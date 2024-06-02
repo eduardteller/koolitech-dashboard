@@ -4,6 +4,7 @@ const socketIo = require('socket.io');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
@@ -21,6 +22,11 @@ module.exports = db;
 const { JWT_SECRET } = require('./config');
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+	res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Register route
 app.post('/api/register', async (req, res) => {
@@ -72,6 +78,7 @@ io.on('connection', (socket) => {
 	console.log(`User connected: ${socket.userId}`);
 
 	socket.on('message', (message) => {
+		console.log(message);
 		io.emit('message', message);
 	});
 
