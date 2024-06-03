@@ -53,20 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
 				for (i = 0; i < 5; i++) {
 					const cell = document.createElement('th');
 					if (i === 0) {
-						cell.contentEditable = false;
 						cell.textContent = 'ID';
+						cell.contentEditable = false;
 					} else if (i === 1) {
-						cell.contentEditable = true;
 						cell.textContent = 'Nimi';
+						cell.contentEditable = false;
 					} else if (i === 2) {
-						cell.contentEditable = true;
 						cell.textContent = 'Aeg';
+						cell.contentEditable = false;
 					} else if (i === 3) {
-						cell.contentEditable = true;
 						cell.textContent = 'Kirjeldus';
+						cell.contentEditable = false;
 					} else if (i === 4) {
-						cell.contentEditable = true;
 						cell.textContent = 'Helifail';
+						cell.contentEditable = false;
 					}
 					initial.appendChild(cell);
 				}

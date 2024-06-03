@@ -3,106 +3,32 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>WebSocket Auth</title>
+		<title>E-Kell Web</title>
+		<link rel="stylesheet" href="login.css" />
 	</head>
 	<body>
-		<h1>Register</h1>
-		<form id="register-form">
-			<input
-				type="text"
-				id="register-username"
-				placeholder="Username"
-				required
-			/>
-			<input
-				type="password"
-				id="register-password"
-				placeholder="Password"
-				required
-			/>
-			<button type="submit">Register</button>
-		</form>
-
-		<h1>Login</h1>
-		<form id="login-form">
-			<input type="text" id="login-username" placeholder="Username" required />
-			<input
-				type="password"
-				id="login-password"
-				placeholder="Password"
-				required
-			/>
-			<button type="submit">Login</button>
-		</form>
-
-		<div id="message-area" style="display: none">
-			<h2>Messages</h2>
-			<ul id="messages"></ul>
-			<input type="text" id="message-input" placeholder="Type a message" />
-			<button id="send-message">Send</button>
+		<div class="container">
+			<h2 class="main-header">E-Kell Web</h2>
+			<h2>Palun logi sisse</h2>
+			<form>
+				<div class="input-group">
+					<label for="username">Kasutaja</label>
+					<input type="text" id="username" name="username" required />
+				</div>
+				<div class="input-group">
+					<label for="password">Salasõna</label>
+					<input type="password" id="password" name="password" required />
+				</div>
+				<div class="button-group">
+					<button type="submit" class="btn-login" id="login-btn">
+						Logi sisse
+					</button>
+					<button type="button" class="btn-register" id="signup-btn">
+						Registreeru
+					</button>
+				</div>
+			</form>
 		</div>
-
-		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				const registerForm = document.getElementById('register-form');
-				const loginForm = document.getElementById('login-form');
-				const messageArea = document.getElementById('message-area');
-				const messageInput = document.getElementById('message-input');
-				const messages = document.getElementById('messages');
-				const sendMessageButton = document.getElementById('send-message');
-				let socket;
-
-				registerForm.addEventListener('submit', async (e) => {
-					e.preventDefault();
-					const username = document.getElementById('register-username').value;
-					const password = document.getElementById('register-password').value;
-
-					const response = await fetch('/api/register', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({ username, password }),
-					});
-
-					if (response.ok) {
-						alert('User registered successfully');
-					} else {
-						alert('User registration failed');
-					}
-				});
-
-				loginForm.addEventListener('submit', async (e) => {
-					e.preventDefault();
-					const username = document.getElementById('login-username').value;
-					const password = document.getElementById('login-password').value;
-
-					const response = await fetch('/api/login', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({ username, password }),
-					});
-
-					if (response.ok) {
-						const data = await response.json();
-						localStorage.setItem('token', data.token);
-						// connectSocket(data.token);
-						// messageArea.style.display = 'block';
-						window.location.href = 'index.html';
-					} else {
-						alert('Invalid credentials');
-					}
-				});
-
-				const token = localStorage.getItem('token');
-				if (token) {
-					// connectSocket(token);
-					window.location.href = 'index.html';
-				}
-			});
-		</script>
-		<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+		<script src="login.js"></script>
 	</body>
 </html>

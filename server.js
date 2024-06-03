@@ -60,7 +60,7 @@ app.post('/api/login', async (req, res) => {
 			if (err || !user || !(await bcrypt.compare(password, user.password))) {
 				return res.status(401).send('Invalid credentials');
 			}
-			const token = jwt.sign({ userId: user.id }, JWT_SECRET);
+			const token = jwt.sign({ userName: user.username }, JWT_SECRET);
 			res.json({ token });
 		}
 	);

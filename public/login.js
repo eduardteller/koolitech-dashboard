@@ -1,0 +1,53 @@
+document.addEventListener('DOMContentLoaded', () => {
+	const login = document.getElementById('login-btn');
+	const singup = document.getElementById('signup-btn');
+	const user = document.getElementById('username');
+	const pass = document.getElementById('password');
+
+	singup.addEventListener('click', async (e) => {
+		e.preventDefault();
+		const username = user.value;
+		const password = pass.value;
+
+		const response = await fetch('/api/register', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ username, password }),
+		});
+
+		if (response.ok) {
+			alert('Kasutaja loodud, palun logi sisse!');
+		} else {
+			alert('Registreerimine ebaõnnestus');
+		}
+	});
+
+	login.addEventListener('click', async (e) => {
+		e.preventDefault();
+		const username = user.value;
+		const password = pass.value;
+
+		const response = await fetch('/api/login', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ username, password }),
+		});
+
+		if (response.ok) {
+			const data = await response.json();
+			localStorage.setItem('token', data.token);
+			window.location.href = 'main.html';
+		} else {
+			alert('Invalid credentials');
+		}
+	});
+
+	const token = localStorage.getItem('token');
+	if (token) {
+		window.location.href = 'main.html';
+	}
+});
