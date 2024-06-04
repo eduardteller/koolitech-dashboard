@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	let ws;
 
 	function initiateConnect(token) {
-		ws = new WebSocket('https://localhost:8081?token=' + token, 'webpage');
+		ws = new WebSocket('https://localhost:8081?token=' + token, 'web');
 
 		ws.onopen = function () {
 			connectBtn.style.display = 'none';

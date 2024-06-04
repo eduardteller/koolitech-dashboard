@@ -70,9 +70,11 @@ wss.on('connection', function connection(ws, req) {
 	const clientType = ws.protocol;
 	let clientName = '';
 
-	if (clientType !== 'webpage' && clientType !== 'desktopapp') {
-		ws.close(1008, 'Suspicious connection');
-	} else if (clientType === 'webpage') {
+	// if (clientType !== 'webpage' && clientType !== 'desktopapp') {
+	// 	ws.close(1008, 'Suspicious connection');
+	// } else
+
+	if (clientType === 'web') {
 		const token = req.url.split('=')[1];
 		if (!token) {
 			ws.close(1008, 'Authentication error');
@@ -87,11 +89,16 @@ wss.on('connection', function connection(ws, req) {
 			ws.close(1008, 'Authentication error');
 			return;
 		}
-	} else if (clientType === 'desktopapp') {
-		ws.schoolName = 'kallavere';
-		clientName = ws.schoolName + '|' + clientType;
+	} else if (clientType.split('_')[0] === 'desktop') {
+		const cl = clientType.split('_')[0];
+		const sch = clientType.split('_')[1];
+		ws.clientType = cl;
+		ws.schoolName = sch;
+		clientName = ws.schoolName + '|' + ws.clientType;
+	} else {
+		ws.close(1008, 'Authentication error');
+		return;
 	}
-
 	clients.set(ws, ws.schoolName);
 	console.log(`Client connected: ${clientName}`);
 
@@ -112,7 +119,7 @@ wss.on('connection', function connection(ws, req) {
 						}
 						// ws.send(JSON.stringify({ type: 'data', data: rows }));
 						sendToClientType(
-							'webpage',
+							'web',
 							JSON.stringify({ type: 'data', data: rows }),
 							ws.schoolName
 						);
@@ -150,7 +157,7 @@ wss.on('connection', function connection(ws, req) {
 					}
 					sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
 					sendToClientType(
-						'desktopapp',
+						'desktop',
 						JSON.stringify({ type: 'refresh_req' }),
 						ws.schoolName
 					);
@@ -173,7 +180,7 @@ wss.on('connection', function connection(ws, req) {
 						}
 						// ws.send(JSON.stringify({ type: 'preset_data', data: rows }));
 						sendToClientType(
-							'webpage',
+							'web',
 							JSON.stringify({
 								type: 'preset_data',
 								data: rows,
@@ -237,13 +244,13 @@ wss.on('connection', function connection(ws, req) {
 											throw new Error(err.message);
 										}
 										sendToClientType(
-											'webpage',
+											'web',
 											JSON.stringify({ type: 'preset_data', data: rows }),
 											ws.schoolName
 										);
 										sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
 										sendToClientType(
-											'desktopapp',
+											'desktop',
 											JSON.stringify({ type: 'refresh_req' }),
 											ws.schoolName
 										);
@@ -284,14 +291,14 @@ wss.on('connection', function connection(ws, req) {
 							throw new Error(err.message);
 						}
 						sendToClientType(
-							'webpage',
+							'web',
 							JSON.stringify({ type: 'preset_data', data: rows }),
 							ws.schoolName
 						);
 						sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
 						sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
 						sendToClientType(
-							'desktopapp',
+							'desktop',
 							JSON.stringify({ type: 'refresh_req' }),
 							ws.schoolName
 						);
@@ -310,7 +317,7 @@ wss.on('connection', function connection(ws, req) {
 			case 'enable_req':
 				try {
 					sendToClientType(
-						'desktopapp',
+						'desktop',
 						JSON.stringify({ type: msg.type, name: msg.name }),
 						ws.schoolName
 					);
@@ -328,7 +335,7 @@ wss.on('connection', function connection(ws, req) {
 							throw new Error(err.message);
 						}
 						sendToClientType(
-							'webpage',
+							'web',
 							JSON.stringify({ type: 'preset_data', data: rows }),
 							ws.schoolName
 						);
@@ -342,28 +349,28 @@ wss.on('connection', function connection(ws, req) {
 			case 'refresh_ok':
 				console.log('Succesfully refreshed School PC');
 				sendToClientType(
-					'webpage',
+					'web',
 					JSON.stringify({ type: 'refresh_ok' }),
 					ws.schoolName
 				);
 				break;
 			case 'alarm_req':
 				sendToClientType(
-					'desktopapp',
+					'desktop',
 					JSON.stringify({ type: 'alarm_req' }),
 					ws.schoolName
 				);
 				break;
 			case 'alarm_started':
 				sendToClientType(
-					'webpage',
+					'web',
 					JSON.stringify({ type: 'alarm_started' }),
 					ws.schoolName
 				);
 				break;
 			case 'alarm_stopped':
 				sendToClientType(
-					'webpage',
+					'web',
 					JSON.stringify({ type: 'alarm_stopped' }),
 					ws.schoolName
 				);
@@ -394,6 +401,13 @@ wss.on('connection', function connection(ws, req) {
 								throw new Error(`Error setting file times: ${err.message}`);
 							}
 							compareModifiedDates(fileMain, filePath, ws.schoolName);
+							if (path.basename(filePath) === 'system.db') {
+								sendToClientType(
+									'desktop',
+									JSON.stringify({ type: 'refresh_req' }),
+									ws.schoolName
+								);
+							}
 						});
 					});
 				} catch (error) {
@@ -406,10 +420,10 @@ wss.on('connection', function connection(ws, req) {
 	});
 
 	ws.on('close', () => {
-		console.log(`Client disconnected: ${clientType}`);
-		if (clientType === 'desktopapp') {
+		console.log(`Client disconnected: ${clientName}`);
+		if (clientType === 'desktop') {
 			sendToClientType(
-				'webpage',
+				'web',
 				JSON.stringify({ type: 'School PC OFFLINE' }),
 				ws.schoolName
 			);
@@ -418,16 +432,16 @@ wss.on('connection', function connection(ws, req) {
 	});
 });
 
-function sendToClientType(type, message, school) {
+async function sendToClientType(type, message, school) {
 	let sent = false;
 	for (const [client, schoolName] of clients.entries()) {
-		if (client.protocol === type && schoolName === school) {
-			client.send(message);
+		if (client.clientType === type && schoolName === school) {
 			sent = true;
+			await client.send(message);
 		}
 	}
 	if (!sent) {
-		console.error('Cant send shit, NOT connected!');
+		console.error(`Cant send shit, NOT connected to ${type + '|' + school}!`);
 	}
 }
 
@@ -510,7 +524,7 @@ async function sendFileThroughWebSocket(filePath, school) {
 
 	const jsonMessage = JSON.stringify(messageDB);
 
-	sendToClientType('desktopapp', jsonMessage, school);
+	await sendToClientType('desktop', jsonMessage, school);
 	console.log(`Sending ${path.basename(filePath)} to To School PC`);
 }
 
