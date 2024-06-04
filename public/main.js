@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				console.log(msg.type + ' by desktop client');
 			} else if (msg.type === 'preset_data') {
 				clearTimeout(timer);
-				hideSpinner('E-KELL');
+				hideSpinner(`E-KELL WEB: ${msg.name} kool`);
 				removeAllPresets();
 				currentDBIndex = [];
 				currentDBName = [];

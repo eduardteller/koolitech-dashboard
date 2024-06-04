@@ -68,11 +68,11 @@ app.post('/api/login', async (req, res) => {
 
 wss.on('connection', function connection(ws, req) {
 	const clientType = ws.protocol;
+	let clientName = '';
 
 	if (clientType !== 'webpage' && clientType !== 'desktopapp') {
 		ws.close(1008, 'Suspicious connection');
-	}
-	if (clientType === 'webpage') {
+	} else if (clientType === 'webpage') {
 		const token = req.url.split('=')[1];
 		if (!token) {
 			ws.close(1008, 'Authentication error');
@@ -81,15 +81,19 @@ wss.on('connection', function connection(ws, req) {
 
 		try {
 			const decoded = jwt.verify(token, JWT_SECRET);
-			ws.userId = decoded.userId;
+			ws.schoolName = decoded.userName;
+			clientName = ws.schoolName + '|' + clientType;
 		} catch (err) {
 			ws.close(1008, 'Authentication error');
 			return;
 		}
+	} else if (clientType === 'desktopapp') {
+		ws.schoolName = 'kallavere';
+		clientName = ws.schoolName + '|' + clientType;
 	}
 
-	clients.set(ws, clientType);
-	console.log(`Client connected: ${clientType}`);
+	clients.set(ws, ws.schoolName);
+	console.log(`Client connected: ${clientName}`);
 
 	ws.on('message', async function incoming(message) {
 		const msg = JSON.parse(message);
@@ -109,7 +113,8 @@ wss.on('connection', function connection(ws, req) {
 						// ws.send(JSON.stringify({ type: 'data', data: rows }));
 						sendToClientType(
 							'webpage',
-							JSON.stringify({ type: 'data', data: rows })
+							JSON.stringify({ type: 'data', data: rows }),
+							ws.schoolName
 						);
 					});
 					dbMain.close();
@@ -143,10 +148,11 @@ wss.on('connection', function connection(ws, req) {
 							}
 						);
 					}
-					sendFileThroughWebSocket(`./data/${dbIndex}.db`);
+					sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
 					sendToClientType(
 						'desktopapp',
-						JSON.stringify({ type: 'refresh_req' })
+						JSON.stringify({ type: 'refresh_req' }),
+						ws.schoolName
 					);
 					console.log(`Succesfully updated ${dbIndex}.db by Web Client`);
 					dbMain.close((err) => {
@@ -168,7 +174,12 @@ wss.on('connection', function connection(ws, req) {
 						// ws.send(JSON.stringify({ type: 'preset_data', data: rows }));
 						sendToClientType(
 							'webpage',
-							JSON.stringify({ type: 'preset_data', data: rows })
+							JSON.stringify({
+								type: 'preset_data',
+								data: rows,
+								name: ws.schoolName,
+							}),
+							ws.schoolName
 						);
 					});
 				} catch (error) {
@@ -227,12 +238,14 @@ wss.on('connection', function connection(ws, req) {
 										}
 										sendToClientType(
 											'webpage',
-											JSON.stringify({ type: 'preset_data', data: rows })
+											JSON.stringify({ type: 'preset_data', data: rows }),
+											ws.schoolName
 										);
-										sendFileThroughWebSocket(`./data/system.db`);
+										sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
 										sendToClientType(
 											'desktopapp',
-											JSON.stringify({ type: 'refresh_req' })
+											JSON.stringify({ type: 'refresh_req' }),
+											ws.schoolName
 										);
 									});
 								}
@@ -272,13 +285,15 @@ wss.on('connection', function connection(ws, req) {
 						}
 						sendToClientType(
 							'webpage',
-							JSON.stringify({ type: 'preset_data', data: rows })
+							JSON.stringify({ type: 'preset_data', data: rows }),
+							ws.schoolName
 						);
-						sendFileThroughWebSocket(`./data/system.db`);
-						sendFileThroughWebSocket(`./data/${dbIndex}.db`);
+						sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
+						sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
 						sendToClientType(
 							'desktopapp',
-							JSON.stringify({ type: 'refresh_req' })
+							JSON.stringify({ type: 'refresh_req' }),
+							ws.schoolName
 						);
 					});
 
@@ -296,7 +311,8 @@ wss.on('connection', function connection(ws, req) {
 				try {
 					sendToClientType(
 						'desktopapp',
-						JSON.stringify({ type: msg.type, name: msg.name })
+						JSON.stringify({ type: msg.type, name: msg.name }),
+						ws.schoolName
 					);
 					console.log(`Use: ${msg.name} sent to desktop`);
 				} catch (error) {
@@ -313,7 +329,8 @@ wss.on('connection', function connection(ws, req) {
 						}
 						sendToClientType(
 							'webpage',
-							JSON.stringify({ type: 'preset_data', data: rows })
+							JSON.stringify({ type: 'preset_data', data: rows }),
+							ws.schoolName
 						);
 					});
 					dbSystem.close();
@@ -324,16 +341,32 @@ wss.on('connection', function connection(ws, req) {
 				break;
 			case 'refresh_ok':
 				console.log('Succesfully refreshed School PC');
-				sendToClientType('webpage', JSON.stringify({ type: 'refresh_ok' }));
+				sendToClientType(
+					'webpage',
+					JSON.stringify({ type: 'refresh_ok' }),
+					ws.schoolName
+				);
 				break;
 			case 'alarm_req':
-				sendToClientType('desktopapp', JSON.stringify({ type: 'alarm_req' }));
+				sendToClientType(
+					'desktopapp',
+					JSON.stringify({ type: 'alarm_req' }),
+					ws.schoolName
+				);
 				break;
 			case 'alarm_started':
-				sendToClientType('webpage', JSON.stringify({ type: 'alarm_started' }));
+				sendToClientType(
+					'webpage',
+					JSON.stringify({ type: 'alarm_started' }),
+					ws.schoolName
+				);
 				break;
 			case 'alarm_stopped':
-				sendToClientType('webpage', JSON.stringify({ type: 'alarm_stopped' }));
+				sendToClientType(
+					'webpage',
+					JSON.stringify({ type: 'alarm_stopped' }),
+					ws.schoolName
+				);
 				break;
 			case 'db_data':
 				try {
@@ -360,7 +393,7 @@ wss.on('connection', function connection(ws, req) {
 							if (err) {
 								throw new Error(`Error setting file times: ${err.message}`);
 							}
-							compareModifiedDates(fileMain, filePath);
+							compareModifiedDates(fileMain, filePath, ws.schoolName);
 						});
 					});
 				} catch (error) {
@@ -373,21 +406,22 @@ wss.on('connection', function connection(ws, req) {
 	});
 
 	ws.on('close', () => {
-		clients.delete(ws);
 		console.log(`Client disconnected: ${clientType}`);
 		if (clientType === 'desktopapp') {
 			sendToClientType(
 				'webpage',
-				JSON.stringify({ type: 'School PC OFFLINE' })
+				JSON.stringify({ type: 'School PC OFFLINE' }),
+				ws.schoolName
 			);
 		}
+		clients.delete(ws);
 	});
 });
 
-function sendToClientType(type, message) {
+function sendToClientType(type, message, school) {
 	let sent = false;
-	for (const [client, clientType] of clients.entries()) {
-		if (clientType === type) {
+	for (const [client, schoolName] of clients.entries()) {
+		if (client.protocol === type && schoolName === school) {
 			client.send(message);
 			sent = true;
 		}
@@ -401,7 +435,7 @@ function delay(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function compareModifiedDates(file1Path, file2Path) {
+async function compareModifiedDates(file1Path, file2Path, school) {
 	fs.access(file1Path, fs.constants.F_OK, (err) => {
 		if (err) {
 			console.log(
@@ -451,7 +485,7 @@ async function compareModifiedDates(file1Path, file2Path) {
 							`Sending updated ${path.basename(file1Path)} to To School PC`
 						);
 						delay(100);
-						sendFileThroughWebSocket(file1Path);
+						sendFileThroughWebSocket(file1Path, school);
 					}
 				});
 			});
@@ -459,7 +493,7 @@ async function compareModifiedDates(file1Path, file2Path) {
 	});
 }
 
-async function sendFileThroughWebSocket(filePath) {
+async function sendFileThroughWebSocket(filePath, school) {
 	const stats = fs.statSync(filePath);
 	const lastModified = stats.mtime;
 	const unixTimestampMilliseconds = lastModified.getTime();
@@ -476,7 +510,7 @@ async function sendFileThroughWebSocket(filePath) {
 
 	const jsonMessage = JSON.stringify(messageDB);
 
-	sendToClientType('desktopapp', jsonMessage);
+	sendToClientType('desktopapp', jsonMessage, school);
 	console.log(`Sending ${path.basename(filePath)} to To School PC`);
 }
 
