@@ -84,7 +84,8 @@ wss.on('connection', function connection(ws, req) {
 		try {
 			const decoded = jwt.verify(token, JWT_SECRET);
 			ws.schoolName = decoded.userName;
-			clientName = ws.schoolName + '|' + clientType;
+			ws.clientType = ws.protocol;
+			clientName = ws.schoolName + '|' + ws.clientType;
 		} catch (err) {
 			ws.close(1008, 'Authentication error');
 			return;
@@ -441,7 +442,7 @@ async function sendToClientType(type, message, school) {
 		}
 	}
 	if (!sent) {
-		console.error(`Cant send shit, NOT connected to ${type + '|' + school}!`);
+		console.error(`Cant send shit, NOT connected to ${school + '|' + type}!`);
 	}
 }
 
