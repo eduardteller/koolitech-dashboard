@@ -529,6 +529,18 @@ async function sendFileThroughWebSocket(filePath, school) {
 	console.log(`Sending ${path.basename(filePath)} to To School PC`);
 }
 
-server.listen(8081, () => {
-	console.log('WebSocket server is running on https://localhost:8081');
-});
+let p_ip = 'localhost';
+
+async function get_ip() {
+	let ip = await fetch('https://icanhazip.com').then((response) =>
+		response.text()
+	);
+	return ip;
+}
+
+(async () => {
+	p_ip = await get_ip();
+	server.listen(443, () => {
+		console.log(`E-Kell Web Server is running on https://${p_ip}`);
+	});
+})();
