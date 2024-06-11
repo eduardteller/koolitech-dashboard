@@ -22,7 +22,6 @@ const wss = new webSocket.Server({ server });
 const clients = new Map();
 let day;
 
-module.exports = main;
 const { JWT_SECRET } = require('./config');
 
 app.use(express.json());
@@ -368,7 +367,7 @@ function delay(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function compareModifiedDates(file1Path, file2Path, school) {
+function compareModifiedDates(file1Path, file2Path, school) {
 	fs.access(file1Path, fs.constants.F_OK, (err) => {
 		if (err) {
 			console.log(`Received ${path.basename(file1Path)} from school pc dont exist on server, copying...`);
@@ -395,17 +394,17 @@ async function compareModifiedDates(file1Path, file2Path, school) {
 
 					if (file2ModifiedDate > file1ModifiedDate) {
 						console.log(`Recieved ${path.basename(file2Path)} from School PC is newer, replacing...`);
-						// fs.unlink(file1Path, (err) => {
-						// 	if (err) {
-						// 		throw new Error(err.message);
-						// 	}
-						// 	});
-						await deleteDatabaseFile(file1Path);
-						fs.rename(file2Path, file1Path, (err) => {
+						fs.unlink(file1Path, (err) => {
 							if (err) {
 								throw new Error(err.message);
 							}
+							fs.rename(file2Path, file1Path, (err) => {
+								if (err) {
+									throw new Error(err.message);
+								}
+							});
 						});
+						// await deleteDatabaseFile(file1Path);
 					} else if (file2ModifiedDate < file1ModifiedDate) {
 						// console.log(`Sending updated ${file1Path} to To School PC`);
 						delay(100);
@@ -417,22 +416,22 @@ async function compareModifiedDates(file1Path, file2Path, school) {
 	});
 }
 
-function deleteDatabaseFile(filepath, retry = 0) {
-	// Make sure we have a safety net: if ten unlink attempts
-	// fail in a row, something has *actually* going wrong.
-	if (retry > 10) {
-		console.log('FUCK DUDE');
-		return;
-	}
+// function deleteDatabaseFile(filepath, retry = 0) {
+// 	// Make sure we have a safety net: if ten unlink attempts
+// 	// fail in a row, something has *actually* going wrong.
+// 	if (retry > 10) {
+// 		console.log('FUCK DUDE');
+// 		return;
+// 	}
 
-	try {
-		fs.unlink(filepath);
-	} catch (e) {
-		setTimeout(() => deleteDatabaseFile(filepath, retry + 1), 100);
-	}
-}
+// 	try {
+// 		fs.unlink(filepath);
+// 	} catch (e) {
+// 		setTimeout(() => deleteDatabaseFile(filepath, retry + 1), 100);
+// 	}
+// }
 
-async function sendFileThroughWebSocket(filePath, school) {
+function sendFileThroughWebSocket(filePath, school) {
 	const stats = fs.statSync(filePath);
 	const lastModified = stats.mtime;
 	const unixTimestampMilliseconds = lastModified.getTime();
@@ -449,7 +448,7 @@ async function sendFileThroughWebSocket(filePath, school) {
 
 	const jsonMessage = JSON.stringify(messageDB);
 
-	await sendToClientType('desktop', jsonMessage, school);
+	sendToClientType('desktop', jsonMessage, school);
 	console.log(`Sending ${filePath} to To ${school} PC`);
 }
 

@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	let ws;
 
 	function initiateConnect(token) {
-		ws = new WebSocket('wss://93.185.249.221:443?token=' + token, 'web');
+		ws = new WebSocket('wss://localhost:443?token=' + token, 'web');
 
 		ws.onopen = function () {
 			connectBtn.style.display = 'none';
@@ -70,11 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 					initial.appendChild(cell);
 				}
-				if (
-					msg.data[0] !== undefined &&
-					msg.data[0] !== null &&
-					msg.data[0] !== ''
-				) {
+				if (msg.data[0] !== undefined && msg.data[0] !== null && msg.data[0] !== '') {
 					msg.data.forEach((rowData) => {
 						const newRow = table.querySelector('tbody').insertRow(-1);
 
@@ -262,9 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	delPlanBtn.addEventListener('click', function () {
 		if (selectedPresetPlan != null) {
-			ws.send(
-				JSON.stringify({ type: 'req_del_plan', name: selectedPresetPlan })
-			);
+			ws.send(JSON.stringify({ type: 'req_del_plan', name: selectedPresetPlan }));
 		}
 	});
 
@@ -335,9 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function triggerDayClick(presetText) {
-		const item = Array.from(presetItemsDays).find(
-			(i) => i.textContent === presetText
-		);
+		const item = Array.from(presetItemsDays).find((i) => i.textContent === presetText);
 		if (item) {
 			item.dispatchEvent(new Event('click'));
 		} else {
