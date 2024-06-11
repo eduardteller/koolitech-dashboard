@@ -383,7 +383,7 @@ async function compareModifiedDates(file1Path, file2Path, school) {
 					throw new Error(err1.message);
 				}
 
-				fs.stat(file2Path, (err2, stats2) => {
+				fs.stat(file2Path, async (err2, stats2) => {
 					if (err2) {
 						throw new Error(err2.message);
 					}
@@ -395,15 +395,16 @@ async function compareModifiedDates(file1Path, file2Path, school) {
 
 					if (file2ModifiedDate > file1ModifiedDate) {
 						console.log(`Recieved ${path.basename(file2Path)} from School PC is newer, replacing...`);
-						fs.unlink(file1Path, (err) => {
+						// fs.unlink(file1Path, (err) => {
+						// 	if (err) {
+						// 		throw new Error(err.message);
+						// 	}
+						// 	});
+						await deleteDatabaseFile(file1Path);
+						fs.rename(file2Path, file1Path, (err) => {
 							if (err) {
 								throw new Error(err.message);
 							}
-							fs.rename(file2Path, file1Path, (err) => {
-								if (err) {
-									throw new Error(err.message);
-								}
-							});
 						});
 					} else if (file2ModifiedDate < file1ModifiedDate) {
 						// console.log(`Sending updated ${file1Path} to To School PC`);
@@ -414,6 +415,21 @@ async function compareModifiedDates(file1Path, file2Path, school) {
 			});
 		}
 	});
+}
+
+function deleteDatabaseFile(filepath, retry = 0) {
+	// Make sure we have a safety net: if ten unlink attempts
+	// fail in a row, something has *actually* going wrong.
+	if (retry > 10) {
+		console.log('FUCK DUDE');
+		return;
+	}
+
+	try {
+		fs.unlink(filepath);
+	} catch (e) {
+		setTimeout(() => deleteDatabaseFile(filepath, retry + 1), 100);
+	}
 }
 
 async function sendFileThroughWebSocket(filePath, school) {
