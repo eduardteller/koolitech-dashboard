@@ -38,9 +38,7 @@ app.post('/api/register', async (req, res) => {
 	const { username, password } = req.body;
 	const hashedPassword = await bcrypt.hash(password, 10);
 
-	const stmt = main.prepare(
-		'INSERT INTO User (username, password) VALUES (?, ?)'
-	);
+	const stmt = main.prepare('INSERT INTO User (username, password) VALUES (?, ?)');
 	stmt.run([username, hashedPassword], function (err) {
 		if (err) {
 			return res.status(400).send('User registration failed');
@@ -53,17 +51,13 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
 	const { username, password } = req.body;
 
-	main.get(
-		'SELECT * FROM User WHERE username = ?',
-		[username],
-		async (err, user) => {
-			if (err || !user || !(await bcrypt.compare(password, user.password))) {
-				return res.status(401).send('Invalid credentials');
-			}
-			const token = jwt.sign({ userName: user.username }, JWT_SECRET);
-			res.json({ token });
+	main.get('SELECT * FROM User WHERE username = ?', [username], async (err, user) => {
+		if (err || !user || !(await bcrypt.compare(password, user.password))) {
+			return res.status(401).send('Invalid credentials');
 		}
-	);
+		const token = jwt.sign({ userName: user.username }, JWT_SECRET);
+		res.json({ token });
+	});
 });
 
 wss.on('connection', function connection(ws, req) {
@@ -118,18 +112,16 @@ wss.on('connection', function connection(ws, req) {
 						if (err) {
 							throw new Error(err.message);
 						}
+						dbMain.close(() => {
+							sendToClientType('web', JSON.stringify({ type: 'data', data: rows }), ws.schoolName);
+						});
 						// ws.send(JSON.stringify({ type: 'data', data: rows }));
-						sendToClientType(
-							'web',
-							JSON.stringify({ type: 'data', data: rows }),
-							ws.schoolName
-						);
 					});
-					dbMain.close();
 				} catch (error) {
 					console.error('fetch error:', error.message);
 				}
 				break;
+
 			case 'update':
 				try {
 					dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
@@ -146,32 +138,22 @@ wss.on('connection', function connection(ws, req) {
 						const Aeg = msg.tableData[i][2];
 						const Kirjeldus = msg.tableData[i][3];
 						const Helifail = msg.tableData[i][4];
-						dbMain.run(
-							`INSERT INTO ${day} VALUES (?, ?, ?, ?, ?)`,
-							[Id, Nimi, Aeg, Kirjeldus, Helifail],
-							(err) => {
-								if (err) {
-									throw new Error(err.message);
-								}
+						dbMain.run(`INSERT INTO ${day} VALUES (?, ?, ?, ?, ?)`, [Id, Nimi, Aeg, Kirjeldus, Helifail], (err) => {
+							if (err) {
+								throw new Error(err.message);
 							}
-						);
+						});
 					}
-					sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
-					sendToClientType(
-						'desktop',
-						JSON.stringify({ type: 'refresh_req' }),
-						ws.schoolName
-					);
-					console.log(`Succesfully updated ${dbIndex}.db by Web Client`);
-					dbMain.close((err) => {
-						if (err) {
-							throw new Error(err.message);
-						}
+					dbMain.close(() => {
+						sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
+						sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+						console.log(`Succesfully updated ${dbIndex}.db by Web Client`);
 					});
 				} catch (error) {
 					console.error('update error:', error.message);
 				}
 				break;
+
 			case 'preset':
 				try {
 					dbSystem = new sqlite3.Database('./data/system.db');
@@ -194,77 +176,58 @@ wss.on('connection', function connection(ws, req) {
 					console.error('preset error:', error.message);
 				}
 				break;
+
 			case 'req_new_plan':
 				try {
 					dbSystem = new sqlite3.Database('./data/system.db');
-					dbSystem.all(
-						'SELECT * FROM PlanNames ORDER BY DbId',
-						[],
-						(err, rows) => {
-							if (err) {
-								throw new Error(err.message);
-							}
-							let previousDbId = 0; // Assuming the first DbId can be 0 or 1
-							let newDbId = 0;
-							rows.forEach((plan) => {
-								if (parseInt(plan.DbId) - previousDbId > 1) {
-									newDbId = previousDbId + 1;
-									return; // Exit the loop, since you found the first gap
-								}
-								previousDbId = parseInt(plan.DbId);
-							});
-							if (newDbId === 0) {
-								newDbId = previousDbId + 1;
-							}
-							let newName = '';
-							if (msg.name) {
-								newName = msg.name;
-							} else {
-								newName = 'UUS' + newDbId.toString();
-							}
-							let newID = 0;
-							if (rows) {
-								// newID = parseInt(rows[rows.length - 1].Id) + 1;
-								rows.forEach((plan) => {
-									if (plan.Id > newID) {
-										newID = plan.Id;
-									}
-								});
-							}
-							newID++;
-							dbSystem.run(
-								`INSERT INTO PlanNames VALUES (?, ?, ?, ?)`,
-								[newID, newName, newDbId, 0],
-								(err) => {
-									if (err) {
-										throw new Error(err.message);
-									}
-									console.log(`New Plan with ID: ${newID}`);
-									dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
-										if (err) {
-											throw new Error(err.message);
-										}
-										sendToClientType(
-											'web',
-											JSON.stringify({ type: 'preset_data', data: rows }),
-											ws.schoolName
-										);
-										sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
-										sendToClientType(
-											'desktop',
-											JSON.stringify({ type: 'refresh_req' }),
-											ws.schoolName
-										);
-									});
-								}
-							);
+					dbSystem.all('SELECT * FROM PlanNames ORDER BY DbId', [], (err, rows) => {
+						if (err) {
+							throw new Error(err.message);
 						}
-					);
-					dbSystem.close();
+						let previousDbId = 0; // Assuming the first DbId can be 0 or 1
+						let newDbId = 0;
+						rows.forEach((plan) => {
+							if (parseInt(plan.DbId) - previousDbId > 1) {
+								newDbId = previousDbId + 1;
+								return; // Exit the loop, since you found the first gap
+							}
+							previousDbId = parseInt(plan.DbId);
+						});
+						if (newDbId === 0) {
+							newDbId = previousDbId + 1;
+						}
+						let newName = '';
+						if (msg.name) {
+							newName = msg.name;
+						} else {
+							newName = 'UUS' + newDbId.toString();
+						}
+						let newID = 0;
+						if (rows) {
+							// newID = parseInt(rows[rows.length - 1].Id) + 1;
+							rows.forEach((plan) => {
+								if (plan.Id > newID) {
+									newID = plan.Id;
+								}
+							});
+						}
+						newID++;
+						dbSystem.run(`INSERT INTO PlanNames VALUES (?, ?, ?, ?)`, [newID, newName, newDbId, 0], (err) => {
+							console.log(`New Plan with ID: ${newID}`);
+							dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
+								dbSystem.close(() => {
+									sendToClientType('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
+									sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
+									sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+								});
+							});
+						});
+					});
 				} catch (error) {
 					console.error('req_new_plan error:', error.message);
 				}
 				break;
+
 			case 'req_del_plan':
 				try {
 					dbSystem = new sqlite3.Database('./data/system.db');
@@ -277,123 +240,85 @@ wss.on('connection', function connection(ws, req) {
 					dbMain.run(`DELETE FROM Saturdays`);
 					dbMain.run(`DELETE FROM Sundays`);
 
-					dbSystem.run(
-						`DELETE FROM PlanNames WHERE Name = ?`,
-						[msg.name],
-						(err) => {
-							if (err) {
-								throw new Error(err.message);
-							}
-						}
-					);
-
-					dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
+					dbSystem.run(`DELETE FROM PlanNames WHERE Name = ?`, [msg.name], (err) => {
 						if (err) {
 							throw new Error(err.message);
 						}
-						sendToClientType(
-							'web',
-							JSON.stringify({ type: 'preset_data', data: rows }),
-							ws.schoolName
-						);
-						sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
-						sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
-						sendToClientType(
-							'desktop',
-							JSON.stringify({ type: 'refresh_req' }),
-							ws.schoolName
-						);
 					});
 
-					console.log('Deleted ' + msg.name);
-					dbMain.close();
-					dbSystem.close();
+					dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
+						console.log('Deleted ' + msg.name);
+						dbMain.close(() => {
+							dbSystem.close(() => {
+								sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
+								sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
+								sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+								sendToClientType('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
+							});
+						});
+					});
 				} catch (error) {
 					console.error('req_del_plan error:', error.message);
 				}
 				break;
+
 			case 'sel_db':
 				dbIndex = msg.data;
 				break;
+
 			case 'enable_req':
 				try {
-					sendToClientType(
-						'desktop',
-						JSON.stringify({ type: msg.type, name: msg.name }),
-						ws.schoolName
-					);
+					sendToClientType('desktop', JSON.stringify({ type: msg.type, name: msg.name }), ws.schoolName);
 					console.log(`Use: ${msg.name} sent to desktop`);
 				} catch (error) {
 					console.error('enable_req error:', error.message);
 				}
 				break;
+
 			case 'plan_change_ok':
 				try {
 					dbSystem = new sqlite3.Database('./data/system.db');
 
 					dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
-						if (err) {
-							throw new Error(err.message);
-						}
-						sendToClientType(
-							'web',
-							JSON.stringify({ type: 'preset_data', data: rows }),
-							ws.schoolName
-						);
+						dbSystem.close(() => {
+							sendToClientType('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
+						});
 					});
-					dbSystem.close();
 				} catch (error) {
 					console.error('plan_change_ok error:', error.message);
 				}
 
 				break;
+
 			case 'refresh_ok':
 				console.log('Succesfully refreshed School PC');
-				sendToClientType(
-					'web',
-					JSON.stringify({ type: 'refresh_ok' }),
-					ws.schoolName
-				);
+				sendToClientType('web', JSON.stringify({ type: 'refresh_ok' }), ws.schoolName);
 				break;
+
 			case 'alarm_req':
-				sendToClientType(
-					'desktop',
-					JSON.stringify({ type: 'alarm_req' }),
-					ws.schoolName
-				);
+				sendToClientType('desktop', JSON.stringify({ type: 'alarm_req' }), ws.schoolName);
 				break;
+
 			case 'alarm_started':
-				sendToClientType(
-					'web',
-					JSON.stringify({ type: 'alarm_started' }),
-					ws.schoolName
-				);
+				sendToClientType('web', JSON.stringify({ type: 'alarm_started' }), ws.schoolName);
 				break;
+
 			case 'alarm_stopped':
-				sendToClientType(
-					'web',
-					JSON.stringify({ type: 'alarm_stopped' }),
-					ws.schoolName
-				);
+				sendToClientType('web', JSON.stringify({ type: 'alarm_stopped' }), ws.schoolName);
 				break;
+
 			case 'db_data':
 				try {
 					const fileData = Buffer.from(msg.data, 'base64');
 					const fileMain = `./data/${msg.db_index}.db`;
-					const filePath = path.join(
-						__dirname,
-						'temp_data',
-						`${msg.db_index}.db`
-					);
+					const filePath = path.join(__dirname, 'temp_data', `${msg.db_index}.db`);
 
 					fs.writeFile(filePath, fileData, (err) => {
 						if (err) {
 							throw new Error(`Error writing file: ${err.message}`);
 						}
 
-						console.log(
-							`Received ${fileData.length} bytes and saved to ${filePath}`
-						);
+						console.log(`Received ${fileData.length} bytes and saved to ${filePath}`);
 						const oldDateInMilliseconds = msg.time_data;
 						const oldDate = new Date(oldDateInMilliseconds);
 
@@ -403,11 +328,7 @@ wss.on('connection', function connection(ws, req) {
 							}
 							compareModifiedDates(fileMain, filePath, ws.schoolName);
 							if (path.basename(filePath) === 'system.db') {
-								sendToClientType(
-									'desktop',
-									JSON.stringify({ type: 'refresh_req' }),
-									ws.schoolName
-								);
+								sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
 							}
 						});
 					});
@@ -415,6 +336,7 @@ wss.on('connection', function connection(ws, req) {
 					console.error('db_data error:', error.message);
 				}
 				break;
+
 			default:
 				break;
 		}
@@ -423,11 +345,7 @@ wss.on('connection', function connection(ws, req) {
 	ws.on('close', () => {
 		console.log(`Client disconnected: ${clientName}`);
 		if (clientType === 'desktop') {
-			sendToClientType(
-				'web',
-				JSON.stringify({ type: 'School PC OFFLINE' }),
-				ws.schoolName
-			);
+			sendToClientType('web', JSON.stringify({ type: 'School PC OFFLINE' }), ws.schoolName);
 		}
 		clients.delete(ws);
 	});
@@ -453,11 +371,7 @@ function delay(ms) {
 async function compareModifiedDates(file1Path, file2Path, school) {
 	fs.access(file1Path, fs.constants.F_OK, (err) => {
 		if (err) {
-			console.log(
-				`Received ${path.basename(
-					file1Path
-				)} from school pc dont exist on server, copying...`
-			);
+			console.log(`Received ${path.basename(file1Path)} from school pc dont exist on server, copying...`);
 			fs.rename(file2Path, file1Path, (err) => {
 				if (err) {
 					throw new Error(err.message);
@@ -480,11 +394,7 @@ async function compareModifiedDates(file1Path, file2Path, school) {
 					// console.log(file1ModifiedDate + ' | ' + file2ModifiedDate);
 
 					if (file2ModifiedDate > file1ModifiedDate) {
-						console.log(
-							`Recieved ${path.basename(
-								file1Path
-							)} from School PC is newer, replacing...`
-						);
+						console.log(`Recieved ${path.basename(file2Path)} from School PC is newer, replacing...`);
 						fs.unlink(file1Path, (err) => {
 							if (err) {
 								throw new Error(err.message);
@@ -496,9 +406,7 @@ async function compareModifiedDates(file1Path, file2Path, school) {
 							});
 						});
 					} else if (file2ModifiedDate < file1ModifiedDate) {
-						console.log(
-							`Sending updated ${path.basename(file1Path)} to To School PC`
-						);
+						// console.log(`Sending updated ${file1Path} to To School PC`);
 						delay(100);
 						sendFileThroughWebSocket(file1Path, school);
 					}
@@ -526,15 +434,13 @@ async function sendFileThroughWebSocket(filePath, school) {
 	const jsonMessage = JSON.stringify(messageDB);
 
 	await sendToClientType('desktop', jsonMessage, school);
-	console.log(`Sending ${path.basename(filePath)} to To School PC`);
+	console.log(`Sending ${filePath} to To ${school} PC`);
 }
 
 let p_ip = 'localhost';
 
 async function get_ip() {
-	let ip = await fetch('https://icanhazip.com').then((response) =>
-		response.text()
-	);
+	let ip = await fetch('https://icanhazip.com').then((response) => response.text());
 	return ip;
 }
 
