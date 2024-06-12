@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+	.list-plan-tail {
+		@apply px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm;
+	}
+
+	.list-table-h-tail {
+		@apply p-4 text-left text-sm font-semibold text-gray-900 uppercase border;
+	}
+
+	.list-table-tail {
+		@apply p-4 whitespace-nowrap border;
+	}
+
+	.active.selected {
+		@apply bg-blue-500 hover:bg-blue-600;
+	}
+
+	.regular.selected {
+		@apply bg-slate-400 hover:bg-slate-500;
+	}
+
+	.active {
+		@apply bg-blue-300 hover:bg-blue-400;
+	}
+
+	.regular {
+		@apply bg-slate-200 hover:bg-slate-300;
+	}
+}

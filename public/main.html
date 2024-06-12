@@ -4,64 +4,171 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>E-Kell Web</title>
-		<link rel="stylesheet" href="main.css" />
+		<link rel="stylesheet" href="./main.css" />
 	</head>
-	<body>
-		<div class="container" id="cntM" style="display: none">
-			<h1>Plaanid</h1>
-			<ul id="preset-list-plan">
-				<li class="preset-item-plan">JOHHNY</li>
-				<li class="preset-item-plan">JOHHNY</li>
-			</ul>
-			<div class="buttons">
-				<button id="new-plan">Uus plaan</button>
-				<button id="del-plan">Kustuta valitud</button>
-				<button id="enable-plan">Aktiveeri</button>
+	<body class="h-screen bg-slate-100">
+		<header class="bg-blue-400 w-full h-24"></header>
+
+		<div id="heading-fail" class="h-full w-full flex flex-col items-center justify-center hidden">
+			<h1 class="text-6xl rounded-lg shadow-lg font-bold p-8 bg-green-300 text-center">Connecting... 🔄</h1>
+			<button class="py-2 px-4 mt-4 bg-blue-400 hover:bg-blue-500 text-center font-semibold text-xl rounded-md hidden" id="connect-btn">
+				Taasühendu
+			</button>
+		</div>
+
+		<div id="cntMain" class="container w-full h-full mx-auto">
+			<div class="w-full h-1/2 mt-8 flex flex-col justify-start items-center">
+				<div class="bg-white w-1/2 h-full mb-8 rounded-lg shadow-lg p-4 flex flex-row justify-between items-center" id="cntM">
+					<div class="h-full flex flex-col justify-center items-center">
+						<h1 class="px-4 py-2 bg-red-400 rounded-lg font-semibold text-xl text-gray-900">Staatus: Offline 🔴</h1>
+					</div>
+					<div class="buttons">
+						<button class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white" id="haire-btn">
+							Haire Start 🚨
+						</button>
+					</div>
+				</div>
+				<div class="flex flex-row w-full h-full items-center justify-center">
+					<div class="h-full w-48 bg-white rounded-lg shadow-lg mr-4" id="cnt1">
+						<h1 class="font-semibold text-xl text-gray-900 my-4 text-center">Nädalapäevad</h1>
+
+						<ul class="flex flex-col items-center justify-start text-lg text-center mt-4 border-y-2 w-full">
+							<li class="preset-item regular px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm">Esmaspäev</li>
+							<li class="preset-item regular px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm">Teisipäev</li>
+							<li class="preset-item regular px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm">Kolmapäev</li>
+							<li class="preset-item regular px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm">Neljapäev</li>
+							<li class="preset-item regular px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm">Reede</li>
+							<li class="preset-item regular px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm">Laupäev</li>
+							<li class="preset-item regular px-2 py-1 m-1 cursor-pointer w-32 rounded-sm">Pühapäev</li>
+						</ul>
+						<div id="selected-preset"></div>
+					</div>
+					<div class="bg-white h-full w-2/4 min-w-96 rounded-lg shadow-lg p-4 flex flex-col items-center justify-center" id="cnt2">
+						<h1 class="text-3xl font-semibold mb-4" id="heada">Tavaplaan</h1>
+						<div class="w-full max-w-2xl h-96 overflow-y-auto mb-4">
+							<table class="w-full divide-y divide-gray-200" id="data-table">
+								<thead class="bg-gray-50">
+									<tr>
+										<th class="list-table-h-tail min-w-32">Id</th>
+										<th class="list-table-h-tail min-w-32">Nimi</th>
+										<th class="list-table-h-tail min-w-32">Aeg</th>
+										<th class="list-table-h-tail min-w-32">Kirjeldus</th>
+										<th class="list-table-h-tail min-w-32">Helifail</th>
+									</tr>
+								</thead>
+								<tbody class="bg-white divide-y divide-gray-200">
+									<tr>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+									</tr>
+									<tr>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+									</tr>
+									<tr>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+									</tr>
+									<tr>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+									</tr>
+									<tr>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+									</tr>
+									<tr>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+									</tr>
+									<tr>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+									</tr>
+									<tr>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+										<td class="list-table-tail">TESTING</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="buttons flex flex-row items-center justify-center w-full h-16">
+							<button class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-32" id="update-btn">
+								Salvesta
+							</button>
+							<button class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-32" id="row-btn">
+								Lisa Rida
+							</button>
+							<button class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-32" id="delete-btn">
+								Kustuta Rida
+							</button>
+						</div>
+					</div>
+					<div class="h-full w-48 bg-white rounded-lg shadow-lg ml-4 flex flex-col items-center justify-between">
+						<h1 class="font-semibold text-xl text-gray-900 mt-4">Plaanid</h1>
+
+						<ul
+							id="preset-list-plan"
+							class="flex flex-col items-center justify-start h-full text-lg text-center mt-4 border-y-2 w-full overflow-y-auto"
+						>
+							<li class="list-plan-tail preset-item-plan active selected">JOHNNY</li>
+							<li class="list-plan-tail preset-item-plan regular">JOHNNY</li>
+							<li class="list-plan-tail preset-item-plan regular">JOHNNY</li>
+							<li class="list-plan-tail preset-item-plan regular">JOHNNY</li>
+							<li class="list-plan-tail preset-item-plan regular">JOHNNY</li>
+							<li class="list-plan-tail preset-item-plan regular">JOHNNY</li>
+							<li class="list-plan-tail preset-item-plan regular">JOHNNY</li>
+							<li class="list-plan-tail preset-item-plan regular">JOHNNY</li>
+						</ul>
+						<div class="flex flex-col justify-start items-center my-4">
+							<button id="new-plan" class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-36">
+								Uus plaan
+							</button>
+							<button id="del-plan" class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-36">
+								Kustuta valitud
+							</button>
+							<button id="enable-plan" class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-36">
+								Aktiveeri
+							</button>
+						</div>
+					</div>
+				</div>
+				<!-- <div class="overlay" id="overlay"></div>
+				<div class="modal" id="modal">
+					<h2>Enter Element Name</h2>
+					<input type="text" id="elementName" placeholder="Element Name" />
+					<div class="modal-buttons">
+						<button id="saveButton">Save</button>
+						<button id="cancelButton">Cancel</button>
+					</div>
+				</div> -->
 			</div>
 		</div>
-
-		<div>
-			<h1 id="heading-fail">Connecting... 🔄</h1>
-			<button id="connect-btn" style="display: none">Connect</button>
-		</div>
-
-		<div class="container" style="display: none" id="cnt1">
-			<ul id="preset-list">
-				<li class="preset-item">Esmaspäev</li>
-				<li class="preset-item">Teisipäev</li>
-				<li class="preset-item">Kolmapäev</li>
-				<li class="preset-item">Neljapäev</li>
-				<li class="preset-item">Reede</li>
-				<li class="preset-item">Laupäev</li>
-				<li class="preset-item">Pühapäev</li>
-			</ul>
-			<div id="selected-preset"></div>
-		</div>
-
-		<div class="container" style="display: none" id="cnt2">
-			<h1 id="heada">E-Kell DB</h1>
-			<table id="data-table">
-				<thead></thead>
-				<tbody></tbody>
-			</table>
-			<div class="buttons">
-				<button id="update-btn">Salvestatud</button>
-				<button id="row-btn">Lisa Rida</button>
-				<button id="delete-btn">Kustuta Viimane Rida</button>
-				<button id="haire-btn">Haire Start</button>
-			</div>
-		</div>
-
-		<div class="overlay" id="overlay"></div>
-		<div class="modal" id="modal">
-			<h2>Enter Element Name</h2>
-			<input type="text" id="elementName" placeholder="Element Name" />
-			<div class="modal-buttons">
-				<button id="saveButton">Save</button>
-				<button id="cancelButton">Cancel</button>
-			</div>
-		</div>
-
+		<footer class="bg-blue-400 w-full h-48"></footer>
 		<script src="main.js"></script>
 	</body>
 </html>

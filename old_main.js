@@ -1,28 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
+	const updateBtn = document.getElementById('update-btn');
 	const enableBtn = document.getElementById('enable-plan');
 	const newPlanBtn = document.getElementById('new-plan');
 	const delPlanBtn = document.getElementById('del-plan');
-
-	const updateBtn = document.getElementById('update-btn');
 	const addRowBtn = document.getElementById('row-btn');
 	const delRowBtn = document.getElementById('delete-btn');
-
 	const alarmBtn = document.getElementById('haire-btn');
 	const connectBtn = document.getElementById('connect-btn');
 
-	const presetListPlan = document.getElementById('preset-list-plan');
 	let presetItemsPlan = document.querySelectorAll('.preset-item-plan');
-
 	let presetItemsDays = document.querySelectorAll('.preset-item');
-
+	const presetListPlan = document.getElementById('preset-list-plan');
 	const table = document.getElementById('data-table');
 	const H1Text = document.getElementById('heada');
 
-	// const modal = document.getElementById('modal');
-	// const overlay = document.getElementById('overlay');
-	// const saveButton = document.getElementById('saveButton');
-	// const cancelButton = document.getElementById('cancelButton');
-	// const elementNameInput = document.getElementById('elementName');
+	const modal = document.getElementById('modal');
+	const overlay = document.getElementById('overlay');
+	const saveButton = document.getElementById('saveButton');
+	const cancelButton = document.getElementById('cancelButton');
+	const elementNameInput = document.getElementById('elementName');
 
 	let newPlanName = '';
 	let selectedPresetPlan = null;
@@ -37,11 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		ws = new WebSocket('wss://localhost?token=' + token, 'web');
 
 		ws.onopen = function () {
-			const containerMain = document.getElementById('cntMain');
-			const headerOffline = document.getElementById('heading-fail');
-
-			containerMain.classList.remove('hidden');
-			headerOffline.classList.add('hidden');
+			connectBtn.style.display = 'none';
+			const headingF = document.getElementById('heading-fail');
+			headingF.style.display = 'none';
 
 			console.log('Connected to the server');
 			ws.send(JSON.stringify({ type: 'preset' }));
@@ -59,23 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
 				for (i = 0; i < 5; i++) {
 					const cell = document.createElement('th');
 					if (i === 0) {
-						cell.classList.add('list-table-h-tail');
 						cell.textContent = 'ID';
 						cell.contentEditable = false;
 					} else if (i === 1) {
-						cell.classList.add('list-table-h-tail');
 						cell.textContent = 'Nimi';
 						cell.contentEditable = false;
 					} else if (i === 2) {
-						cell.classList.add('list-table-h-tail');
 						cell.textContent = 'Aeg';
 						cell.contentEditable = false;
 					} else if (i === 3) {
-						cell.classList.add('list-table-h-tail');
 						cell.textContent = 'Kirjeldus';
 						cell.contentEditable = false;
 					} else if (i === 4) {
-						cell.classList.add('list-table-h-tail');
 						cell.textContent = 'Helifail';
 						cell.contentEditable = false;
 					}
@@ -93,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
 								cell.contentEditable = true;
 							}
 							cell.textContent = value;
-							cell.classList.add('list-table-tail');
 						});
 					});
 				}
@@ -122,8 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					Object.entries(header).forEach(([key, value]) => {
 						const newItem = document.createElement('li');
 						if (key === 'Name') {
-							// newItem.className = 'preset-item-plan';
-							newItem.classList.add('preset-item-plan', 'list-plan-tail', 'regular');
+							newItem.className = 'preset-item-plan';
 							newItem.textContent = value;
 							presetListPlan.appendChild(newItem);
 							currentDBName.push(value);
@@ -133,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
 						if (key === 'Current' && value === 1) {
 							const lastItem = presetListPlan.lastElementChild;
 							if (lastItem) {
-								lastItem.classList.remove('regular');
 								lastItem.classList.add('active');
 								activePresetPlan = lastItem.textContent;
 							}
@@ -147,19 +133,16 @@ document.addEventListener('DOMContentLoaded', () => {
 		};
 
 		ws.onclose = function () {
-			const containerMain = document.getElementById('cntMain');
-			const headerOffline = document.getElementById('heading-fail');
-			const header = headerOffline.querySelector('h1');
-
-			containerMain.classList.add('hidden');
-			headerOffline.classList.remove('hidden');
-
-			header.textContent = 'Ühendust pole, proovi taasühenduda!';
-			header.classList.remove('bg-green-300');
-			header.classList.add('bg-red-300');
-
-			const button = headerOffline.querySelector('button');
-			button.classList.remove('hidden');
+			const container1 = document.getElementById('cnt1');
+			const container2 = document.getElementById('cnt2');
+			const containerM = document.getElementById('cntM');
+			const headingF = document.getElementById('heading-fail');
+			container1.style.display = 'none';
+			container2.style.display = 'none';
+			containerM.style.display = 'none';
+			connectBtn.style.display = 'block';
+			headingF.style.display = 'block';
+			headingF.textContent = 'Ühendust pole, proovi recconect';
 		};
 	}
 
@@ -188,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			} else {
 				cell.contentEditable = true;
 			}
-			cell.classList.add('list-table-tail');
 		}
 		updateBtn.textContent = 'Salvesta muudatusi';
 	});
@@ -262,17 +244,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	// newPlanBtn.addEventListener('click', async function () {
-	// 	if (presetListPlan.children.length < 10) {
-	// 		await pullupModal();
-	// 		if (newPlanName) {
-	// 			ws.send(JSON.stringify({ type: 'req_new_plan', name: newPlanName }));
-	// 			newPlanName = '';
-	// 		}
-	// 	} else {
-	// 		console.log('Liiga palju plaane, palun kustutage mõned ära!');
-	// 	}
-	// });
+	newPlanBtn.addEventListener('click', async function () {
+		if (presetListPlan.children.length < 10) {
+			await pullupModal();
+			if (newPlanName) {
+				ws.send(JSON.stringify({ type: 'req_new_plan', name: newPlanName }));
+				newPlanName = '';
+			}
+		} else {
+			console.log('Liiga palju plaane, palun kustutage mõned ära!');
+		}
+	});
 
 	delPlanBtn.addEventListener('click', function () {
 		if (selectedPresetPlan != null) {
@@ -281,18 +263,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	connectBtn.addEventListener('click', function () {
-		const headerOffline = document.getElementById('heading-fail');
-		const header = headerOffline.querySelector('h1');
-		const button = headerOffline.querySelector('button');
-		button.classList.add('hidden');
-		header.classList.remove('bg-red-300');
-		header.classList.add('bg-green-300');
-
-		header.textContent = 'Connecting... 🔄';
+		const headingF = document.getElementById('heading-fail');
+		connectBtn.style.display = 'none';
+		headingF.textContent = 'Connecting... 🔄';
 		initiateConnect(token);
 	});
 
-	// overlay.addEventListener('click', closeModal);
+	overlay.addEventListener('click', closeModal);
 
 	function updateMessage(tableD) {
 		ws.send(
@@ -388,12 +365,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	function setPlans() {
 		presetItemsPlan.forEach((item) => {
 			item.addEventListener('click', async function () {
-				presetItemsPlan.forEach((i) => {
-					i.classList.remove('selected');
-				});
-
+				presetItemsPlan.forEach((i) => i.classList.remove('selected'));
 				item.classList.add('selected');
-
 				selectedPresetPlan = item.textContent;
 
 				if (selectedPresetPlan) {
@@ -409,15 +382,12 @@ document.addEventListener('DOMContentLoaded', () => {
 					// socket.emit('sel_db', JSON.stringify({ data: send_index }));
 					triggerDayClick('Esmaspäev');
 
-					// const container1 = document.getElementById('cnt1');
-					// const container2 = document.getElementById('cnt2');
-					// const container3 = document.getElementById('cntM');
-					// container1.style.display = 'block';
-					// container2.style.display = 'block';
-					// container3.style.display = 'block';
-
-					const containerMain = document.getElementById('cntMain');
-					containerMain.classList.remove('hidden');
+					const container1 = document.getElementById('cnt1');
+					const container2 = document.getElementById('cnt2');
+					const container3 = document.getElementById('cntM');
+					container1.style.display = 'block';
+					container2.style.display = 'block';
+					container3.style.display = 'block';
 				}
 			});
 		});
@@ -468,42 +438,42 @@ document.addEventListener('DOMContentLoaded', () => {
 		return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 	};
 
-	// function pullupModal() {
-	// 	return new Promise((resolve) => {
-	// 		modal.style.display = 'block';
-	// 		overlay.style.display = 'block';
-	// 		elementNameInput.value = ''; // Clear the input field
-	// 		saveButton.addEventListener('click', function () {
-	// 			const elementName = elementNameInput.value.trim().toUpperCase();
-	// 			let check = false;
-	// 			if (elementName && /^[a-zA-Z0-9 ]+$/.test(elementName)) {
-	// 				presetItemsPlan.forEach((plan) => {
-	// 					if (plan.textContent === elementName) {
-	// 						check = true;
-	// 					}
-	// 				});
-	// 				if (!check) {
-	// 					newPlanName = elementName;
-	// 					closeModal();
-	// 					resolve();
-	// 				} else {
-	// 					alert('Selline nimi juba olemas');
-	// 				}
-	// 			} else {
-	// 				alert('Palun sistestage ainult nubmrid ja tahed');
-	// 			}
-	// 		});
-	// 		cancelButton.addEventListener('click', function () {
-	// 			closeModal();
-	// 			resolve();
-	// 		});
-	// 	});
-	// }
+	function pullupModal() {
+		return new Promise((resolve) => {
+			modal.style.display = 'block';
+			overlay.style.display = 'block';
+			elementNameInput.value = ''; // Clear the input field
+			saveButton.addEventListener('click', function () {
+				const elementName = elementNameInput.value.trim().toUpperCase();
+				let check = false;
+				if (elementName && /^[a-zA-Z0-9 ]+$/.test(elementName)) {
+					presetItemsPlan.forEach((plan) => {
+						if (plan.textContent === elementName) {
+							check = true;
+						}
+					});
+					if (!check) {
+						newPlanName = elementName;
+						closeModal();
+						resolve();
+					} else {
+						alert('Selline nimi juba olemas');
+					}
+				} else {
+					alert('Palun sistestage ainult nubmrid ja tahed');
+				}
+			});
+			cancelButton.addEventListener('click', function () {
+				closeModal();
+				resolve();
+			});
+		});
+	}
 
-	// function closeModal() {
-	// 	modal.style.display = 'none';
-	// 	overlay.style.display = 'none';
-	// }
+	function closeModal() {
+		modal.style.display = 'none';
+		overlay.style.display = 'none';
+	}
 
 	const token = localStorage.getItem('token');
 	if (token) {

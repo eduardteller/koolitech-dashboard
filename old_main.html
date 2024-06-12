@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>E-Kell Web</title>
+		<link rel="stylesheet" href="main.css" />
+	</head>
+	<body>
+		<div class="container" id="cntM" style="display: none">
+			<h1>Plaanid</h1>
+			<ul id="preset-list-plan">
+				<li class="preset-item-plan">JOHHNY</li>
+				<li class="preset-item-plan">JOHHNY</li>
+			</ul>
+			<div class="buttons">
+				<button id="new-plan">Uus plaan</button>
+				<button id="del-plan">Kustuta valitud</button>
+				<button id="enable-plan">Aktiveeri</button>
+			</div>
+		</div>
+
+		<div>
+			<h1 id="heading-fail">Connecting... 🔄</h1>
+			<button id="connect-btn" style="display: none">Connect</button>
+		</div>
+
+		<div class="container" style="display: none" id="cnt1">
+			<ul id="preset-list">
+				<li class="preset-item">Esmaspäev</li>
+				<li class="preset-item">Teisipäev</li>
+				<li class="preset-item">Kolmapäev</li>
+				<li class="preset-item">Neljapäev</li>
+				<li class="preset-item">Reede</li>
+				<li class="preset-item">Laupäev</li>
+				<li class="preset-item">Pühapäev</li>
+			</ul>
+			<div id="selected-preset"></div>
+		</div>
+
+		<div class="container" style="display: none" id="cnt2">
+			<h1 id="heada">E-Kell DB</h1>
+			<table id="data-table">
+				<thead></thead>
+				<tbody></tbody>
+			</table>
+			<div class="buttons">
+				<button id="update-btn">Salvestatud</button>
+				<button id="row-btn">Lisa Rida</button>
+				<button id="delete-btn">Kustuta Viimane Rida</button>
+				<button id="haire-btn">Haire Start</button>
+			</div>
+		</div>
+
+		<div class="overlay" id="overlay"></div>
+		<div class="modal" id="modal">
+			<h2>Enter Element Name</h2>
+			<input type="text" id="elementName" placeholder="Element Name" />
+			<div class="modal-buttons">
+				<button id="saveButton">Save</button>
+				<button id="cancelButton">Cancel</button>
+			</div>
+		</div>
+
+		<script src="main.js"></script>
+	</body>
+</html>
