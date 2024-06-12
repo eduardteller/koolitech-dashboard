@@ -350,12 +350,12 @@ wss.on('connection', function connection(ws, req) {
 	});
 });
 
-async function sendToClientType(type, message, school) {
+function sendToClientType(type, message, school) {
 	let sent = false;
 	for (const [client, schoolName] of clients.entries()) {
 		if (client.clientType === type && schoolName === school) {
 			sent = true;
-			await client.send(message);
+			client.send(message);
 		}
 	}
 	if (!sent) {
@@ -462,6 +462,6 @@ async function get_ip() {
 (async () => {
 	p_ip = await get_ip();
 	server.listen(443, () => {
-		console.log(`E-Kell Web Server is running on https://${p_ip}`);
+		console.log(`E-Kell Web Server is running on https://localhost`);
 	});
 })();

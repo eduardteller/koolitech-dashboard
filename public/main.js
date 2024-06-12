@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	let ws;
 
 	function initiateConnect(token) {
-		ws = new WebSocket('wss://localhost:443?token=' + token, 'web');
+		ws = new WebSocket('wss://localhost?token=' + token, 'web');
 
 		ws.onopen = function () {
 			connectBtn.style.display = 'none';
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const headingF = document.getElementById('heading-fail');
 		connectBtn.style.display = 'none';
 		headingF.textContent = 'Connecting... 🔄';
-		initiateConnect();
+		initiateConnect(token);
 	});
 
 	overlay.addEventListener('click', closeModal);
