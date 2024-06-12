@@ -3,34 +3,29 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>E-Kell Web</title>
+		<title>🌐 E-Kell Web Client</title>
 		<link rel="stylesheet" href="./main.css" />
 	</head>
-	<body class="h-screen bg-slate-100">
+	<body class="h-screen bg-slate-200">
 		<header class="bg-blue-400 w-full h-24"></header>
 
 		<div id="heading-fail" class="h-full w-full flex flex-col items-center justify-center">
-			<h1 class="text-6xl rounded-lg shadow-lg font-bold p-8 bg-green-300 text-center">Connecting... 🔄</h1>
-			<button class="py-2 px-4 mt-4 bg-blue-400 hover:bg-blue-500 text-center font-semibold text-xl rounded-md hidden" id="connect-btn">
-				Taasühendu
+			<h1 class="text-3xl rounded-lg shadow-lg font-bold p-8 bg-green-300 text-center">Connecting... 🔄</h1>
+			<button class="py-2 px-4 mt-8 bg-blue-400 hover:bg-blue-500 text-center font-semibold text-xl rounded-md hidden" id="connect-btn">
+				Taasühendu 🔄
 			</button>
 		</div>
 
 		<div id="cntMain" class="container w-full h-full mx-auto hidden">
 			<div class="w-full h-1/2 mt-8 flex flex-col justify-start items-center">
-				<div class="bg-white w-1/2 h-full mb-8 rounded-lg shadow-lg p-4 flex flex-row justify-between items-center" id="cntM">
+				<div class="bg-white h-full mb-8 rounded-lg shadow-lg p-4 flex flex-row justify-center items-center">
 					<div class="h-full flex flex-col justify-center items-center">
-						<h1 class="px-4 py-2 bg-red-400 rounded-lg font-semibold text-xl text-gray-900">Staatus: Offline 🔴</h1>
-					</div>
-					<div class="buttons">
-						<button class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white" id="haire-btn">
-							Haire Start 🚨
-						</button>
+						<h1 class="px-4 py-2 bg-red-400 rounded-lg font-semibold text-xl text-gray-900">Ühendus kooli arvutiga: Offline 🔴</h1>
 					</div>
 				</div>
 				<div class="flex flex-row w-full h-full items-center justify-center">
 					<div class="h-full w-48 bg-white rounded-lg shadow-lg mr-4" id="cnt1">
-						<h1 class="font-semibold text-xl text-gray-900 my-4 text-center">Nädalapäevad</h1>
+						<h1 class="font-semibold text-xl text-gray-900 my-4 text-center">Nädalapäevad 📅</h1>
 
 						<ul class="flex flex-col items-center justify-start text-lg text-center mt-4 border-y-2 w-full">
 							<li class="preset-item regular px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm">Esmaspäev</li>
@@ -118,18 +113,18 @@
 						</div>
 						<div class="buttons flex flex-row items-center justify-center w-full h-16">
 							<button class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-32" id="update-btn">
-								Salvesta
+								Salvesta 💾
 							</button>
 							<button class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-32" id="row-btn">
-								Lisa Rida
+								Lisa Rida ➕
 							</button>
 							<button class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-32" id="delete-btn">
-								Kustuta Rida
+								Kustuta 🗑️
 							</button>
 						</div>
 					</div>
 					<div class="h-full w-48 bg-white rounded-lg shadow-lg ml-4 flex flex-col items-center justify-between">
-						<h1 class="font-semibold text-xl text-gray-900 mt-4">Plaanid</h1>
+						<h1 class="font-semibold text-xl text-gray-900 mt-4">Plaanid 📝</h1>
 
 						<ul
 							id="preset-list-plan"
@@ -146,26 +141,47 @@
 						</ul>
 						<div class="flex flex-col justify-start items-center my-4">
 							<button id="new-plan" class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-36">
-								Uus plaan
+								Uus plaan ➕
 							</button>
 							<button id="del-plan" class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-36">
-								Kustuta valitud
+								Kustuta 🗑️
 							</button>
 							<button id="enable-plan" class="font-semibold px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md m-1 text-white w-36">
-								Aktiveeri
+								Kasuta see ✅
 							</button>
 						</div>
 					</div>
 				</div>
-				<!-- <div class="overlay" id="overlay"></div>
-				<div class="modal" id="modal">
-					<h2>Enter Element Name</h2>
-					<input type="text" id="elementName" placeholder="Element Name" />
-					<div class="modal-buttons">
-						<button id="saveButton">Save</button>
-						<button id="cancelButton">Cancel</button>
+				<div class="bg-white w-1/2 mt-8 rounded-lg shadow-lg p-4">
+					<div class="flex flex-col justify-start items-center w-full h-full">
+						<h1 class="text-3xl font-semibold my-4">Haire</h1>
+						<h2 class="text-lg text-black m-2">
+							Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis quisquam, quas, tempore inventore voluptatum placeat delectus id
+							quos earum error ut nobis molestiae? Eius magnam molestiae iure ullam, dolor enim?
+						</h2>
+						<button class="font-semibold px-8 py-4 bg-red-500 hover:bg-red-600 rounded-md m-1 text-white" id="haire-btn">Haire Start 🚨</button>
 					</div>
-				</div> -->
+				</div>
+			</div>
+		</div>
+		<!-- <div class="relative h-full w-full bg-red-400" id="overlay">
+			<div class="w-48 h-48 rounded-lg" id="modal">
+				<h2>Enter Element Name</h2>
+				<input type="text" id="elementName" placeholder="Element Name" />
+				<div class="modal-buttons">
+					<button id="saveButton">Save</button>
+					<button id="cancelButton">Cancel</button>
+				</div>
+			</div>
+		</div> -->
+		<div class="fixed inset-0 bg-gray-400 bg-opacity-75 flex items-center justify-center hidden" id="overlay">
+			<div class="bg-white p-8 rounded-lg shadow-lg">
+				<h2 class="mb-4 text-xl font-semibold">Uue Plaani Nimi</h2>
+				<input type="text" id="elementName" placeholder="Sisesta uus nimi..." class="border border-gray-300 p-2 rounded w-full mb-4" />
+				<div class="flex justify-end space-x-4">
+					<button id="saveButton" class="bg-blue-500 text-white px-4 py-2 rounded">Ok</button>
+					<button id="cancelButton" class="bg-gray-500 text-white px-4 py-2 rounded">Tagasi</button>
+				</div>
 			</div>
 		</div>
 		<footer class="bg-blue-400 w-full h-48"></footer>

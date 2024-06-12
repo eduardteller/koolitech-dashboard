@@ -19,10 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	const H1Text = document.getElementById('heada');
 
 	// const modal = document.getElementById('modal');
-	// const overlay = document.getElementById('overlay');
-	// const saveButton = document.getElementById('saveButton');
-	// const cancelButton = document.getElementById('cancelButton');
-	// const elementNameInput = document.getElementById('elementName');
+	const overlay = document.getElementById('overlay');
+	const saveButton = document.getElementById('saveButton');
+	const cancelButton = document.getElementById('cancelButton');
+	const elementNameInput = document.getElementById('elementName');
 
 	let newPlanName = '';
 	let selectedPresetPlan = null;
@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	let currentDay;
 	let timer;
 	let ws;
+
+	let schName = '';
 
 	function initiateConnect(token) {
 		ws = new WebSocket('wss://localhost?token=' + token, 'web');
@@ -99,22 +101,22 @@ document.addEventListener('DOMContentLoaded', () => {
 				}
 			} else if (msg.type === 'refresh_ok') {
 				clearTimeout(timer);
-				hideSpinner('E-KELL');
+				setMainLabel();
 				updateBtn.textContent = 'Salvestatud';
 				console.log(msg.type + ' by desktop client');
 			} else if (msg.type === 'alarm_started') {
 				clearTimeout(timer);
-				hideSpinner('E-KELL');
-				alarmBtn.textContent = 'Haire Stop';
+				setMainLabel();
+				alarmBtn.textContent = 'Haire Stop 🚨';
 				console.log(msg.type + ' by desktop client');
 			} else if (msg.type === 'alarm_stopped') {
 				clearTimeout(timer);
-				hideSpinner('E-KELL');
-				alarmBtn.textContent = 'Haire Start';
+				setMainLabel();
+				alarmBtn.textContent = 'Haire Start 🚨';
 				console.log(msg.type + ' by desktop client');
 			} else if (msg.type === 'preset_data') {
 				clearTimeout(timer);
-				hideSpinner(`E-KELL WEB: ${msg.name} kool`);
+				schName = msg.name;
 				removeAllPresets();
 				currentDBIndex = [];
 				currentDBName = [];
@@ -122,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
 					Object.entries(header).forEach(([key, value]) => {
 						const newItem = document.createElement('li');
 						if (key === 'Name') {
-							// newItem.className = 'preset-item-plan';
 							newItem.classList.add('preset-item-plan', 'list-plan-tail', 'regular');
 							newItem.textContent = value;
 							presetListPlan.appendChild(newItem);
@@ -143,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				presetItemsPlan = document.querySelectorAll('.preset-item-plan');
 				setPlans();
 				triggerPlanClick();
+				setMainLabel();
 			}
 		};
 
@@ -190,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			cell.classList.add('list-table-tail');
 		}
-		updateBtn.textContent = 'Salvesta muudatusi';
+		updateBtn.textContent = 'Salvesta 💾';
 	});
 
 	updateBtn.addEventListener('click', function () {
@@ -211,12 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			for (let j = 0; j < dataCells.length; j++) {
 				if (j === 2) {
 					const tempString = formatTime(dataCells[j].textContent.trim());
-					// console.log(tempString);
 					if (tempString !== 'Invalid') {
 						dataRow.push(tempString);
 					} else {
 						sendingAccept = false;
-						H1Text.textContent = 'Vale aja formaat';
+						H1Text.textContent = 'Vale aja formaat 🕓⬇️';
 						dataCells[j].classList.add('errorClass');
 					}
 				} else if (j === 1 || j === 3) {
@@ -225,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					} else {
 						sendingAccept = false;
 
-						H1Text.textContent = 'Liiga pikk tekst';
+						H1Text.textContent = 'Liiga pikk tekst 📏⬇️';
 						dataCells[j].classList.add('errorClass');
 					}
 				} else {
@@ -245,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const tableBody = table.querySelector('tbody');
 		if (tableBody.rows.length > 0) {
 			tableBody.deleteRow(tableBody.rows.length - 1);
-			updateBtn.textContent = 'Salvesta muudatusi';
+			updateBtn.textContent = 'Salvesta 💾';
 		}
 	});
 
@@ -262,17 +263,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	// newPlanBtn.addEventListener('click', async function () {
-	// 	if (presetListPlan.children.length < 10) {
-	// 		await pullupModal();
-	// 		if (newPlanName) {
-	// 			ws.send(JSON.stringify({ type: 'req_new_plan', name: newPlanName }));
-	// 			newPlanName = '';
-	// 		}
-	// 	} else {
-	// 		console.log('Liiga palju plaane, palun kustutage mõned ära!');
-	// 	}
-	// });
+	newPlanBtn.addEventListener('click', async function () {
+		if (presetListPlan.children.length < 10) {
+			await pullupModal();
+			if (newPlanName) {
+				ws.send(JSON.stringify({ type: 'req_new_plan', name: newPlanName }));
+				newPlanName = '';
+			}
+		} else {
+			console.log('Liiga palju plaane, palun kustutage mõned ära!');
+		}
+	});
 
 	delPlanBtn.addEventListener('click', function () {
 		if (selectedPresetPlan != null) {
@@ -291,8 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		header.textContent = 'Connecting... 🔄';
 		initiateConnect(token);
 	});
-
-	// overlay.addEventListener('click', closeModal);
 
 	function updateMessage(tableD) {
 		ws.send(
@@ -371,18 +370,23 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function showSpinner(text) {
-		// updateBtn.disabled = true;
 		H1Text.innerHTML = `${text} <span class="spinner">🔄</span>`;
 	}
 
 	function hideSpinner(text) {
-		// updateBtn.disabled = false;
 		H1Text.innerHTML = `${text}`;
+	}
+
+	function setMainLabel() {
+		hideSpinner(`${schName} Kool: ${selectedPresetPlan}`);
 	}
 
 	function onTimeout() {
 		console.log('Cant reach the Desktop App');
 		hideSpinner('Viga!');
+		setTimeout(() => {
+			setMainLabel();
+		}, 5000);
 	}
 
 	function setPlans() {
@@ -406,18 +410,12 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 					const send_index = currentDBIndex[j];
 					ws.send(JSON.stringify({ type: 'sel_db', data: send_index }));
-					// socket.emit('sel_db', JSON.stringify({ data: send_index }));
 					triggerDayClick('Esmaspäev');
-
-					// const container1 = document.getElementById('cnt1');
-					// const container2 = document.getElementById('cnt2');
-					// const container3 = document.getElementById('cntM');
-					// container1.style.display = 'block';
-					// container2.style.display = 'block';
-					// container3.style.display = 'block';
 
 					const containerMain = document.getElementById('cntMain');
 					containerMain.classList.remove('hidden');
+
+					setMainLabel();
 				}
 			});
 		});
@@ -431,10 +429,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	const formatTime = (timeString) => {
-		// Regular expression to match valid time formats
 		const timeRegex = /^(\d{1,2}):?(\d{2}):?(\d{2})?$|^(\d{1,2})\.(\d{2})$/;
 
-		// Match the input string with the regex
 		const match = timeString.match(timeRegex);
 
 		if (!match) {
@@ -468,46 +464,49 @@ document.addEventListener('DOMContentLoaded', () => {
 		return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 	};
 
-	// function pullupModal() {
-	// 	return new Promise((resolve) => {
-	// 		modal.style.display = 'block';
-	// 		overlay.style.display = 'block';
-	// 		elementNameInput.value = ''; // Clear the input field
-	// 		saveButton.addEventListener('click', function () {
-	// 			const elementName = elementNameInput.value.trim().toUpperCase();
-	// 			let check = false;
-	// 			if (elementName && /^[a-zA-Z0-9 ]+$/.test(elementName)) {
-	// 				presetItemsPlan.forEach((plan) => {
-	// 					if (plan.textContent === elementName) {
-	// 						check = true;
-	// 					}
-	// 				});
-	// 				if (!check) {
-	// 					newPlanName = elementName;
-	// 					closeModal();
-	// 					resolve();
-	// 				} else {
-	// 					alert('Selline nimi juba olemas');
-	// 				}
-	// 			} else {
-	// 				alert('Palun sistestage ainult nubmrid ja tahed');
-	// 			}
-	// 		});
-	// 		cancelButton.addEventListener('click', function () {
-	// 			closeModal();
-	// 			resolve();
-	// 		});
-	// 	});
-	// }
+	function pullupModal() {
+		return new Promise((resolve) => {
+			// modal.style.display = 'block';
+			overlay.classList.remove('hidden');
+			elementNameInput.value = ''; // Clear the input field
+			saveButton.addEventListener('click', function () {
+				const elementName = elementNameInput.value.trim().toUpperCase();
+				let check = false;
+				if (elementName && /^[a-zA-Z0-9 ]+$/.test(elementName)) {
+					presetItemsPlan.forEach((plan) => {
+						if (plan.textContent === elementName) {
+							check = true;
+						}
+					});
+					if (!check) {
+						newPlanName = elementName;
+						closeModal();
+						resolve();
+					} else {
+						alert('Selline nimi juba olemas');
+					}
+				} else {
+					alert('Palun sistestage ainult nubmrid ja tahed');
+				}
+			});
+			cancelButton.addEventListener('click', function () {
+				closeModal();
+				resolve();
+			});
+		});
+	}
 
-	// function closeModal() {
-	// 	modal.style.display = 'none';
-	// 	overlay.style.display = 'none';
-	// }
+	function closeModal() {
+		overlay.classList.add('hidden');
+
+		// modal.style.display = 'none';
+		// overlay.style.display = 'none';
+	}
+
+	// overlay.addEventListener('click', closeModal);
 
 	const token = localStorage.getItem('token');
 	if (token) {
-		// connectSocket(token);
 		initiateConnect(token);
 	} else {
 		console.log('No existing token');

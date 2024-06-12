@@ -30,4 +30,7 @@
 	.regular {
 		@apply bg-slate-200 hover:bg-slate-300;
 	}
+	.errorClass {
+		@apply bg-red-200;
+	}
 }
