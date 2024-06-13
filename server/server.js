@@ -12,7 +12,7 @@ import config from '../private/config.js';
 import cors from 'cors';
 
 import { sendToClientType, compareModifiedDates, sendFileThroughWebSocket } from './func.js';
-import { registerUserHandler, loginUserHandler, getIndexHtml, __dirname } from '../root-handler-func.js';
+import { registerUserHandler, loginUserHandler, getIndexHtml, __dirname } from './root-handler-func.js';
 
 const privateKey = fs.readFileSync('./private/key.pem', 'utf8');
 const certificate = fs.readFileSync('./private/cert.pem', 'utf8');
@@ -46,6 +46,8 @@ wss.on('connection', function connection(ws, req) {
 	if (clientType === 'web') {
 		const token = req.url.split('=')[1];
 		if (!token) {
+			console.log('1');
+
 			ws.close(1008, 'Authentication error');
 			return;
 		}
@@ -59,6 +61,7 @@ wss.on('connection', function connection(ws, req) {
 			console.log(`Client connected: ${clientName}`);
 		} catch (err) {
 			ws.close(1008, 'Authentication error');
+			console.log('2');
 			return;
 		}
 	} else if (clientType.split('_')[0] === 'desktop') {

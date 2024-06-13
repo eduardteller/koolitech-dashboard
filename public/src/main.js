@@ -158,8 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			headerOffline.classList.remove('hidden');
 
 			header.textContent = 'Ühendust pole, proovi taasühenduda!';
-			header.classList.remove('bg-green-300');
-			header.classList.add('bg-red-300');
+			header.classList.remove('bg-green-400');
+			header.classList.add('bg-red-400');
 
 			const button = headerOffline.querySelector('button');
 			button.classList.remove('hidden');
@@ -287,8 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		const header = headerOffline.querySelector('h1');
 		const button = headerOffline.querySelector('button');
 		button.classList.add('hidden');
-		header.classList.remove('bg-red-300');
-		header.classList.add('bg-green-300');
+		header.classList.remove('bg-red-400');
+		header.classList.add('bg-green-400');
 
 		header.textContent = 'Connecting... 🔄';
 		initiateConnect(token);

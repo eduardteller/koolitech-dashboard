@@ -3,11 +3,12 @@ import jwt from 'jsonwebtoken';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import config from './private/config.js';
+import config from '../private/config.js';
 import sqlite3 from 'sqlite3';
 
 const __filename = fileURLToPath(import.meta.url);
-export const __dirname = dirname(__filename);
+const maindir = dirname(__filename);
+export const __dirname = path.join(maindir, '..');
 
 export const registerUserHandler = async (req, res) => {
 	const UsersDB = new sqlite3.Database(path.join(__dirname, 'data', 'data.db'));

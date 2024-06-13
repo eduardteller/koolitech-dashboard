@@ -8,15 +8,15 @@
 	}
 
 	.list-table-h-tail {
-		@apply p-4 text-left text-sm font-semibold text-gray-900 uppercase border;
+		@apply p-4 text-left text-sm font-semibold text-gray-900 uppercase;
 	}
 
 	.list-table-tail {
-		@apply p-4 whitespace-nowrap border text-gray-900;
+		@apply p-4 whitespace-nowrap border-t border-l border-r text-gray-900;
 	}
 
 	.active.selected {
-		@apply bg-blue-400 hover:bg-blue-500;
+		@apply bg-blue-500 hover:bg-blue-600;
 	}
 
 	.regular.selected {
@@ -31,6 +31,6 @@
 		@apply bg-slate-200 hover:bg-slate-300;
 	}
 	.errorClass {
-		@apply bg-red-200;
+		@apply bg-red-400;
 	}
 }
