@@ -1,12 +1,18 @@
-const webSocket = require('ws');
-const sqlite3 = require('sqlite3').verbose();
-const fs = require('fs');
-const path = require('path');
+import { WebSocketServer } from 'ws';
+import sqlite3 from 'sqlite3';
+import fs from 'fs';
+import path from 'path';
+import jwt from 'jsonwebtoken';
 
-const express = require('express');
-const https = require('https');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+import express from 'express';
+import https from 'https';
+
+import config from '../private/config.js';
+
+import cors from 'cors';
+
+import { sendToClientType, compareModifiedDates, sendFileThroughWebSocket } from './func.js';
+import { registerUserHandler, loginUserHandler, getIndexHtml, __dirname } from '../root-handler-func.js';
 
 const privateKey = fs.readFileSync('./private/key.pem', 'utf8');
 const certificate = fs.readFileSync('./private/cert.pem', 'utf8');
@@ -14,58 +20,28 @@ const credentials = { key: privateKey, cert: certificate };
 
 const app = express();
 const server = https.createServer(credentials, app);
-const main = new sqlite3.Database(path.join(__dirname, 'data', 'data.db'));
-
-let dbIndex = 1;
-
-const wss = new webSocket.Server({ server });
-const clients = new Map();
-let day;
-
-const { JWT_SECRET } = require('./config');
+const wss = new WebSocketServer({ server });
 
 app.use(express.json());
+app.use(cors());
 
-app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
+let dbIndex = 1;
+export const clients = new Map();
+let day;
+
+app.get('/', getIndexHtml);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Register route
-app.post('/api/register', async (req, res) => {
-	const { username, password } = req.body;
-	const hashedPassword = await bcrypt.hash(password, 10);
-
-	const stmt = main.prepare('INSERT INTO User (username, password) VALUES (?, ?)');
-	stmt.run([username, hashedPassword], function (err) {
-		if (err) {
-			return res.status(400).send('User registration failed');
-		}
-		res.status(201).send('User registered');
-	});
-});
+app.post('/api/register', registerUserHandler);
 
 // Login route
-app.post('/api/login', async (req, res) => {
-	const { username, password } = req.body;
-
-	main.get('SELECT * FROM User WHERE username = ?', [username], async (err, user) => {
-		if (err || !user || !(await bcrypt.compare(password, user.password))) {
-			return res.status(401).send('Invalid credentials');
-		}
-		const token = jwt.sign({ userName: user.username }, JWT_SECRET);
-		res.json({ token });
-	});
-});
+app.post('/api/login', loginUserHandler);
 
 wss.on('connection', function connection(ws, req) {
 	const clientType = ws.protocol;
 	let clientName = '';
-
-	// if (clientType !== 'webpage' && clientType !== 'desktopapp') {
-	// 	ws.close(1008, 'Suspicious connection');
-	// } else
 
 	if (clientType === 'web') {
 		const token = req.url.split('=')[1];
@@ -75,10 +51,12 @@ wss.on('connection', function connection(ws, req) {
 		}
 
 		try {
-			const decoded = jwt.verify(token, JWT_SECRET);
+			const decoded = jwt.verify(token, config.JWT_SECRET);
 			ws.schoolName = decoded.userName;
 			ws.clientType = ws.protocol;
 			clientName = ws.schoolName + '|' + ws.clientType;
+			clients.set(ws, ws.schoolName);
+			console.log(`Client connected: ${clientName}`);
 		} catch (err) {
 			ws.close(1008, 'Authentication error');
 			return;
@@ -89,23 +67,20 @@ wss.on('connection', function connection(ws, req) {
 		ws.clientType = cl;
 		ws.schoolName = sch;
 		clientName = ws.schoolName + '|' + ws.clientType;
+		clients.set(ws, ws.schoolName);
+		console.log(`Client connected: ${clientName}`);
 	} else {
+		console.log('Unknown Client');
 		ws.close(1008, 'Authentication error');
 		return;
 	}
-	clients.set(ws, ws.schoolName);
-	console.log(`Client connected: ${clientName}`);
 
-	ws.on('message', async function incoming(message) {
+	ws.on('message', function incoming(message) {
 		const msg = JSON.parse(message);
-
-		let dbSystem;
-		let dbMain;
-
 		switch (msg.type) {
 			case 'fetch':
 				try {
-					dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
+					const dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
 					day = msg.day;
 					dbMain.all(`SELECT * FROM ${day}`, [], (err, rows) => {
 						if (err) {
@@ -114,7 +89,6 @@ wss.on('connection', function connection(ws, req) {
 						dbMain.close(() => {
 							sendToClientType('web', JSON.stringify({ type: 'data', data: rows }), ws.schoolName);
 						});
-						// ws.send(JSON.stringify({ type: 'data', data: rows }));
 					});
 				} catch (error) {
 					console.error('fetch error:', error.message);
@@ -123,7 +97,7 @@ wss.on('connection', function connection(ws, req) {
 
 			case 'update':
 				try {
-					dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
+					const dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
 					day = msg.day;
 					dbMain.run(`DELETE FROM ${day}`, [], (err) => {
 						if (err) {
@@ -155,12 +129,11 @@ wss.on('connection', function connection(ws, req) {
 
 			case 'preset':
 				try {
-					dbSystem = new sqlite3.Database('./data/system.db');
+					const dbSystem = new sqlite3.Database('./data/system.db');
 					dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
 						if (err) {
 							console.error(err);
 						}
-						// ws.send(JSON.stringify({ type: 'preset_data', data: rows }));
 						sendToClientType(
 							'web',
 							JSON.stringify({
@@ -170,6 +143,7 @@ wss.on('connection', function connection(ws, req) {
 							}),
 							ws.schoolName
 						);
+						dbSystem.close();
 					});
 				} catch (error) {
 					console.error('preset error:', error.message);
@@ -178,7 +152,7 @@ wss.on('connection', function connection(ws, req) {
 
 			case 'req_new_plan':
 				try {
-					dbSystem = new sqlite3.Database('./data/system.db');
+					const dbSystem = new sqlite3.Database('./data/system.db');
 					dbSystem.all('SELECT * FROM PlanNames ORDER BY DbId', [], (err, rows) => {
 						if (err) {
 							throw new Error(err.message);
@@ -229,8 +203,8 @@ wss.on('connection', function connection(ws, req) {
 
 			case 'req_del_plan':
 				try {
-					dbSystem = new sqlite3.Database('./data/system.db');
-					dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
+					const dbSystem = new sqlite3.Database('./data/system.db');
+					const dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
 					dbMain.run(`DELETE FROM Mondays`);
 					dbMain.run(`DELETE FROM Tuesdays`);
 					dbMain.run(`DELETE FROM Wednesdays`);
@@ -276,7 +250,7 @@ wss.on('connection', function connection(ws, req) {
 
 			case 'plan_change_ok':
 				try {
-					dbSystem = new sqlite3.Database('./data/system.db');
+					const dbSystem = new sqlite3.Database('./data/system.db');
 
 					dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
 						dbSystem.close(() => {
@@ -349,108 +323,6 @@ wss.on('connection', function connection(ws, req) {
 		clients.delete(ws);
 	});
 });
-
-function sendToClientType(type, message, school) {
-	let sent = false;
-	for (const [client, schoolName] of clients.entries()) {
-		if (client.clientType === type && schoolName === school) {
-			sent = true;
-			client.send(message);
-		}
-	}
-	if (!sent) {
-		console.error(`Cant send shit, NOT connected to ${school + '|' + type}!`);
-	}
-}
-
-function delay(ms) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function compareModifiedDates(file1Path, file2Path, school) {
-	fs.access(file1Path, fs.constants.F_OK, (err) => {
-		if (err) {
-			console.log(`Received ${path.basename(file1Path)} from school pc dont exist on server, copying...`);
-			fs.rename(file2Path, file1Path, (err) => {
-				if (err) {
-					throw new Error(err.message);
-				}
-			});
-		} else {
-			fs.stat(file1Path, (err1, stats1) => {
-				if (err1) {
-					throw new Error(err1.message);
-				}
-
-				fs.stat(file2Path, async (err2, stats2) => {
-					if (err2) {
-						throw new Error(err2.message);
-					}
-
-					const file1ModifiedDate = stats1.mtime;
-					const file2ModifiedDate = stats2.mtime;
-
-					// console.log(file1ModifiedDate + ' | ' + file2ModifiedDate);
-
-					if (file2ModifiedDate > file1ModifiedDate) {
-						console.log(`Recieved ${path.basename(file2Path)} from School PC is newer, replacing...`);
-						fs.unlink(file1Path, (err) => {
-							if (err) {
-								throw new Error(err.message);
-							}
-							fs.rename(file2Path, file1Path, (err) => {
-								if (err) {
-									throw new Error(err.message);
-								}
-							});
-						});
-						// await deleteDatabaseFile(file1Path);
-					} else if (file2ModifiedDate < file1ModifiedDate) {
-						// console.log(`Sending updated ${file1Path} to To School PC`);
-						delay(100);
-						sendFileThroughWebSocket(file1Path, school);
-					}
-				});
-			});
-		}
-	});
-}
-
-// function deleteDatabaseFile(filepath, retry = 0) {
-// 	// Make sure we have a safety net: if ten unlink attempts
-// 	// fail in a row, something has *actually* going wrong.
-// 	if (retry > 10) {
-// 		console.log('FUCK DUDE');
-// 		return;
-// 	}
-
-// 	try {
-// 		fs.unlink(filepath);
-// 	} catch (e) {
-// 		setTimeout(() => deleteDatabaseFile(filepath, retry + 1), 100);
-// 	}
-// }
-
-function sendFileThroughWebSocket(filePath, school) {
-	const stats = fs.statSync(filePath);
-	const lastModified = stats.mtime;
-	const unixTimestampMilliseconds = lastModified.getTime();
-
-	const fileData = fs.readFileSync(filePath);
-	const base64Data = fileData.toString('base64');
-
-	const messageDB = {
-		type: 'new_data',
-		data: base64Data,
-		name: path.basename(filePath),
-		time_data: unixTimestampMilliseconds,
-	};
-
-	const jsonMessage = JSON.stringify(messageDB);
-
-	sendToClientType('desktop', jsonMessage, school);
-	console.log(`Sending ${filePath} to To ${school} PC`);
-}
 
 let p_ip = 'localhost';
 

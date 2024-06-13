@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const table = document.getElementById('data-table');
 	const H1Text = document.getElementById('heada');
 
-	// const modal = document.getElementById('modal');
 	const overlay = document.getElementById('overlay');
 	const saveButton = document.getElementById('saveButton');
 	const cancelButton = document.getElementById('cancelButton');
@@ -47,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			console.log('Connected to the server');
 			ws.send(JSON.stringify({ type: 'preset' }));
+
 			setDayButtons();
 			setPlans();
 		};
@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		};
 
 		ws.onclose = function () {
+			console.log('SHITS CRASHING NIGGA');
 			const containerMain = document.getElementById('cntMain');
 			const headerOffline = document.getElementById('heading-fail');
 			const header = headerOffline.querySelector('h1');
@@ -345,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
 						break;
 				}
 				ws.send(JSON.stringify({ type: 'fetch', day: currentDay }));
-				// socket.emit('fetch', JSON.stringify({ day: currentDay }));
 			});
 		});
 	}
@@ -466,7 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function pullupModal() {
 		return new Promise((resolve) => {
-			// modal.style.display = 'block';
 			overlay.classList.remove('hidden');
 			elementNameInput.value = ''; // Clear the input field
 			saveButton.addEventListener('click', function () {
@@ -498,12 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function closeModal() {
 		overlay.classList.add('hidden');
-
-		// modal.style.display = 'none';
-		// overlay.style.display = 'none';
 	}
-
-	// overlay.addEventListener('click', closeModal);
 
 	const token = localStorage.getItem('token');
 	if (token) {
