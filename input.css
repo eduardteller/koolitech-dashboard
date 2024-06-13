@@ -4,7 +4,7 @@
 
 @layer components {
 	.list-plan-tail {
-		@apply px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm;
+		@apply px-2 py-1 mt-1 cursor-pointer w-32 rounded-sm text-gray-900;
 	}
 
 	.list-table-h-tail {
@@ -12,11 +12,11 @@
 	}
 
 	.list-table-tail {
-		@apply p-4 whitespace-nowrap border;
+		@apply p-4 whitespace-nowrap border text-gray-900;
 	}
 
 	.active.selected {
-		@apply bg-blue-500 hover:bg-blue-600;
+		@apply bg-blue-400 hover:bg-blue-500;
 	}
 
 	.regular.selected {
