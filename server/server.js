@@ -25,9 +25,7 @@ const wss = new WebSocketServer({ server });
 app.use(express.json());
 app.use(cors());
 
-let dbIndex = 1;
 export const clients = new Map();
-let day;
 
 app.get('/', getIndexHtml);
 
@@ -83,9 +81,8 @@ wss.on('connection', function connection(ws, req) {
 		switch (msg.type) {
 			case 'fetch':
 				try {
-					const dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
-					day = msg.day;
-					dbMain.all(`SELECT * FROM ${day}`, [], (err, rows) => {
+					const dbMain = new sqlite3.Database(`./data/${msg.dbid}.db`);
+					dbMain.all(`SELECT * FROM ${msg.day}`, [], (err, rows) => {
 						if (err) {
 							throw new Error(err.message);
 						}
@@ -100,9 +97,8 @@ wss.on('connection', function connection(ws, req) {
 
 			case 'update':
 				try {
-					const dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
-					day = msg.day;
-					dbMain.run(`DELETE FROM ${day}`, [], (err) => {
+					const dbMain = new sqlite3.Database(`./data/${msg.dbid}.db`);
+					dbMain.run(`DELETE FROM ${msg.day}`, [], (err) => {
 						if (err) {
 							throw new Error(err.message);
 						}
@@ -114,16 +110,16 @@ wss.on('connection', function connection(ws, req) {
 						const Aeg = msg.tableData[i][2];
 						const Kirjeldus = msg.tableData[i][3];
 						const Helifail = msg.tableData[i][4];
-						dbMain.run(`INSERT INTO ${day} VALUES (?, ?, ?, ?, ?)`, [Id, Nimi, Aeg, Kirjeldus, Helifail], (err) => {
+						dbMain.run(`INSERT INTO ${msg.day} VALUES (?, ?, ?, ?, ?)`, [Id, Nimi, Aeg, Kirjeldus, Helifail], (err) => {
 							if (err) {
 								throw new Error(err.message);
 							}
 						});
 					}
 					dbMain.close(() => {
-						sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
+						sendFileThroughWebSocket(`./data/${msg.dbid}.db`, ws.schoolName);
 						sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
-						console.log(`Succesfully updated ${dbIndex}.db by Web Client`);
+						console.log(`Succesfully updated ${msg.dbid}.db by Web Client`);
 					});
 				} catch (error) {
 					console.error('update error:', error.message);
@@ -207,7 +203,7 @@ wss.on('connection', function connection(ws, req) {
 			case 'req_del_plan':
 				try {
 					const dbSystem = new sqlite3.Database('./data/system.db');
-					const dbMain = new sqlite3.Database(`./data/${dbIndex}.db`);
+					const dbMain = new sqlite3.Database(`./data/${msg.dbid}.db`);
 					dbMain.run(`DELETE FROM Mondays`);
 					dbMain.run(`DELETE FROM Tuesdays`);
 					dbMain.run(`DELETE FROM Wednesdays`);
@@ -227,7 +223,7 @@ wss.on('connection', function connection(ws, req) {
 						dbMain.close(() => {
 							dbSystem.close(() => {
 								sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
-								sendFileThroughWebSocket(`./data/${dbIndex}.db`, ws.schoolName);
+								sendFileThroughWebSocket(`./data/${msg.dbid}.db`, ws.schoolName);
 								sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
 								sendToClientType('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
 							});
@@ -236,10 +232,6 @@ wss.on('connection', function connection(ws, req) {
 				} catch (error) {
 					console.error('req_del_plan error:', error.message);
 				}
-				break;
-
-			case 'sel_db':
-				dbIndex = msg.data;
 				break;
 
 			case 'enable_req':

@@ -26,12 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	let newPlanName = '';
 	let selectedPresetPlan = null;
 	let activePresetPlan = null;
-	let currentDBIndex = [];
-	let currentDBName = [];
+	let userDatabaseIndexes = [];
+	let userDatabaseNames = [];
 	let currentDay;
 	let timer;
-	let ws;
 
+	let ws;
+	let selDBIndex = 0;
 	let schName = '';
 
 	function initiateConnect(token) {
@@ -130,8 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				clearTimeout(timer);
 				schName = msg.name;
 				removeAllPresets();
-				currentDBIndex = [];
-				currentDBName = [];
+				userDatabaseIndexes = [];
+				userDatabaseNames = [];
 				msg.data.forEach((header) => {
 					Object.entries(header).forEach(([key, value]) => {
 						const newItem = document.createElement('li');
@@ -139,9 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
 							newItem.classList.add('preset-item-plan', 'list-plan-tail', 'regular');
 							newItem.textContent = value;
 							presetListPlan.appendChild(newItem);
-							currentDBName.push(value);
+							userDatabaseNames.push(value);
 						} else if (key === 'DbId') {
-							currentDBIndex.push(value);
+							userDatabaseIndexes.push(value);
 						}
 						if (key === 'Current' && value === 1) {
 							const lastItem = presetListPlan.lastElementChild;
@@ -235,6 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
 						sendingAccept = false;
 						H1Text.textContent = 'Vale aja formaat 🕓⬇️';
 						dataCells[j - 1].classList.add('errorClass');
+						setTimeout(() => {
+							setMainLabel();
+						}, 5000);
 					}
 				} else if (j === 1 || j === 3) {
 					if (dataCells[j - 1].textContent.trim().length < 15) {
@@ -243,6 +247,9 @@ document.addEventListener('DOMContentLoaded', () => {
 						sendingAccept = false;
 						H1Text.textContent = 'Liiga pikk tekst 📏⬇️';
 						dataCells[j - 1].classList.add('errorClass');
+						setTimeout(() => {
+							setMainLabel();
+						}, 5000);
 					}
 				} else {
 					dataRow.push(dataCells[j - 1].textContent.trim());
@@ -293,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	delPlanBtn.addEventListener('click', function () {
 		if (selectedPresetPlan != null) {
-			ws.send(JSON.stringify({ type: 'req_del_plan', name: selectedPresetPlan }));
+			ws.send(JSON.stringify({ type: 'req_del_plan', name: selectedPresetPlan, dbid: selDBIndex }));
 		}
 	});
 
@@ -315,6 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				type: 'update',
 				day: currentDay,
 				tableData: tableD,
+				dbid: selDBIndex,
 			})
 		);
 		updateBtn.textContent = 'Salvestatud';
@@ -360,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					default:
 						break;
 				}
-				ws.send(JSON.stringify({ type: 'fetch', day: currentDay }));
+				ws.send(JSON.stringify({ type: 'fetch', day: currentDay, dbid: selDBIndex }));
 			});
 		});
 	}
@@ -418,13 +426,13 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (selectedPresetPlan) {
 					let i = 0;
 					let j = 0;
-					for (i = 0; i < currentDBName.length; i++) {
-						if (selectedPresetPlan === currentDBName[i]) {
+					for (i = 0; i < userDatabaseNames.length; i++) {
+						if (selectedPresetPlan === userDatabaseNames[i]) {
 							j = i;
 						}
 					}
-					const send_index = currentDBIndex[j];
-					ws.send(JSON.stringify({ type: 'sel_db', data: send_index }));
+					selDBIndex = userDatabaseIndexes[j];
+					// ws.send(JSON.stringify({ type: 'sel_db', data: send_index }));
 					triggerDayClick('Esmaspäev');
 
 					const containerMain = document.getElementById('cntMain');
