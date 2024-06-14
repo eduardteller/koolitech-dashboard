@@ -1,4 +1,6 @@
 import { clients } from './server.js';
+import fs from 'fs';
+import path from 'path';
 
 export function sendToClientType(type, message, school) {
 	let sent = false;

@@ -58,25 +58,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				const initial = table.querySelector('thead').insertRow(-1);
 				let i = 0;
-				for (i = 0; i < 5; i++) {
+				for (i = 0; i < 4; i++) {
 					const cell = document.createElement('th');
+					// if (i === 0) {
+					// 	cell.classList.add('list-table-h-tail');
+					// 	cell.textContent = 'ID';
+					// 	cell.contentEditable = false;
+					// } else
 					if (i === 0) {
-						cell.classList.add('list-table-h-tail');
-						cell.textContent = 'ID';
-						cell.contentEditable = false;
-					} else if (i === 1) {
 						cell.classList.add('list-table-h-tail');
 						cell.textContent = 'Nimi';
 						cell.contentEditable = false;
-					} else if (i === 2) {
+					} else if (i === 1) {
 						cell.classList.add('list-table-h-tail');
 						cell.textContent = 'Aeg';
 						cell.contentEditable = false;
-					} else if (i === 3) {
+					} else if (i === 2) {
 						cell.classList.add('list-table-h-tail');
 						cell.textContent = 'Kirjeldus';
 						cell.contentEditable = false;
-					} else if (i === 4) {
+					} else if (i === 3) {
 						cell.classList.add('list-table-h-tail');
 						cell.textContent = 'Helifail';
 						cell.contentEditable = false;
@@ -88,14 +89,25 @@ document.addEventListener('DOMContentLoaded', () => {
 						const newRow = table.querySelector('tbody').insertRow(-1);
 
 						Object.entries(rowData).forEach(([key, value]) => {
-							const cell = newRow.insertCell(-1);
-							if (key === 'Id' || key === 'Helifail') {
+							if (key === 'Helifail') {
+								const cell = newRow.insertCell(-1);
 								cell.contentEditable = false;
-							} else {
+								cell.textContent = value;
+								cell.classList.add('list-table-tail');
+							} else if (key !== 'Id') {
+								const cell = newRow.insertCell(-1);
 								cell.contentEditable = true;
+								cell.textContent = value;
+								cell.classList.add('list-table-tail');
 							}
-							cell.textContent = value;
-							cell.classList.add('list-table-tail');
+							// const cell = newRow.insertCell(-1);
+							// if (key === 'Id' || key === 'Helifail') {
+							// 	cell.contentEditable = false;
+							// } else {
+							// 	cell.contentEditable = true;
+							// }
+							// cell.textContent = value;
+							// cell.classList.add('list-table-tail');
 						});
 					});
 				}
@@ -174,18 +186,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		const newRow = table.querySelector('tbody').insertRow(-1);
 		let i = 0;
-		for (i = 0; i < 5; i++) {
+		for (i = 0; i < 4; i++) {
 			const cell = newRow.insertCell(-1);
-			if (i === 0) {
-				cell.contentEditable = false;
-				if (empty === false) {
-					const rows = head.getElementsByTagName('tr');
-					let firstCell = rows[rows.length - 2].getElementsByTagName('td')[0];
-					cell.textContent = parseInt(firstCell.textContent) + 1;
-				} else {
-					cell.textContent = 1;
-				}
-			} else if (i === 4) {
+			// if (i === 0) {
+			// 	cell.contentEditable = false;
+			// 	if (empty === false) {
+			// 		const rows = head.getElementsByTagName('tr');
+			// 		let firstCell = rows[rows.length - 2].getElementsByTagName('td')[0];
+			// 		cell.textContent = parseInt(firstCell.textContent) + 1;
+			// 	} else {
+			// 		cell.textContent = 1;
+			// 	}
+			// } else
+			if (i === 3) {
 				cell.contentEditable = false;
 				cell.textContent = 'Vaikimisi';
 			} else {
@@ -211,32 +224,34 @@ document.addEventListener('DOMContentLoaded', () => {
 		for (let i = 1; i < table.rows.length; i++) {
 			const dataRow = [];
 			const dataCells = table.rows[i].cells;
-			for (let j = 0; j < dataCells.length; j++) {
-				if (j === 2) {
-					const tempString = formatTime(dataCells[j].textContent.trim());
+			for (let j = 0; j < dataCells.length + 1; j++) {
+				if (j === 0) {
+					dataRow.push(`${i + 1}`);
+				} else if (j === 2) {
+					const tempString = formatTime(dataCells[j - 1].textContent.trim());
 					if (tempString !== 'Invalid') {
 						dataRow.push(tempString);
 					} else {
 						sendingAccept = false;
 						H1Text.textContent = 'Vale aja formaat 🕓⬇️';
-						dataCells[j].classList.add('errorClass');
+						dataCells[j - 1].classList.add('errorClass');
 					}
 				} else if (j === 1 || j === 3) {
-					if (dataCells[j].textContent.trim().length < 15) {
-						dataRow.push(dataCells[j].textContent.trim());
+					if (dataCells[j - 1].textContent.trim().length < 15) {
+						dataRow.push(dataCells[j - 1].textContent.trim());
 					} else {
 						sendingAccept = false;
-
 						H1Text.textContent = 'Liiga pikk tekst 📏⬇️';
-						dataCells[j].classList.add('errorClass');
+						dataCells[j - 1].classList.add('errorClass');
 					}
 				} else {
-					dataRow.push(dataCells[j].textContent.trim());
+					dataRow.push(dataCells[j - 1].textContent.trim());
 				}
 			}
 			tableData.push(dataRow);
 		}
 		if (sendingAccept) {
+			console.log(tableData);
 			updateMessage(tableData);
 			timer = setTimeout(onTimeout, 5000);
 		}
