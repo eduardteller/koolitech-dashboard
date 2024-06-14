@@ -8,11 +8,11 @@
 	}
 
 	.list-table-h-tail {
-		@apply p-4 text-left text-sm font-semibold text-gray-900 uppercase;
+		@apply p-4 text-left text-sm font-semibold text-gray-900 uppercase border;
 	}
 
 	.list-table-tail {
-		@apply p-4 whitespace-nowrap border-t border-l border-r text-gray-900;
+		@apply p-4 whitespace-nowrap border-t border-x text-gray-900;
 	}
 
 	.active.selected {
