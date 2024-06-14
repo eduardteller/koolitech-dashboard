@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const dataCells = table.rows[i].cells;
 			for (let j = 0; j < dataCells.length + 1; j++) {
 				if (j === 0) {
-					dataRow.push(`${i + 1}`);
+					dataRow.push(`${i}`);
 				} else if (j === 2) {
 					const tempString = formatTime(dataCells[j - 1].textContent.trim());
 					if (tempString !== 'Invalid') {
