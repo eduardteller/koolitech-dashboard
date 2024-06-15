@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			const processed = await response.json();
 			setDayButtons();
 			presetDataProcess(processed.data);
+			schName = processed.school;
+
 			hideSpinner('E-KELL-WEB');
 		} else {
 			hideSpinner('VIGA');
@@ -367,7 +369,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (response.ok) {
 					const processed = await response.json();
 					tableDataProcess(processed.data);
-					schName = processed.school;
 					hideSpinner('E-KELL-WEB');
 				} else {
 					hideSpinner('VIGA');

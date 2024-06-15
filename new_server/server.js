@@ -239,11 +239,12 @@ app.get('/api/preset', (req, res) => {
 				}
 				res.json({
 					data: rows,
+					school: checkToken(authHeader),
 				});
 				dbSystem.close();
 			});
 		} catch (error) {
-			return res.status(500).send('Soments faki!');
+			return res.status(500).send('Error!');
 		}
 	}
 });
@@ -262,8 +263,7 @@ app.get('/api/fetch', (req, res) => {
 					throw new Error(err.message);
 				}
 				dbMain.close(() => {
-					const schoolName = checkToken(token);
-					res.status(200).json({ data: rows, school: schoolName });
+					res.json({ data: rows });
 				});
 			});
 		} catch (error) {
