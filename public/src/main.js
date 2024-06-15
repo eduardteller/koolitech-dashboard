@@ -1,5 +1,3 @@
-const { response } = require('express');
-
 document.addEventListener('DOMContentLoaded', () => {
 	const enableBtn = document.getElementById('enable-plan');
 	const newPlanBtn = document.getElementById('new-plan');
@@ -10,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const delRowBtn = document.getElementById('delete-btn');
 
 	const alarmBtn = document.getElementById('haire-btn');
-	const connectBtn = document.getElementById('connect-btn');
 
 	const presetListPlan = document.getElementById('preset-list-plan');
 	let presetItemsPlan = document.querySelectorAll('.preset-item-plan');
@@ -38,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	let schName = '';
 
 	async function Connect(token) {
+		showSpinner('Ühendan...');
 		const response = await fetch('/api/preset', {
 			method: 'GET',
 			headers: {
@@ -45,9 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
 				Authorization: `${token}`,
 			},
 		});
-		const processed = await response.json();
-		setDayButtons();
-		presetDataProcess(processed.data);
+		if (response.ok) {
+			const processed = await response.json();
+			setDayButtons();
+			presetDataProcess(processed.data);
+			hideSpinner('E-KELL-WEB');
+		} else {
+			hideSpinner('VIGA');
+		}
 	}
 
 	function presetDataProcess(data) {
@@ -237,11 +240,27 @@ document.addEventListener('DOMContentLoaded', () => {
 		timer = setTimeout(onTimeout, 5000);
 		ws.send(JSON.stringify({ type: 'alarm_req' }));
 	});
-	enableBtn.addEventListener('click', function () {
+	enableBtn.addEventListener('click', async function () {
+		showSpinner('Aktiveerin');
 		if (selectedPresetPlan != null) {
-			showSpinner('Ühendamine...');
-			timer = setTimeout(onTimeout, 5000);
-			ws.send(JSON.stringify({ type: 'enable_req', name: selectedPresetPlan }));
+			// ws.send(JSON.stringify({ type: 'enable_req', name: selectedPresetPlan }));
+
+			const response = await fetch('/api/enable_plan', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `${token}`,
+				},
+				body: JSON.stringify({ school: schName, name: selectedPresetPlan }),
+			});
+
+			if (response.ok) {
+				const processed = await response.json();
+				presetDataProcess(processed.data);
+				hideSpinner('Edukas!');
+			} else {
+				hideSpinner('Viga!');
+			}
 		}
 	});
 
@@ -263,17 +282,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	connectBtn.addEventListener('click', function () {
-		const headerOffline = document.getElementById('heading-fail');
-		const header = headerOffline.querySelector('h1');
-		const button = headerOffline.querySelector('button');
-		button.classList.add('hidden');
-		header.classList.remove('bg-red-400');
-		header.classList.add('bg-green-400');
+	// connectBtn.addEventListener('click', function () {
+	// 	const headerOffline = document.getElementById('heading-fail');
+	// 	const header = headerOffline.querySelector('h1');
+	// 	const button = headerOffline.querySelector('button');
+	// 	button.classList.add('hidden');
+	// 	header.classList.remove('bg-red-400');
+	// 	header.classList.add('bg-green-400');
 
-		header.textContent = 'Connecting... 🔄';
-		initiateConnect(token);
-	});
+	// 	header.textContent = 'Connecting... 🔄';
+	// 	initiateConnect(token);
+	// });
 
 	async function updateMessage(tableD) {
 		const response = await fetch('/api/update', {
@@ -288,10 +307,11 @@ document.addEventListener('DOMContentLoaded', () => {
 				dbid: selDBIndex,
 			}),
 		});
-		const processed = response.json();
-		console.log(processed);
-		hideSpinner('updated');
-		updateBtn.textContent = 'Salvestatud';
+		if (response.ok) {
+			hideSpinner('E-KELL-WEB');
+		} else {
+			hideSpinner('VIGA');
+		}
 	}
 
 	function removeTableData() {
@@ -344,9 +364,14 @@ document.addEventListener('DOMContentLoaded', () => {
 						dbid: selDBIndex,
 					},
 				});
-				const processed = await response.json();
-				tableDataProcess(processed.data);
-				schName = processed.school;
+				if (response.ok) {
+					const processed = await response.json();
+					tableDataProcess(processed.data);
+					schName = processed.school;
+					hideSpinner('E-KELL-WEB');
+				} else {
+					hideSpinner('VIGA');
+				}
 			});
 		});
 	}

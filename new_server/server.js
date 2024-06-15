@@ -82,22 +82,21 @@ app.get('/api/connect', (req, res) => {
 	}
 });
 
-app.get('/api/enable_plan', async (req, res) => {
-	const token = req.body.token;
+app.post('/api/enable_plan', async (req, res) => {
+	const token = req.headers['authorization'];
 	if (!token || !checkToken(token)) {
-		return res.status(400).send('Enable Failed 1!');
+		return res.status(400).send('Enable Failed!');
 	} else {
 		try {
-			await sendMessage('desktop', JSON.stringify({ type: req.body.type, name: req.body.name }), req.body.schoolName);
-
-			const gotClient = null;
+			await sendMessage('desktop', JSON.stringify({ type: 'enable_req', name: req.body.name }), req.body.school);
+			let gotClient = null;
 			for (const [client, schoolName] of clients.entries()) {
-				if (schoolName === req.body.schoolName) {
+				if (schoolName === req.body.school) {
 					gotClient = client;
 				}
 			}
 			if (!gotClient) {
-				return res.status(400).send('Enable Failed 2!');
+				return res.status(400).send('Enable Failed!');
 			}
 
 			const responseFromWebSocket = await new Promise((resolve, reject) => {
@@ -105,16 +104,19 @@ app.get('/api/enable_plan', async (req, res) => {
 					const msg = JSON.parse(data);
 					if (msg.type === 'plan_change_ok') {
 						try {
-							const dbSystem = new sqlite3.Database('./data/system.db');
+							setTimeout(() => {
+								const dbSystem = new sqlite3.Database('./data/system.db');
 
-							dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
-								dbSystem.close(() => {
-									res.json({ data: rows });
-									resolve();
+								dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
+									dbSystem.close(() => {
+										res.json({ data: rows, pc: 'online' });
+										resolve();
+									});
 								});
-							});
+							}, 100);
 						} catch (error) {
 							console.error('plan_change_ok error:', error.message);
+							res.status(500).json({ pc: 'offline' });
 							resolve();
 						}
 					} else {
@@ -225,8 +227,6 @@ app.post('/api/new_plan', (req, res) => {
 });
 
 app.get('/api/preset', (req, res) => {
-	// const msg = JSON.parse(req.body);
-	// const token = msg.token;
 	const authHeader = req.headers['authorization'];
 	if (!authHeader || !checkToken(authHeader)) {
 		return res.status(400).send('Authentication Failed!');
@@ -244,7 +244,6 @@ app.get('/api/preset', (req, res) => {
 			});
 		} catch (error) {
 			return res.status(500).send('Soments faki!');
-			console.error('Preset Data Send Error:', error.message);
 		}
 	}
 });
@@ -275,7 +274,7 @@ app.get('/api/fetch', (req, res) => {
 });
 
 app.post('/api/update', (req, res) => {
-	const token = req.body.token;
+	const token = req.headers['authorization'];
 	if (!token || !checkToken(token)) {
 		return res.status(400).send('Fail!');
 	} else {
@@ -300,13 +299,15 @@ app.post('/api/update', (req, res) => {
 					dbMain.close(() => {
 						sendDBFile(`./data/${req.body.dbid}.db`, req.body.schoolName);
 						sendMessage('desktop', JSON.stringify({ type: 'refresh_req' }), req.body.schoolName);
+
 						console.log(`Succesfully updated ${req.body.dbid}.db by Web Client`);
-						res.status(200).send('User registered');
+						res.json({ message: 'OK' });
 					});
 				});
 			}
 		} catch (error) {
 			console.error('update error:', error.message);
+			return res.status(400).send('Fail!');
 		}
 	}
 });
@@ -342,24 +343,9 @@ wss.on('connection', function connection(ws, req) {
 	ws.on('message', function incoming(message) {
 		const msg = JSON.parse(message);
 		switch (msg.type) {
-			case 'plan_change_ok':
-				try {
-					const dbSystem = new sqlite3.Database('./data/system.db');
-
-					dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
-						dbSystem.close(() => {
-							sendMessage('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
-						});
-					});
-				} catch (error) {
-					console.error('plan_change_ok error:', error.message);
-				}
-
-				break;
-
 			case 'refresh_ok':
 				console.log('Succesfully refreshed School PC');
-				sendMessage('web', JSON.stringify({ type: 'refresh_ok' }), ws.schoolName);
+				// sendMessage('web', JSON.stringify({ type: 'refresh_ok' }), ws.schoolName);
 				break;
 
 			case 'alarm_req':
