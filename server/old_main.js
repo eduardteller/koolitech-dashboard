@@ -1,5 +1,3 @@
-const { response } = require('express');
-
 document.addEventListener('DOMContentLoaded', () => {
 	const enableBtn = document.getElementById('enable-plan');
 	const newPlanBtn = document.getElementById('new-plan');
@@ -37,100 +35,84 @@ document.addEventListener('DOMContentLoaded', () => {
 	let selDBIndex = 0;
 	let schName = '';
 
-	async function Connect(token) {
-		const response = await fetch('/api/preset', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `${token}`,
-			},
-		});
-		const processed = await response.json();
-		setDayButtons();
-		presetDataProcess(processed.data);
-	}
-
-	function presetDataProcess(data) {
-		removeAllPresets();
-		userDatabaseIndexes = [];
-		userDatabaseNames = [];
-		data.forEach((header) => {
-			Object.entries(header).forEach(([key, value]) => {
-				const newItem = document.createElement('li');
-				if (key === 'Name') {
-					newItem.classList.add('preset-item-plan', 'list-plan-tail', 'regular');
-					newItem.textContent = value;
-					presetListPlan.appendChild(newItem);
-					userDatabaseNames.push(value);
-				} else if (key === 'DbId') {
-					userDatabaseIndexes.push(value);
-				}
-				if (key === 'Current' && value === 1) {
-					const lastItem = presetListPlan.lastElementChild;
-					if (lastItem) {
-						lastItem.classList.remove('regular');
-						lastItem.classList.add('active');
-						activePresetPlan = lastItem.textContent;
-					}
-				}
-			});
-		});
-		presetItemsPlan = document.querySelectorAll('.preset-item-plan');
-		setPlans();
-		triggerPlanClick();
-		setMainLabel();
-	}
-
-	function tableDataProcess(data) {
-		removeTableData();
-		const initial = table.querySelector('thead').insertRow(-1);
-		let i = 0;
-		for (i = 0; i < 4; i++) {
-			const cell = document.createElement('th');
-			if (i === 0) {
-				cell.classList.add('list-table-h-tail');
-				cell.textContent = 'Nimi';
-				cell.contentEditable = false;
-			} else if (i === 1) {
-				cell.classList.add('list-table-h-tail');
-				cell.textContent = 'Aeg';
-				cell.contentEditable = false;
-			} else if (i === 2) {
-				cell.classList.add('list-table-h-tail');
-				cell.textContent = 'Kirjeldus';
-				cell.contentEditable = false;
-			} else if (i === 3) {
-				cell.classList.add('list-table-h-tail');
-				cell.textContent = 'Helifail';
-				cell.contentEditable = false;
-			}
-			initial.appendChild(cell);
-		}
-		if (data[0] !== undefined && data[0] !== null && data[0] !== '') {
-			data.forEach((rowData) => {
-				const newRow = table.querySelector('tbody').insertRow(-1);
-
-				Object.entries(rowData).forEach(([key, value]) => {
-					if (key === 'Helifail') {
-						const cell = newRow.insertCell(-1);
-						cell.contentEditable = false;
-						cell.textContent = value;
-						cell.classList.add('list-table-tail');
-					} else if (key !== 'Id') {
-						const cell = newRow.insertCell(-1);
-						cell.contentEditable = true;
-						cell.textContent = value;
-						cell.classList.add('list-table-tail');
-					}
-				});
-			});
-		}
-	}
-
 	function initiateConnect(token) {
+		ws = new WebSocket('wss://localhost?token=' + token, 'web');
+
+		ws.onopen = function () {
+			const containerMain = document.getElementById('cntMain');
+			const headerOffline = document.getElementById('heading-fail');
+
+			containerMain.classList.remove('hidden');
+			headerOffline.classList.add('hidden');
+
+			console.log('Connected to the server');
+			ws.send(JSON.stringify({ type: 'preset' }));
+
+			setDayButtons();
+			setPlans();
+		};
+
 		ws.onmessage = function (event) {
 			const msg = JSON.parse(event.data);
-			if (msg.type === 'refresh_ok') {
+			if (msg.type === 'data') {
+				removeTableData();
+
+				const initial = table.querySelector('thead').insertRow(-1);
+				let i = 0;
+				for (i = 0; i < 4; i++) {
+					const cell = document.createElement('th');
+					// if (i === 0) {
+					// 	cell.classList.add('list-table-h-tail');
+					// 	cell.textContent = 'ID';
+					// 	cell.contentEditable = false;
+					// } else
+					if (i === 0) {
+						cell.classList.add('list-table-h-tail');
+						cell.textContent = 'Nimi';
+						cell.contentEditable = false;
+					} else if (i === 1) {
+						cell.classList.add('list-table-h-tail');
+						cell.textContent = 'Aeg';
+						cell.contentEditable = false;
+					} else if (i === 2) {
+						cell.classList.add('list-table-h-tail');
+						cell.textContent = 'Kirjeldus';
+						cell.contentEditable = false;
+					} else if (i === 3) {
+						cell.classList.add('list-table-h-tail');
+						cell.textContent = 'Helifail';
+						cell.contentEditable = false;
+					}
+					initial.appendChild(cell);
+				}
+				if (msg.data[0] !== undefined && msg.data[0] !== null && msg.data[0] !== '') {
+					msg.data.forEach((rowData) => {
+						const newRow = table.querySelector('tbody').insertRow(-1);
+
+						Object.entries(rowData).forEach(([key, value]) => {
+							if (key === 'Helifail') {
+								const cell = newRow.insertCell(-1);
+								cell.contentEditable = false;
+								cell.textContent = value;
+								cell.classList.add('list-table-tail');
+							} else if (key !== 'Id') {
+								const cell = newRow.insertCell(-1);
+								cell.contentEditable = true;
+								cell.textContent = value;
+								cell.classList.add('list-table-tail');
+							}
+							// const cell = newRow.insertCell(-1);
+							// if (key === 'Id' || key === 'Helifail') {
+							// 	cell.contentEditable = false;
+							// } else {
+							// 	cell.contentEditable = true;
+							// }
+							// cell.textContent = value;
+							// cell.classList.add('list-table-tail');
+						});
+					});
+				}
+			} else if (msg.type === 'refresh_ok') {
 				clearTimeout(timer);
 				setMainLabel();
 				updateBtn.textContent = 'Salvestatud';
@@ -145,7 +127,55 @@ document.addEventListener('DOMContentLoaded', () => {
 				setMainLabel();
 				alarmBtn.textContent = 'Haire Start 🚨';
 				console.log(msg.type + ' by desktop client');
+			} else if (msg.type === 'preset_data') {
+				clearTimeout(timer);
+				schName = msg.name;
+				removeAllPresets();
+				userDatabaseIndexes = [];
+				userDatabaseNames = [];
+				msg.data.forEach((header) => {
+					Object.entries(header).forEach(([key, value]) => {
+						const newItem = document.createElement('li');
+						if (key === 'Name') {
+							newItem.classList.add('preset-item-plan', 'list-plan-tail', 'regular');
+							newItem.textContent = value;
+							presetListPlan.appendChild(newItem);
+							userDatabaseNames.push(value);
+						} else if (key === 'DbId') {
+							userDatabaseIndexes.push(value);
+						}
+						if (key === 'Current' && value === 1) {
+							const lastItem = presetListPlan.lastElementChild;
+							if (lastItem) {
+								lastItem.classList.remove('regular');
+								lastItem.classList.add('active');
+								activePresetPlan = lastItem.textContent;
+							}
+						}
+					});
+				});
+				presetItemsPlan = document.querySelectorAll('.preset-item-plan');
+				setPlans();
+				triggerPlanClick();
+				setMainLabel();
 			}
+		};
+
+		ws.onclose = function () {
+			console.log('SHITS CRASHING NIGGA');
+			const containerMain = document.getElementById('cntMain');
+			const headerOffline = document.getElementById('heading-fail');
+			const header = headerOffline.querySelector('h1');
+
+			containerMain.classList.add('hidden');
+			headerOffline.classList.remove('hidden');
+
+			header.textContent = 'Ühendust pole, proovi taasühenduda!';
+			header.classList.remove('bg-green-400');
+			header.classList.add('bg-red-400');
+
+			const button = headerOffline.querySelector('button');
+			button.classList.remove('hidden');
 		};
 	}
 
@@ -159,6 +189,16 @@ document.addEventListener('DOMContentLoaded', () => {
 		let i = 0;
 		for (i = 0; i < 4; i++) {
 			const cell = newRow.insertCell(-1);
+			// if (i === 0) {
+			// 	cell.contentEditable = false;
+			// 	if (empty === false) {
+			// 		const rows = head.getElementsByTagName('tr');
+			// 		let firstCell = rows[rows.length - 2].getElementsByTagName('td')[0];
+			// 		cell.textContent = parseInt(firstCell.textContent) + 1;
+			// 	} else {
+			// 		cell.textContent = 1;
+			// 	}
+			// } else
 			if (i === 3) {
 				cell.contentEditable = false;
 				cell.textContent = 'Vaikimisi';
@@ -220,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (sendingAccept) {
 			console.log(tableData);
 			updateMessage(tableData);
+			timer = setTimeout(onTimeout, 5000);
 		}
 	});
 
@@ -275,22 +316,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		initiateConnect(token);
 	});
 
-	async function updateMessage(tableD) {
-		const response = await fetch('/api/update', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `${token}`,
-			},
-			body: JSON.stringify({
+	function updateMessage(tableD) {
+		ws.send(
+			JSON.stringify({
+				type: 'update',
 				day: currentDay,
 				tableData: tableD,
 				dbid: selDBIndex,
-			}),
-		});
-		const processed = response.json();
-		console.log(processed);
-		hideSpinner('updated');
+			})
+		);
 		updateBtn.textContent = 'Salvestatud';
 	}
 
@@ -302,9 +336,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	async function setDayButtons() {
+	function setDayButtons() {
 		presetItemsDays.forEach((item) => {
-			item.addEventListener('click', async function () {
+			item.addEventListener('click', function () {
 				presetItemsDays.forEach((i) => i.classList.remove('selected'));
 				item.classList.add('selected');
 				const selectedPresetDay = item.textContent;
@@ -334,19 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					default:
 						break;
 				}
-				// ws.send(JSON.stringify({ type: 'fetch', day: currentDay, dbid: selDBIndex }));
-				const response = await fetch('/api/fetch', {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: token,
-						day: currentDay,
-						dbid: selDBIndex,
-					},
-				});
-				const processed = await response.json();
-				tableDataProcess(processed.data);
-				schName = processed.school;
+				ws.send(JSON.stringify({ type: 'fetch', day: currentDay, dbid: selDBIndex }));
 			});
 		});
 	}
@@ -502,8 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const token = localStorage.getItem('token');
 	if (token) {
-		// initiateConnect(token);
-		Connect(token);
+		initiateConnect(token);
 	} else {
 		console.log('No existing token');
 	}

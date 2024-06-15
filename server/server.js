@@ -11,8 +11,8 @@ import config from '../private/config.js';
 
 import cors from 'cors';
 
-import { sendToClientType, compareModifiedDates, sendFileThroughWebSocket } from './func.js';
-import { registerUserHandler, loginUserHandler, getIndexHtml, __dirname } from './root-handler-func.js';
+import { sendMessage, cmpDBModDate, sendDBFile } from './func.js';
+import { registerUserHandler, loginUserHandler, sendPageHandler, __dirname } from './root-handler-func.js';
 
 const privateKey = fs.readFileSync('./private/key.pem', 'utf8');
 const certificate = fs.readFileSync('./private/cert.pem', 'utf8');
@@ -27,7 +27,7 @@ app.use(cors());
 
 export const clients = new Map();
 
-app.get('/', getIndexHtml);
+app.get('/', sendPageHandler);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -87,7 +87,7 @@ wss.on('connection', function connection(ws, req) {
 							throw new Error(err.message);
 						}
 						dbMain.close(() => {
-							sendToClientType('web', JSON.stringify({ type: 'data', data: rows }), ws.schoolName);
+							sendMessage('web', JSON.stringify({ type: 'data', data: rows }), ws.schoolName);
 						});
 					});
 				} catch (error) {
@@ -117,8 +117,8 @@ wss.on('connection', function connection(ws, req) {
 						});
 					}
 					dbMain.close(() => {
-						sendFileThroughWebSocket(`./data/${msg.dbid}.db`, ws.schoolName);
-						sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+						sendDBFile(`./data/${msg.dbid}.db`, ws.schoolName);
+						sendMessage('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
 						console.log(`Succesfully updated ${msg.dbid}.db by Web Client`);
 					});
 				} catch (error) {
@@ -133,7 +133,7 @@ wss.on('connection', function connection(ws, req) {
 						if (err) {
 							console.error(err);
 						}
-						sendToClientType(
+						sendMessage(
 							'web',
 							JSON.stringify({
 								type: 'preset_data',
@@ -188,9 +188,9 @@ wss.on('connection', function connection(ws, req) {
 							console.log(`New Plan with ID: ${newID}`);
 							dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
 								dbSystem.close(() => {
-									sendToClientType('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
-									sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
-									sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+									sendMessage('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
+									sendDBFile(`./data/system.db`, ws.schoolName);
+									sendMessage('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
 								});
 							});
 						});
@@ -222,10 +222,10 @@ wss.on('connection', function connection(ws, req) {
 						console.log('Deleted ' + msg.name);
 						dbMain.close(() => {
 							dbSystem.close(() => {
-								sendFileThroughWebSocket(`./data/system.db`, ws.schoolName);
-								sendFileThroughWebSocket(`./data/${msg.dbid}.db`, ws.schoolName);
-								sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
-								sendToClientType('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
+								sendDBFile(`./data/system.db`, ws.schoolName);
+								sendDBFile(`./data/${msg.dbid}.db`, ws.schoolName);
+								sendMessage('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+								sendMessage('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
 							});
 						});
 					});
@@ -236,7 +236,7 @@ wss.on('connection', function connection(ws, req) {
 
 			case 'enable_req':
 				try {
-					sendToClientType('desktop', JSON.stringify({ type: msg.type, name: msg.name }), ws.schoolName);
+					sendMessage('desktop', JSON.stringify({ type: msg.type, name: msg.name }), ws.schoolName);
 					console.log(`Use: ${msg.name} sent to desktop`);
 				} catch (error) {
 					console.error('enable_req error:', error.message);
@@ -249,7 +249,7 @@ wss.on('connection', function connection(ws, req) {
 
 					dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
 						dbSystem.close(() => {
-							sendToClientType('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
+							sendMessage('web', JSON.stringify({ type: 'preset_data', data: rows }), ws.schoolName);
 						});
 					});
 				} catch (error) {
@@ -260,19 +260,19 @@ wss.on('connection', function connection(ws, req) {
 
 			case 'refresh_ok':
 				console.log('Succesfully refreshed School PC');
-				sendToClientType('web', JSON.stringify({ type: 'refresh_ok' }), ws.schoolName);
+				sendMessage('web', JSON.stringify({ type: 'refresh_ok' }), ws.schoolName);
 				break;
 
 			case 'alarm_req':
-				sendToClientType('desktop', JSON.stringify({ type: 'alarm_req' }), ws.schoolName);
+				sendMessage('desktop', JSON.stringify({ type: 'alarm_req' }), ws.schoolName);
 				break;
 
 			case 'alarm_started':
-				sendToClientType('web', JSON.stringify({ type: 'alarm_started' }), ws.schoolName);
+				sendMessage('web', JSON.stringify({ type: 'alarm_started' }), ws.schoolName);
 				break;
 
 			case 'alarm_stopped':
-				sendToClientType('web', JSON.stringify({ type: 'alarm_stopped' }), ws.schoolName);
+				sendMessage('web', JSON.stringify({ type: 'alarm_stopped' }), ws.schoolName);
 				break;
 
 			case 'db_data':
@@ -294,9 +294,9 @@ wss.on('connection', function connection(ws, req) {
 							if (err) {
 								throw new Error(`Error setting file times: ${err.message}`);
 							}
-							compareModifiedDates(fileMain, filePath, ws.schoolName);
+							cmpDBModDate(fileMain, filePath, ws.schoolName);
 							if (path.basename(filePath) === 'system.db') {
-								sendToClientType('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+								sendMessage('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
 							}
 						});
 					});
@@ -313,7 +313,7 @@ wss.on('connection', function connection(ws, req) {
 	ws.on('close', () => {
 		console.log(`Client disconnected: ${clientName}`);
 		if (clientType === 'desktop') {
-			sendToClientType('web', JSON.stringify({ type: 'School PC OFFLINE' }), ws.schoolName);
+			sendMessage('web', JSON.stringify({ type: 'School PC OFFLINE' }), ws.schoolName);
 		}
 		clients.delete(ws);
 	});

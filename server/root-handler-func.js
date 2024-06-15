@@ -42,6 +42,6 @@ export const loginUserHandler = async (req, res) => {
 	});
 };
 
-export const getIndexHtml = (req, res) => {
+export const sendPageHandler = (req, res) => {
 	res.sendFile(path.join(__dirname, 'public', 'login.html'));
 };
