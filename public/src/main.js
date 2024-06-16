@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			presetDataProcess(processed.data);
 			schName = processed.school;
 
-			hideSpinner('E-KELL-WEB');
+			setMainLabel();
 		} else {
 			hideSpinner('VIGA');
 		}
@@ -252,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `${token}`,
+					School: schName,
 				},
 				body: JSON.stringify({ school: schName, name: selectedPresetPlan }),
 			});
@@ -259,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (response.ok) {
 				const processed = await response.json();
 				presetDataProcess(processed.data);
-				hideSpinner('Edukas!');
+				setMainLabel();
 			} else {
 				hideSpinner('Viga!');
 			}
@@ -284,24 +285,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	// connectBtn.addEventListener('click', function () {
-	// 	const headerOffline = document.getElementById('heading-fail');
-	// 	const header = headerOffline.querySelector('h1');
-	// 	const button = headerOffline.querySelector('button');
-	// 	button.classList.add('hidden');
-	// 	header.classList.remove('bg-red-400');
-	// 	header.classList.add('bg-green-400');
-
-	// 	header.textContent = 'Connecting... 🔄';
-	// 	initiateConnect(token);
-	// });
-
 	async function updateMessage(tableD) {
 		const response = await fetch('/api/update', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `${token}`,
+				School: schName,
 			},
 			body: JSON.stringify({
 				day: currentDay,
@@ -310,9 +300,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			}),
 		});
 		if (response.ok) {
-			hideSpinner('E-KELL-WEB');
+			setMainLabel();
 		} else {
-			hideSpinner('VIGA');
+			hideSpinner('Tekkis viga!');
+			setTimeout(() => {
+				setMainLabel();
+			}, 5000);
 		}
 	}
 
@@ -362,6 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					headers: {
 						'Content-Type': 'application/json',
 						Authorization: token,
+						School: schName,
 						day: currentDay,
 						dbid: selDBIndex,
 					},
@@ -369,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (response.ok) {
 					const processed = await response.json();
 					tableDataProcess(processed.data);
-					hideSpinner('E-KELL-WEB');
+					setMainLabel();
 				} else {
 					hideSpinner('VIGA');
 				}
@@ -405,7 +399,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function setMainLabel() {
-		hideSpinner(`${schName} Kool: ${selectedPresetPlan}`);
+		if (schName && selectedPresetPlan) {
+			hideSpinner(`${schName} Kool: ${selectedPresetPlan}`);
+		} else {
+			hideSpinner('BLANK');
+		}
 	}
 
 	function onTimeout() {
@@ -528,7 +526,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const token = localStorage.getItem('token');
 	if (token) {
-		// initiateConnect(token);
 		Connect(token);
 	} else {
 		console.log('No existing token');

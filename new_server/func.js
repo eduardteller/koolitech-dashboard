@@ -2,10 +2,10 @@ import { clients } from './server.js';
 import fs from 'fs';
 import path from 'path';
 
-export function sendMessage(type, message, school) {
+export function sendMessage(message, school) {
 	let sent = false;
 	for (const [client, schoolName] of clients.entries()) {
-		if (client.clientType === type && schoolName === school) {
+		if (schoolName === school) {
 			sent = true;
 			client.send(message);
 		}

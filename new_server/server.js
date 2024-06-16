@@ -82,6 +82,19 @@ app.get('/api/connect', (req, res) => {
 	}
 });
 
+function findClient(school) {
+	let gotClient = null;
+	for (const [client, schoolName] of clients.entries()) {
+		if (schoolName === school) {
+			gotClient = client;
+		}
+	}
+	if (!gotClient) {
+		return false;
+	}
+	return gotClient;
+}
+
 app.post('/api/enable_plan', async (req, res) => {
 	const token = req.headers['authorization'];
 	if (!token || !checkToken(token)) {
@@ -89,18 +102,15 @@ app.post('/api/enable_plan', async (req, res) => {
 	} else {
 		try {
 			await sendMessage('desktop', JSON.stringify({ type: 'enable_req', name: req.body.name }), req.body.school);
-			let gotClient = null;
-			for (const [client, schoolName] of clients.entries()) {
-				if (schoolName === req.body.school) {
-					gotClient = client;
-				}
-			}
-			if (!gotClient) {
-				return res.status(400).send('Enable Failed!');
+
+			const selClient = findClient(req.body.school);
+
+			if (!selClient) {
+				return res.status(400).send();
 			}
 
 			const responseFromWebSocket = await new Promise((resolve, reject) => {
-				gotClient.once('message', (data) => {
+				selClient.once('message', (data) => {
 					const msg = JSON.parse(data);
 					if (msg.type === 'plan_change_ok') {
 						try {
@@ -159,7 +169,7 @@ app.post('/api/del_plan', (req, res) => {
 					dbSystem.close(() => {
 						sendDBFile(`./data/system.db`, req.body.schoolName);
 						sendDBFile(`./data/${req.body.dbid}.db`, req.body.schoolName);
-						sendMessage('desktop', JSON.stringify({ type: 'refresh_req' }), req.body.schoolName);
+						sendMessage(JSON.stringify({ type: 'refresh_req' }), req.body.schoolName);
 						res.send(JSON.stringify({ type: 'preset_data', data: rows }));
 					});
 				});
@@ -215,7 +225,7 @@ app.post('/api/new_plan', (req, res) => {
 						dbSystem.close(() => {
 							res.send(JSON.stringify({ type: 'preset_data', data: rows }));
 							sendDBFile(`./data/system.db`, req.body.schoolName);
-							sendMessage('desktop', JSON.stringify({ type: 'refresh_req' }), req.body.schoolName);
+							sendMessage(JSON.stringify({ type: 'refresh_req' }), req.body.schoolName);
 						});
 					});
 				});
@@ -273,8 +283,9 @@ app.get('/api/fetch', (req, res) => {
 	}
 });
 
-app.post('/api/update', (req, res) => {
-	const token = req.headers['authorization'];
+app.post('/api/update', async (req, res) => {
+	const token = req.headers['Authorization'];
+	const school = req.headers['School'];
 	if (!token || !checkToken(token)) {
 		return res.status(400).send('Fail!');
 	} else {
@@ -296,18 +307,32 @@ app.post('/api/update', (req, res) => {
 					if (err) {
 						throw new Error(err.message);
 					}
-					dbMain.close(() => {
-						sendDBFile(`./data/${req.body.dbid}.db`, req.body.schoolName);
-						sendMessage('desktop', JSON.stringify({ type: 'refresh_req' }), req.body.schoolName);
+					dbMain.close(async () => {
+						sendDBFile(`./data/${req.body.dbid}.db`, school);
+						sendMessage(JSON.stringify({ type: 'refresh_req' }), school);
 
-						console.log(`Succesfully updated ${req.body.dbid}.db by Web Client`);
-						res.json({ message: 'OK' });
+						const selClient = findClient(school);
+
+						if (!selClient) {
+							return res.status(400).send();
+						}
+
+						const responseFromWebSocket = await new Promise((resolve, reject) => {
+							selClient.once('message', (data) => {
+								const msg = JSON.parse(data);
+								if (msg.type === 'refresh_ok') {
+									console.log(`Succesfully updated ${req.body.dbid}.db by Web Client`);
+									res.json({ pc: 'online' });
+									resolve();
+								}
+							});
+						});
 					});
 				});
 			}
 		} catch (error) {
-			console.error('update error:', error.message);
-			return res.status(400).send('Fail!');
+			console.error('Update error:', error.message);
+			return res.status(500).json({ pc: 'offline' });
 		}
 	}
 });
@@ -349,15 +374,15 @@ wss.on('connection', function connection(ws, req) {
 				break;
 
 			case 'alarm_req':
-				sendMessage('desktop', JSON.stringify({ type: 'alarm_req' }), ws.schoolName);
+				// sendMessage('desktop', JSON.stringify({ type: 'alarm_req' }), ws.schoolName);
 				break;
 
 			case 'alarm_started':
-				sendMessage('web', JSON.stringify({ type: 'alarm_started' }), ws.schoolName);
+				// sendMessage('web', JSON.stringify({ type: 'alarm_started' }), ws.schoolName);
 				break;
 
 			case 'alarm_stopped':
-				sendMessage('web', JSON.stringify({ type: 'alarm_stopped' }), ws.schoolName);
+				// sendMessage('web', JSON.stringify({ type: 'alarm_stopped' }), ws.schoolName);
 				break;
 
 			case 'db_data':
@@ -381,7 +406,7 @@ wss.on('connection', function connection(ws, req) {
 							}
 							cmpDBModDate(fileMain, filePath, ws.schoolName);
 							if (path.basename(filePath) === 'system.db') {
-								sendMessage('desktop', JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+								sendMessage(JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
 							}
 						});
 					});
@@ -397,9 +422,6 @@ wss.on('connection', function connection(ws, req) {
 
 	ws.on('close', () => {
 		console.log(`Client disconnected: ${clientName}`);
-		if (clientType === 'desktop') {
-			sendMessage('web', JSON.stringify({ type: 'School PC OFFLINE' }), ws.schoolName);
-		}
 		clients.delete(ws);
 	});
 });
