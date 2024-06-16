@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const saveButton = document.getElementById('saveButton');
 	const cancelButton = document.getElementById('cancelButton');
 	const elementNameInput = document.getElementById('elementName');
+	const statusHead = document.getElementById('status-head');
 
 	let newPlanName = '';
 	let selectedPresetPlan = null;
@@ -45,9 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 		if (response.ok) {
 			const processed = await response.json();
+			schName = processed.school;
 			setDayButtons();
 			presetDataProcess(processed.data);
-			schName = processed.school;
 
 			setMainLabel();
 		} else {
@@ -223,7 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			tableData.push(dataRow);
 		}
 		if (sendingAccept) {
-			console.log(tableData);
 			updateMessage(tableData);
 		}
 	});
@@ -259,8 +259,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			if (response.ok) {
 				const processed = await response.json();
-				presetDataProcess(processed.data);
-				setMainLabel();
+				if (processed.STATUS === 'ONLINE') {
+					Connect(token);
+					statusSet(true);
+				} else {
+					statusSet(false);
+					hideSpinner('Viga!');
+				}
 			} else {
 				hideSpinner('Viga!');
 			}
@@ -268,20 +273,74 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	newPlanBtn.addEventListener('click', async function () {
+		showSpinner('Uuendan...');
 		if (presetListPlan.children.length < 10) {
 			await pullupModal();
 			if (newPlanName) {
-				ws.send(JSON.stringify({ type: 'req_new_plan', name: newPlanName }));
+				// ws.send(JSON.stringify({ type: 'req_new_plan', name: newPlanName }));
+
+				const response = await fetch('/api/new_plan', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `${token}`,
+						School: schName,
+					},
+					body: JSON.stringify({ name: newPlanName }),
+				});
+
+				if (response.ok) {
+					const processed = await response.json();
+					if (processed.STATUS === 'ONLINE') {
+						statusSet(true);
+					} else {
+						statusSet(false);
+					}
+					presetDataProcess(processed.data);
+					setMainLabel();
+				} else {
+					hideSpinner('Viga!');
+				}
+
 				newPlanName = '';
 			}
 		} else {
-			console.log('Liiga palju plaane, palun kustutage mõned ära!');
+			hideSpinner('Viga!');
+			alert('Liiga palju plaane, palun kustutage mõned ära!');
 		}
 	});
 
-	delPlanBtn.addEventListener('click', function () {
-		if (selectedPresetPlan != null) {
-			ws.send(JSON.stringify({ type: 'req_del_plan', name: selectedPresetPlan, dbid: selDBIndex }));
+	delPlanBtn.addEventListener('click', async function () {
+		if (selectedPresetPlan !== null) {
+			// ws.send(JSON.stringify({ type: 'req_del_plan', name: selectedPresetPlan, dbid: selDBIndex }));
+
+			const response = await fetch('/api/del_plan', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					authorization: `${token}`,
+					school: schName,
+				},
+				body: JSON.stringify({
+					name: selectedPresetPlan,
+					dbid: selDBIndex,
+				}),
+			});
+			if (response.ok) {
+				const processed = await response.json();
+				if (processed.STATUS === 'ONLINE') {
+					statusSet(true);
+				} else {
+					statusSet(false);
+				}
+				presetDataProcess(processed.data);
+				setMainLabel();
+			} else {
+				hideSpinner('Tekkis viga!');
+				setTimeout(() => {
+					setMainLabel();
+				}, 5000);
+			}
 		}
 	});
 
@@ -290,8 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `${token}`,
-				School: schName,
+				authorization: `${token}`,
+				school: schName,
 			},
 			body: JSON.stringify({
 				day: currentDay,
@@ -300,12 +359,30 @@ document.addEventListener('DOMContentLoaded', () => {
 			}),
 		});
 		if (response.ok) {
+			const stat = await response.json();
+			if (stat.STATUS === 'ONLINE') {
+				statusSet(true);
+			} else {
+				statusSet(false);
+			}
 			setMainLabel();
 		} else {
 			hideSpinner('Tekkis viga!');
 			setTimeout(() => {
 				setMainLabel();
 			}, 5000);
+		}
+	}
+
+	function statusSet(bool) {
+		if (bool) {
+			statusHead.textContent = 'Ühendus kooli arvutiga: Online 🟢';
+			statusHead.classList.add('bg-green-400');
+			statusHead.classList.remove('bg-red-400');
+		} else {
+			statusHead.textContent = 'Ühendus kooli arvutiga: Offline 🔴';
+			statusHead.classList.remove('bg-green-400');
+			statusHead.classList.add('bg-red-400');
 		}
 	}
 
@@ -349,19 +426,23 @@ document.addEventListener('DOMContentLoaded', () => {
 					default:
 						break;
 				}
-				// ws.send(JSON.stringify({ type: 'fetch', day: currentDay, dbid: selDBIndex }));
 				const response = await fetch('/api/fetch', {
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/json',
-						Authorization: token,
-						School: schName,
+						authorization: token,
+						school: schName,
 						day: currentDay,
 						dbid: selDBIndex,
 					},
 				});
 				if (response.ok) {
 					const processed = await response.json();
+					if (processed.STATUS) {
+						statusSet(true);
+					} else {
+						statusSet(false);
+					}
 					tableDataProcess(processed.data);
 					setMainLabel();
 				} else {

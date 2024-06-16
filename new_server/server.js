@@ -1,23 +1,19 @@
 import { WebSocketServer } from 'ws';
 import sqlite3 from 'sqlite3';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import jwt from 'jsonwebtoken';
-
 import express from 'express';
 import https from 'https';
-
 import config from '../private/config.js';
-
 import cors from 'cors';
-
 import bcrypt from 'bcrypt';
 import { fileURLToPath } from 'url';
-
+import { promisify } from 'util';
 import { sendMessage, cmpDBModDate, sendDBFile } from './func.js';
 
-const privateKey = fs.readFileSync('./private/key.pem', 'utf8');
-const certificate = fs.readFileSync('./private/cert.pem', 'utf8');
+const privateKey = await fs.readFile('./private/key.pem', 'utf8');
+const certificate = await fs.readFile('./private/cert.pem', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 const app = express();
@@ -73,15 +69,6 @@ app.post('/api/login', async (req, res) => {
 	});
 });
 
-app.get('/api/connect', (req, res) => {
-	const token = req.body.token;
-	if (!token || !checkToken(token)) {
-		return res.status(400).send('Authentication Failed!');
-	} else {
-		res.status(200).send('Succesfull Auth!');
-	}
-});
-
 function findClient(school) {
 	let gotClient = null;
 	for (const [client, schoolName] of clients.entries()) {
@@ -97,242 +84,372 @@ function findClient(school) {
 
 app.post('/api/enable_plan', async (req, res) => {
 	const token = req.headers['authorization'];
+	const school = req.headers['school'];
 	if (!token || !checkToken(token)) {
-		return res.status(400).send('Enable Failed!');
+		return res.status(400).send();
 	} else {
 		try {
-			await sendMessage('desktop', JSON.stringify({ type: 'enable_req', name: req.body.name }), req.body.school);
-
 			const selClient = findClient(req.body.school);
 
 			if (!selClient) {
-				return res.status(400).send();
+				const error = new Error();
+				error.type = 'NOCLIENT'; // Add a custom property
+				throw error;
 			}
 
-			const responseFromWebSocket = await new Promise((resolve, reject) => {
-				selClient.once('message', (data) => {
-					const msg = JSON.parse(data);
-					if (msg.type === 'plan_change_ok') {
-						try {
-							setTimeout(() => {
-								const dbSystem = new sqlite3.Database('./data/system.db');
+			await sendMessage(JSON.stringify({ type: 'enable_req', name: req.body.name }), req.body.school);
 
-								dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
-									dbSystem.close(() => {
-										res.json({ data: rows, pc: 'online' });
-										resolve();
-									});
-								});
-							}, 100);
-						} catch (error) {
-							console.error('plan_change_ok error:', error.message);
-							res.status(500).json({ pc: 'offline' });
-							resolve();
-						}
+			const responseFromWebSocket = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('WEBSOCKET MESSAGE TIMEOUT'));
+				}, 5000);
+				selClient.once('message', async (data) => {
+					clearTimeout(timeoutId);
+					const msg = await JSON.parse(data);
+					if (msg.type === 'plan_change_ok') {
+						resolve({ STATUS: 'ONLINE' });
+						console.log(`SUCCESFULLY ENABLED ${req.body.name} BY WEB CLIENT FROM ${school}`);
 					} else {
-						console.log('Wrong message?');
+						reject(new Error('UNEXPECTED MESSAGE TYPE'));
 					}
 				});
 			});
+			if (responseFromWebSocket) {
+				res.json(responseFromWebSocket);
+			}
 		} catch (error) {
-			console.error('Enable Req error:', error.message);
+			if (error.type === 'NOCLIENT') {
+				res.json({ STATUS: 'OFFLINE' });
+				console.log(`NOT ENABLED ${req.body.name} | ${school}`);
+				return;
+			} else {
+				console.error('ENABLE ERROR:', error.message);
+				return res.status(500).send();
+			}
 		}
 	}
 });
 
-app.post('/api/del_plan', (req, res) => {
-	const token = req.body.token;
+app.post('/api/del_plan', async (req, res) => {
+	const token = req.headers['authorization'];
+	const school = req.headers['school'];
 	if (!token || !checkToken(token)) {
 		return res.status(400).send('Authentication Failed!');
 	} else {
+		let new_data = null;
 		try {
 			const dbSystem = new sqlite3.Database('./data/system.db');
 			const dbMain = new sqlite3.Database(`./data/${req.body.dbid}.db`);
 
-			dbMain.run(`DELETE FROM Mondays`);
-			dbMain.run(`DELETE FROM Tuesdays`);
-			dbMain.run(`DELETE FROM Wednesdays`);
-			dbMain.run(`DELETE FROM Thursdays`);
-			dbMain.run(`DELETE FROM Fridays`);
-			dbMain.run(`DELETE FROM Saturdays`);
-			dbMain.run(`DELETE FROM Sundays`);
+			// Promisify the run and close methods
+			const runAsyncMain = promisify(dbMain.run.bind(dbMain));
+			const runAsyncSys = promisify(dbSystem.run.bind(dbSystem));
+			const closeAsyncMain = promisify(dbMain.close.bind(dbMain));
+			const closeAsyncSys = promisify(dbSystem.close.bind(dbSystem));
 
-			dbSystem.run(`DELETE FROM PlanNames WHERE Name = ?`, [req.body.name], (err) => {
-				if (err) {
-					throw new Error(err.message);
-				}
-			});
+			await runAsyncMain(`DELETE FROM Mondays`);
+			await runAsyncMain(`DELETE FROM Tuesdays`);
+			await runAsyncMain(`DELETE FROM Wednesdays`);
+			await runAsyncMain(`DELETE FROM Thursdays`);
+			await runAsyncMain(`DELETE FROM Fridays`);
+			await runAsyncMain(`DELETE FROM Saturdays`);
+			await runAsyncMain(`DELETE FROM Sundays`);
 
-			dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
-				console.log('Deleted ' + req.body.name);
-				dbMain.close(() => {
-					dbSystem.close(() => {
-						sendDBFile(`./data/system.db`, req.body.schoolName);
-						sendDBFile(`./data/${req.body.dbid}.db`, req.body.schoolName);
-						sendMessage(JSON.stringify({ type: 'refresh_req' }), req.body.schoolName);
-						res.send(JSON.stringify({ type: 'preset_data', data: rows }));
-					});
+			await runAsyncSys(`DELETE FROM PlanNames WHERE Name = ?`, [req.body.name]);
+
+			new_data = await new Promise((resolve, reject) => {
+				dbSystem.all('SELECT * FROM PlanNames', (err, rows) => {
+					if (err) {
+						reject(err); // Reject the Promise if there's an error
+						return;
+					}
+					resolve(rows); // Resolve the Promise with the fetched data
 				});
 			});
+			await closeAsyncMain();
+			await closeAsyncSys();
+
+			const selClient = findClient(school);
+
+			if (!selClient) {
+				const error = new Error();
+				error.type = 'NOCLIENT'; // Add a custom property
+				throw error;
+			}
+			await sendDBFile(`./data/system.db`, school);
+			await sendDBFile(`./data/${req.body.dbid}.db`, school);
+			await sendMessage(JSON.stringify({ type: 'refresh_req' }), school);
+
+			const responseFromWebSocket = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('WebSocket message timeout'));
+				}, 5000);
+				selClient.once('message', (data) => {
+					clearTimeout(timeoutId);
+					const msg = JSON.parse(data);
+					if (msg.type === 'refresh_ok') {
+						console.log(`SUCCESFULLY DELETED ${req.body.name} BY WEB CLIENT FROM ${school}`);
+						resolve({ STATUS: 'ONLINE', data: new_data });
+					} else {
+						reject(new Error('UNEXPECTED MESSAGE TYPE'));
+					}
+				});
+			});
+			if (responseFromWebSocket) {
+				res.json(responseFromWebSocket);
+			}
 		} catch (error) {
-			console.error('Delete Plan Error:', error.message);
+			if (error.type === 'NOCLIENT') {
+				res.json({ STATUS: 'OFFLINE', data: new_data });
+				console.log(`SUCCESFULLY DELETED ${req.body.name} BY WEB CLIENT FROM ${school}`);
+
+				return;
+			} else {
+				console.error('DELETE PLAN ERROR:', error.message);
+				return res.status(500).send();
+			}
 		}
 	}
 });
 
-app.post('/api/new_plan', (req, res) => {
-	const token = req.body.token;
+app.post('/api/new_plan', async (req, res) => {
+	const token = req.headers['authorization'];
+	const school = req.headers['school'];
 	if (!token || !checkToken(token)) {
 		return res.status(400).send('Authentication Failed!');
 	} else {
+		let new_dat = null;
 		try {
 			const dbSystem = new sqlite3.Database('./data/system.db');
-			dbSystem.all('SELECT * FROM PlanNames ORDER BY DbId', [], (err, rows) => {
-				if (err) {
-					throw new Error(err.message);
-				}
-				let previousDbId = 0; // Assuming the first DbId can be 0 or 1
-				let newDbId = 0;
-				let newName = '';
-				let newID = 0;
+			const runAsyncSys = promisify(dbSystem.run.bind(dbSystem));
+			const closeAsyncSys = promisify(dbSystem.close.bind(dbSystem));
 
-				rows.forEach((plan) => {
-					if (parseInt(plan.DbId) - previousDbId > 1) {
-						newDbId = previousDbId + 1;
-						return; // Exit the loop, since you found the first gap
+			const new_data = await new Promise((resolve, reject) => {
+				dbSystem.all('SELECT * FROM PlanNames ORDER BY DbId', (err, rows) => {
+					if (err) {
+						reject(err); // Reject the Promise if there's an error
+						return;
 					}
-					previousDbId = parseInt(plan.DbId);
-				});
-				if (newDbId === 0) {
-					newDbId = previousDbId + 1;
-				}
-				if (req.body.name) {
-					newName = req.body.name;
-				} else {
-					newName = 'UUS' + newDbId.toString();
-				}
-				if (rows) {
-					rows.forEach((plan) => {
-						if (plan.Id > newID) {
-							newID = plan.Id;
-						}
-					});
-				}
-				newID++;
-				dbSystem.run(`INSERT INTO PlanNames VALUES (?, ?, ?, ?)`, [newID, newName, newDbId, 0], (err) => {
-					console.log(`New Plan with ID: ${newID}`);
-					dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
-						dbSystem.close(() => {
-							res.send(JSON.stringify({ type: 'preset_data', data: rows }));
-							sendDBFile(`./data/system.db`, req.body.schoolName);
-							sendMessage(JSON.stringify({ type: 'refresh_req' }), req.body.schoolName);
-						});
-					});
+					resolve(rows); // Resolve the Promise with the fetched data
 				});
 			});
+
+			let previousDbId = 0; // Assuming the first DbId can be 0 or 1
+			let newDbId = 0;
+			let newName = '';
+			let newID = 0;
+
+			await new_data.forEach((plan) => {
+				if (parseInt(plan.DbId) - previousDbId > 1) {
+					newDbId = previousDbId + 1;
+					return; // Exit the loop, since you found the first gap
+				}
+				previousDbId = parseInt(plan.DbId);
+			});
+			if (newDbId === 0) {
+				newDbId = previousDbId + 1;
+			}
+			if (req.body.name) {
+				newName = req.body.name;
+			} else {
+				newName = 'UUS' + newDbId.toString();
+			}
+			if (new_data) {
+				new_data.forEach((plan) => {
+					if (plan.Id > newID) {
+						newID = plan.Id;
+					}
+				});
+			}
+			newID++;
+
+			await runAsyncSys(`INSERT INTO PlanNames VALUES (?, ?, ?, ?)`, [newID, newName, newDbId, 0]);
+			// console.log(`New Plan with ID: ${newID}`);
+			new_dat = await new Promise((resolve, reject) => {
+				dbSystem.all('SELECT * FROM PlanNames', (err, rows) => {
+					if (err) {
+						reject(err); // Reject the Promise if there's an error
+						return;
+					}
+					resolve(rows); // Resolve the Promise with the fetched data
+				});
+			});
+			await closeAsyncSys();
+			const selClient = findClient(school);
+
+			if (!selClient) {
+				const error = new Error();
+				error.type = 'NOCLIENT'; // Add a custom property
+				throw error;
+			}
+			await sendDBFile(`./data/system.db`, school);
+			await sendMessage(JSON.stringify({ type: 'refresh_req' }), school);
+
+			const responseFromWebSocket = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('WebSocket message timeout'));
+				}, 5000);
+				selClient.once('message', (data) => {
+					clearTimeout(timeoutId);
+					const msg = JSON.parse(data);
+					if (msg.type === 'refresh_ok') {
+						console.log(`SUCCESFULLY ADDED NEW PLAN BY WEB CLIENT FROM ${school}`);
+						resolve({ STATUS: 'ONLINE', data: new_dat });
+					} else {
+						reject(new Error('UNEXPECTED MESSAGE TYPE'));
+					}
+				});
+			});
+			if (responseFromWebSocket) {
+				res.json(responseFromWebSocket);
+			}
 		} catch (error) {
-			console.error('req_new_plan error:', error.message);
+			if (error.type === 'NOCLIENT') {
+				res.json({ STATUS: 'OFFLINE', data: new_dat });
+				console.log(`SUCCESFULLY ADDED NEW PLAN BY WEB CLIENT FROM ${school}`);
+
+				return;
+			} else {
+				console.error('NEW PLAN PLAN ERROR:', error);
+				return res.status(500).send();
+			}
 		}
 	}
 });
 
-app.get('/api/preset', (req, res) => {
-	const authHeader = req.headers['authorization'];
-	if (!authHeader || !checkToken(authHeader)) {
-		return res.status(400).send('Authentication Failed!');
+app.get('/api/preset', async (req, res) => {
+	const token = req.headers['authorization'];
+	if (!token || !checkToken(token)) {
+		return res.status(400).send();
 	} else {
 		try {
 			const dbSystem = new sqlite3.Database('./data/system.db');
-			dbSystem.all(`SELECT * FROM PlanNames`, [], (err, rows) => {
-				if (err) {
-					console.error(err);
-				}
-				res.json({
-					data: rows,
-					school: checkToken(authHeader),
+			const closeAsyncSys = promisify(dbSystem.close.bind(dbSystem));
+
+			const resp = await new Promise((resolve, reject) => {
+				dbSystem.all('SELECT * FROM PlanNames', (err, rows) => {
+					if (err) {
+						reject(err); // Reject the Promise if there's an error
+						return;
+					}
+					resolve(rows); // Resolve the Promise with the fetched data
 				});
-				dbSystem.close();
 			});
+			await closeAsyncSys();
+
+			if (resp) {
+				res.json({
+					data: resp,
+					school: checkToken(token),
+				});
+			}
 		} catch (error) {
-			return res.status(500).send('Error!');
+			console.error('PRESET ERROR:', error.message);
+			return res.status(500).send();
 		}
 	}
 });
 
-app.get('/api/fetch', (req, res) => {
+app.get('/api/fetch', async (req, res) => {
 	const token = req.headers['authorization'];
 	const dbid = req.headers['dbid'];
 	const day = req.headers['day'];
+	const school = req.headers['school'];
 	if (!token || !checkToken(token)) {
-		return res.status(400).send('Fail!');
+		return res.status(400).send();
 	} else {
 		try {
 			const dbMain = new sqlite3.Database(`./data/${dbid}.db`);
-			dbMain.all(`SELECT * FROM ${day}`, [], (err, rows) => {
-				if (err) {
-					throw new Error(err.message);
-				}
-				dbMain.close(() => {
-					res.json({ data: rows });
+
+			let available = false;
+			if (findClient(school)) {
+				available = true;
+			}
+
+			const closeAsyncMain = promisify(dbMain.close.bind(dbMain));
+			const resp = await new Promise((resolve, reject) => {
+				dbMain.all(`SELECT * FROM ${day}`, (err, rows) => {
+					if (err) {
+						reject(err); // Reject the Promise if there's an error
+						return;
+					}
+					resolve(rows); // Resolve the Promise with the fetched data
 				});
 			});
+
+			await closeAsyncMain();
+
+			if (resp) {
+				res.json({ data: resp, STATUS: available });
+			}
+			// console.log(`SUCCESFULLY FETCHED ${day} TO WEB: ${school}`);
 		} catch (error) {
-			console.error('Fetch Error:', error.message);
-			return res.status(400).send('Fail!');
+			console.error('FETCH ERROR:', error.message);
+			return res.status(500).send();
 		}
 	}
 });
 
 app.post('/api/update', async (req, res) => {
-	const token = req.headers['Authorization'];
-	const school = req.headers['School'];
+	const token = req.headers['authorization'];
+	const school = req.headers['school'];
 	if (!token || !checkToken(token)) {
-		return res.status(400).send('Fail!');
+		return res.status(400).send();
 	} else {
 		try {
 			const dbMain = new sqlite3.Database(`./data/${req.body.dbid}.db`);
-			dbMain.run(`DELETE FROM ${req.body.day}`, [], (err) => {
-				if (err) {
-					throw new Error(err.message);
-				}
-			});
-			let i = 0;
-			for (i = 0; i < req.body.tableData.length; i++) {
-				const Id = req.body.tableData[i][0];
-				const Nimi = req.body.tableData[i][1];
-				const Aeg = req.body.tableData[i][2];
-				const Kirjeldus = req.body.tableData[i][3];
-				const Helifail = req.body.tableData[i][4];
-				dbMain.run(`INSERT INTO ${req.body.day} VALUES (?, ?, ?, ?, ?)`, [Id, Nimi, Aeg, Kirjeldus, Helifail], (err) => {
-					if (err) {
-						throw new Error(err.message);
+
+			// Promisify the run and close methods
+			const runAsync = promisify(dbMain.run.bind(dbMain));
+			const closeAsync = promisify(dbMain.close.bind(dbMain));
+
+			// Wrap the delete operation in a promise
+			await runAsync(`DELETE FROM ${req.body.day}`);
+
+			for (let i = 0; i < req.body.tableData.length; i++) {
+				const [Id, Nimi, Aeg, Kirjeldus, Helifail] = req.body.tableData[i];
+				await runAsync(`INSERT INTO ${req.body.day} VALUES (?, ?, ?, ?, ?)`, [Id, Nimi, Aeg, Kirjeldus, Helifail]);
+			}
+
+			await closeAsync();
+
+			const selClient = findClient(school);
+
+			if (!selClient) {
+				const error = new Error();
+				error.type = 'NOCLIENT'; // Add a custom property
+				throw error;
+			}
+			await sendDBFile(`./data/${req.body.dbid}.db`, school);
+			await sendMessage(JSON.stringify({ type: 'refresh_req' }), school);
+
+			const responseFromWebSocket = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('WebSocket message timeout'));
+				}, 5000);
+				selClient.once('message', (data) => {
+					clearTimeout(timeoutId);
+					const msg = JSON.parse(data);
+					if (msg.type === 'refresh_ok') {
+						console.log(`SUCCESFULLY UPDATED ${req.body.dbid}.db BY WEB CLIENT FROM ${school}`);
+						resolve({ STATUS: 'ONLINE' });
+					} else {
+						reject(new Error('UNEXPECTED MESSAGE TYPE'));
 					}
-					dbMain.close(async () => {
-						sendDBFile(`./data/${req.body.dbid}.db`, school);
-						sendMessage(JSON.stringify({ type: 'refresh_req' }), school);
-
-						const selClient = findClient(school);
-
-						if (!selClient) {
-							return res.status(400).send();
-						}
-
-						const responseFromWebSocket = await new Promise((resolve, reject) => {
-							selClient.once('message', (data) => {
-								const msg = JSON.parse(data);
-								if (msg.type === 'refresh_ok') {
-									console.log(`Succesfully updated ${req.body.dbid}.db by Web Client`);
-									res.json({ pc: 'online' });
-									resolve();
-								}
-							});
-						});
-					});
 				});
+			});
+
+			if (responseFromWebSocket) {
+				res.json(responseFromWebSocket);
 			}
 		} catch (error) {
-			console.error('Update error:', error.message);
-			return res.status(500).json({ pc: 'offline' });
+			if (error.type === 'NOCLIENT') {
+				res.json({ STATUS: 'OFFLINE' });
+				console.log(`SUCCESFULLY UPDATED ${req.body.dbid}.db BY WEB CLIENT FROM ${school}`);
+			} else {
+				console.error('UPDATE ERROR:', error.message);
+				return res.status(500).send();
+			}
 		}
 	}
 });
@@ -365,11 +482,11 @@ wss.on('connection', function connection(ws, req) {
 		return;
 	}
 
-	ws.on('message', function incoming(message) {
+	ws.on('message', async function incoming(message) {
 		const msg = JSON.parse(message);
 		switch (msg.type) {
 			case 'refresh_ok':
-				console.log('Succesfully refreshed School PC');
+				console.log('Succesfully refreshed School PC\n-------------------------------');
 				// sendMessage('web', JSON.stringify({ type: 'refresh_ok' }), ws.schoolName);
 				break;
 
@@ -391,25 +508,19 @@ wss.on('connection', function connection(ws, req) {
 					const fileMain = `./data/${msg.db_index}.db`;
 					const filePath = path.join(__dirname, 'temp_data', `${msg.db_index}.db`);
 
-					fs.writeFile(filePath, fileData, (err) => {
-						if (err) {
-							throw new Error(`Error writing file: ${err.message}`);
-						}
+					await fs.writeFile(filePath, fileData);
 
-						console.log(`Received ${fileData.length} bytes and saved to ${filePath}`);
-						const oldDateInMilliseconds = msg.time_data;
-						const oldDate = new Date(oldDateInMilliseconds);
+					console.log(`Received ${fileData.length} bytes and saved to ${filePath}`);
+					const oldDateInMilliseconds = msg.time_data;
+					const oldDate = new Date(oldDateInMilliseconds);
 
-						fs.utimes(filePath, oldDate, oldDate, (err) => {
-							if (err) {
-								throw new Error(`Error setting file times: ${err.message}`);
-							}
-							cmpDBModDate(fileMain, filePath, ws.schoolName);
-							if (path.basename(filePath) === 'system.db') {
-								sendMessage(JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
-							}
-						});
-					});
+					await fs.utimes(filePath, oldDate, oldDate);
+
+					await cmpDBModDate(fileMain, filePath, ws.schoolName);
+
+					if (path.basename(filePath) === 'system.db') {
+						await sendMessage(JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+					}
 				} catch (error) {
 					console.error('db_data error:', error.message);
 				}
@@ -426,16 +537,14 @@ wss.on('connection', function connection(ws, req) {
 	});
 });
 
-let p_ip = 'localhost';
+// async function get_ip() {
+// 	let ip = await fetch('https://icanhazip.com').then((response) => response.text());
+// 	return ip;
+// }
 
-async function get_ip() {
-	let ip = await fetch('https://icanhazip.com').then((response) => response.text());
-	return ip;
-}
-
-(async () => {
-	p_ip = await get_ip();
-	server.listen(443, () => {
-		console.log(`E-Kell Web Server is running on https://localhost`);
-	});
-})();
+// (async () => {
+// 	p_ip = await get_ip();
+// })();
+server.listen(443, () => {
+	console.log(`E-Kell Web Server is running on https://localhost`);
+});
