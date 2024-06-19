@@ -34,9 +34,8 @@
 		@apply bg-red-400;
 	}
 
-	.spinner {
-		animation: spin 1s linear infinite;
-		display: inline-block;
+	/* .spinner {
+		@apply animate-spin;
 	}
 
 	@keyframes spin {
@@ -46,5 +45,5 @@
 		to {
 			transform: rotate(360deg);
 		}
-	}
+	} */
 }

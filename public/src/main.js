@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const updateBtn = document.getElementById('update-btn');
 	const addRowBtn = document.getElementById('row-btn');
 	const delRowBtn = document.getElementById('delete-btn');
+	const logOutBtn = document.getElementById('log-out');
 
 	const alarmBtn = document.getElementById('haire-btn');
 
@@ -283,6 +284,19 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 	});
+
+	logOutBtn.onclick = function () {
+		// Check if the token exists before deleting
+		if (localStorage.getItem('token')) {
+			// Remove the token from local storage
+			localStorage.removeItem('token');
+			console.log('Token deleted successfully');
+			window.location.href = 'login.html';
+		} else {
+			console.log('No token found in local storage');
+			window.location.href = 'login.html';
+		}
+	};
 
 	newPlanBtn.addEventListener('click', async function () {
 		showSpinner('Uuendan...');

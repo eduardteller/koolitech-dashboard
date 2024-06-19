@@ -1,81 +1,84 @@
 import { clients } from './server.js';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
-export function sendMessage(type, message, school) {
-	let sent = false;
-	for (const [client, schoolName] of clients.entries()) {
-		if (client.clientType === type && schoolName === school) {
-			sent = true;
-			client.send(message);
+export async function sendMessage(message, school) {
+	return new Promise(async (resolve, reject) => {
+		let sent = false;
+		for (const [client, schoolName] of clients.entries()) {
+			if (schoolName === school) {
+				sent = true;
+				await client.send(message);
+				resolve();
+				return;
+			}
 		}
-	}
-	if (!sent) {
-		console.error(`Cant send shit, NOT connected to ${school + '|' + type}!`);
-	}
-}
-
-export function cmpDBModDate(file1Path, file2Path, school) {
-	fs.access(file1Path, fs.constants.F_OK, (err) => {
-		if (err) {
-			console.log(`Received ${path.basename(file1Path)} from school pc dont exist on server, copying...`);
-			fs.rename(file2Path, file1Path, (err) => {
-				if (err) {
-					throw new Error(err.message);
-				}
-			});
-		} else {
-			fs.stat(file1Path, (err1, stats1) => {
-				if (err1) {
-					throw new Error(err1.message);
-				}
-
-				fs.stat(file2Path, async (err2, stats2) => {
-					if (err2) {
-						throw new Error(err2.message);
-					}
-
-					const file1ModifiedDate = stats1.mtime;
-					const file2ModifiedDate = stats2.mtime;
-
-					if (file2ModifiedDate > file1ModifiedDate) {
-						console.log(`Recieved ${path.basename(file2Path)} from School PC is newer, replacing...`);
-						fs.unlink(file1Path, (err) => {
-							if (err) {
-								throw new Error(err.message);
-							}
-							fs.rename(file2Path, file1Path, (err) => {
-								if (err) {
-									throw new Error(err.message);
-								}
-							});
-						});
-					} else if (file2ModifiedDate < file1ModifiedDate) {
-						sendDBFile(file1Path, school);
-					}
-				});
-			});
+		if (!sent) {
+			console.error(`Cant send to ${school} Desktop App!`);
+			reject(`Cant send to ${school} Desktop App!`);
 		}
 	});
 }
 
-export function sendDBFile(filePath, school) {
-	const stats = fs.statSync(filePath);
-	const lastModified = stats.mtime;
-	const unixTimestampMilliseconds = lastModified.getTime();
+export async function cmpDBModDate(file1Path, file2Path, school) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			await fs.access(file1Path, fs.constants.F_OK);
 
-	const fileData = fs.readFileSync(filePath);
-	const base64Data = fileData.toString('base64');
+			const stats1 = await fs.stat(file1Path);
+			const stats2 = await fs.stat(file2Path);
 
-	const messageDB = {
-		type: 'new_data',
-		data: base64Data,
-		name: path.basename(filePath),
-		time_data: unixTimestampMilliseconds,
-	};
+			const file1ModifiedDate = stats1.mtime;
+			const file2ModifiedDate = stats2.mtime;
 
-	const jsonMessage = JSON.stringify(messageDB);
+			if (file2ModifiedDate > file1ModifiedDate) {
+				await fs.unlink(file1Path);
+				await fs.rename(file2Path, file1Path);
+				console.log(`Received ${path.basename(file2Path)} from School PC is newer, replacing...`);
+				resolve();
+			} else if (file2ModifiedDate < file1ModifiedDate) {
+				await sendDBFile(file1Path, school); // Send the existing file (optional)
+				resolve();
+			} else {
+				resolve();
+			}
+		} catch (err) {
+			if (err.code === 'ENOENT') {
+				console.log(`Received ${path.basename(file1Path)} from school PC doesn't exist on server, copying...`);
+				await fs.rename(file2Path, file1Path);
+				resolve();
+			} else {
+				console.error('Error comparing and updating database files:', err.message);
+				reject();
+			}
+		}
+	});
+}
 
-	sendMessage('desktop', jsonMessage, school);
-	console.log(`Sending ${filePath} to To ${school} PC`);
+export async function sendDBFile(filePath, school) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const stats = await fs.stat(filePath);
+			const lastModified = stats.mtime;
+			const unixTimestampMilliseconds = lastModified.getTime();
+
+			const fileData = await fs.readFile(filePath);
+			const base64Data = fileData.toString('base64');
+
+			const messageDB = {
+				type: 'new_data',
+				data: base64Data,
+				name: path.basename(filePath),
+				time_data: unixTimestampMilliseconds,
+			};
+
+			const jsonMessage = JSON.stringify(messageDB);
+
+			await sendMessage(jsonMessage, school);
+			console.log(`Sending ${filePath} to To ${school} PC`);
+			resolve();
+		} catch (err) {
+			reject(err);
+		}
+	});
 }
