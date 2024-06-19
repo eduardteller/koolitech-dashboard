@@ -29,9 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	let userDatabaseIndexes = [];
 	let userDatabaseNames = [];
 	let currentDay;
-	let timer;
-
-	let ws;
 	let selDBIndex = 0;
 	let schName = '';
 
@@ -53,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			setMainLabel();
 		} else {
 			hideSpinner('VIGA');
+			setMainLabelTimer();
 		}
 	}
 
@@ -131,28 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				});
 			});
 		}
-	}
-
-	function initiateConnect(token) {
-		ws.onmessage = function (event) {
-			const msg = JSON.parse(event.data);
-			if (msg.type === 'refresh_ok') {
-				clearTimeout(timer);
-				setMainLabel();
-				updateBtn.textContent = 'Salvestatud';
-				console.log(msg.type + ' by desktop client');
-			} else if (msg.type === 'alarm_started') {
-				clearTimeout(timer);
-				setMainLabel();
-				alarmBtn.textContent = 'Haire Stop 🚨';
-				console.log(msg.type + ' by desktop client');
-			} else if (msg.type === 'alarm_stopped') {
-				clearTimeout(timer);
-				setMainLabel();
-				alarmBtn.textContent = 'Haire Start 🚨';
-				console.log(msg.type + ' by desktop client');
-			}
-		};
 	}
 
 	addRowBtn.addEventListener('click', function () {
@@ -237,16 +213,48 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	alarmBtn.addEventListener('click', function () {
-		showSpinner('Ühendamine...');
-		timer = setTimeout(onTimeout, 5000);
-		ws.send(JSON.stringify({ type: 'alarm_req' }));
+	alarmBtn.addEventListener('click', async function () {
+		showSpinner('Saadan Haire Request...');
+
+		const response = await fetch('/api/alarm_req', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: token,
+				School: schName,
+			},
+		});
+
+		if (response.ok) {
+			const processed = await response.json();
+			if (processed.STATUS === 'ONLINE') {
+				if (processed.alarm === 'alarm_stopped') {
+					alarmBtn.textContent = 'Haire Start 🚨';
+				} else if (processed.alarm === 'alarm_started') {
+					alarmBtn.textContent = 'Haire Stop 🚨';
+				}
+				statusSet(true);
+				setMainLabel();
+			} else {
+				statusSet(false);
+				hideSpinner('Viga!');
+				setMainLabelTimer();
+			}
+		} else {
+			hideSpinner('Viga!');
+			setMainLabelTimer();
+		}
 	});
+
+	async function setMainLabelTimer() {
+		setTimeout(() => {
+			setMainLabel();
+		}, 5000);
+	}
+
 	enableBtn.addEventListener('click', async function () {
 		showSpinner('Aktiveerin');
 		if (selectedPresetPlan != null) {
-			// ws.send(JSON.stringify({ type: 'enable_req', name: selectedPresetPlan }));
-
 			const response = await fetch('/api/enable_plan', {
 				method: 'POST',
 				headers: {
@@ -260,14 +268,18 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (response.ok) {
 				const processed = await response.json();
 				if (processed.STATUS === 'ONLINE') {
-					Connect(token);
-					statusSet(true);
+					setTimeout(async () => {
+						await Connect(token);
+						statusSet(true);
+					}, 100);
 				} else {
 					statusSet(false);
 					hideSpinner('Viga!');
+					setMainLabelTimer();
 				}
 			} else {
 				hideSpinner('Viga!');
+				setMainLabelTimer();
 			}
 		}
 	});
@@ -277,8 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (presetListPlan.children.length < 10) {
 			await pullupModal();
 			if (newPlanName) {
-				// ws.send(JSON.stringify({ type: 'req_new_plan', name: newPlanName }));
-
 				const response = await fetch('/api/new_plan', {
 					method: 'POST',
 					headers: {
@@ -300,20 +310,20 @@ document.addEventListener('DOMContentLoaded', () => {
 					setMainLabel();
 				} else {
 					hideSpinner('Viga!');
+					setMainLabelTimer();
 				}
 
 				newPlanName = '';
 			}
 		} else {
 			hideSpinner('Viga!');
+			setMainLabelTimer();
 			alert('Liiga palju plaane, palun kustutage mõned ära!');
 		}
 	});
 
 	delPlanBtn.addEventListener('click', async function () {
 		if (selectedPresetPlan !== null) {
-			// ws.send(JSON.stringify({ type: 'req_del_plan', name: selectedPresetPlan, dbid: selDBIndex }));
-
 			const response = await fetch('/api/del_plan', {
 				method: 'POST',
 				headers: {
@@ -336,10 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				presetDataProcess(processed.data);
 				setMainLabel();
 			} else {
-				hideSpinner('Tekkis viga!');
-				setTimeout(() => {
-					setMainLabel();
-				}, 5000);
+				hideSpinner('Viga!');
+				setMainLabelTimer();
 			}
 		}
 	});
@@ -447,6 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					setMainLabel();
 				} else {
 					hideSpinner('VIGA');
+					setMainLabelTimer();
 				}
 			});
 		});
@@ -487,14 +496,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	function onTimeout() {
-		console.log('Cant reach the Desktop App');
-		hideSpinner('Viga!');
-		setTimeout(() => {
-			setMainLabel();
-		}, 5000);
-	}
-
 	function setPlans() {
 		presetItemsPlan.forEach((item) => {
 			item.addEventListener('click', async function () {
@@ -515,7 +516,6 @@ document.addEventListener('DOMContentLoaded', () => {
 						}
 					}
 					selDBIndex = userDatabaseIndexes[j];
-					// ws.send(JSON.stringify({ type: 'sel_db', data: send_index }));
 					triggerDayClick('Esmaspäev');
 
 					const containerMain = document.getElementById('cntMain');

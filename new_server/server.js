@@ -123,7 +123,7 @@ app.post('/api/enable_plan', async (req, res) => {
 				console.log(`NOT ENABLED ${req.body.name} | ${school}`);
 				return;
 			} else {
-				console.error('ENABLE ERROR:', error.message);
+				console.error('ENABLE ERROR:', error.type);
 				return res.status(500).send();
 			}
 		}
@@ -205,7 +205,7 @@ app.post('/api/del_plan', async (req, res) => {
 
 				return;
 			} else {
-				console.error('DELETE PLAN ERROR:', error.message);
+				console.error('DELETE PLAN ERROR:', error.type);
 				return res.status(500).send();
 			}
 		}
@@ -344,7 +344,7 @@ app.get('/api/preset', async (req, res) => {
 				});
 			}
 		} catch (error) {
-			console.error('PRESET ERROR:', error.message);
+			console.error('PRESET ERROR:', error.type);
 			return res.status(500).send();
 		}
 	}
@@ -384,7 +384,7 @@ app.get('/api/fetch', async (req, res) => {
 			}
 			// console.log(`SUCCESFULLY FETCHED ${day} TO WEB: ${school}`);
 		} catch (error) {
-			console.error('FETCH ERROR:', error.message);
+			console.error('FETCH ERROR:', error.type);
 			return res.status(500).send();
 		}
 	}
@@ -447,7 +447,7 @@ app.post('/api/update', async (req, res) => {
 				res.json({ STATUS: 'OFFLINE' });
 				console.log(`SUCCESFULLY UPDATED ${req.body.dbid}.db BY WEB CLIENT FROM ${school}`);
 			} else {
-				console.error('UPDATE ERROR:', error.message);
+				console.error('UPDATE ERROR:', error.type);
 				return res.status(500).send();
 			}
 		}
@@ -463,6 +463,52 @@ function checkToken(token) {
 		return false;
 	}
 }
+
+app.get('/api/alarm_req', async (req, res) => {
+	const token = req.headers['authorization'];
+	const school = req.headers['school'];
+	if (!token || !checkToken(token)) {
+		return res.status(400).send();
+	} else {
+		try {
+			const selClient = findClient(school);
+
+			if (!selClient) {
+				const error = new Error();
+				error.type = 'NOCLIENT'; // Add a custom property
+				throw error;
+			}
+
+			await sendMessage(JSON.stringify({ type: 'alarm_req' }), school);
+
+			const responseFromWebSocket = await new Promise((resolve, reject) => {
+				const timeoutId = setTimeout(() => {
+					reject(new Error('WebSocket message timeout'));
+				}, 5000);
+				selClient.once('message', (data) => {
+					clearTimeout(timeoutId);
+					const msg = JSON.parse(data);
+					if (msg.type === 'alarm_started') {
+						console.log(`ALARM STARTED IN ${school}`);
+						resolve({ STATUS: 'ONLINE', alarm: msg.type });
+					} else if (msg.type === 'alarm_stopped') {
+						console.log(`ALARM STOPPED IN ${school}`);
+						resolve({ STATUS: 'ONLINE', alarm: msg.type });
+					} else {
+						reject(new Error('UNEXPECTED MESSAGE TYPE'));
+					}
+				});
+			});
+
+			if (responseFromWebSocket) {
+				res.json(responseFromWebSocket);
+			}
+		} catch (error) {
+			console.error('ALARM ERROR:', error);
+			return res.status(500).send();
+		}
+	}
+});
 
 wss.on('connection', function connection(ws, req) {
 	const clientType = ws.protocol;
@@ -487,19 +533,6 @@ wss.on('connection', function connection(ws, req) {
 		switch (msg.type) {
 			case 'refresh_ok':
 				console.log('Succesfully refreshed School PC\n-------------------------------');
-				// sendMessage('web', JSON.stringify({ type: 'refresh_ok' }), ws.schoolName);
-				break;
-
-			case 'alarm_req':
-				// sendMessage('desktop', JSON.stringify({ type: 'alarm_req' }), ws.schoolName);
-				break;
-
-			case 'alarm_started':
-				// sendMessage('web', JSON.stringify({ type: 'alarm_started' }), ws.schoolName);
-				break;
-
-			case 'alarm_stopped':
-				// sendMessage('web', JSON.stringify({ type: 'alarm_stopped' }), ws.schoolName);
 				break;
 
 			case 'db_data':
@@ -522,7 +555,7 @@ wss.on('connection', function connection(ws, req) {
 						await sendMessage(JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
 					}
 				} catch (error) {
-					console.error('db_data error:', error.message);
+					console.error('db_data error:', error);
 				}
 				break;
 
