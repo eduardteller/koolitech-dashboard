@@ -517,9 +517,9 @@ wss.on('connection', function connection(ws, req) {
 	const clientType = ws.protocol;
 	let clientName = '';
 
-	if (clientType.split('_')[0] === 'desktop') {
-		const cl = clientType.split('_')[0];
-		const sch = clientType.split('_')[1];
+	if (clientType.split('|')[0] === 'desktop') {
+		const cl = clientType.split('|')[0];
+		const sch = clientType.split('|')[1];
 		ws.clientType = cl;
 		ws.schoolName = sch;
 		clientName = ws.schoolName + '|' + ws.clientType;
