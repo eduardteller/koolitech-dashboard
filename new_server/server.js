@@ -504,7 +504,7 @@ app.get('/api/alarm_req', async (req, res) => {
 				res.json(responseFromWebSocket);
 			}
 		} catch (error) {
-			console.error('ALARM ERROR:', error);
+			console.error('ALARM ERROR:', error.message);
 			return res.status(500).send();
 		}
 	}

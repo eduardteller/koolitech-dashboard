@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>E-Kell Web</title>
+		<link rel="stylesheet" href="src/login.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h2 class="main-header">E-Kell Web</h2>
+			<h2>Palun logi sisse</h2>
+			<form>
+				<div class="input-group">
+					<label for="username">Kasutaja</label>
+					<input type="text" id="username" name="username" required />
+				</div>
+				<div class="input-group">
+					<label for="password">Salasõna</label>
+					<input type="password" id="password" name="password" required />
+				</div>
+				<div class="button-group">
+					<button type="submit" class="btn-login" id="login-btn">Logi sisse</button>
+					<button type="button" class="btn-register" id="signup-btn">Registreeru</button>
+				</div>
+			</form>
+		</div>
+		<script src="src/login.js"></script>
+	</body>
+</html>

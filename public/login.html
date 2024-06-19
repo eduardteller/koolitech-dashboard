@@ -3,27 +3,43 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>E-Kell Web</title>
-		<link rel="stylesheet" href="src/login.css" />
+		<title>🌐 E-Kell Web</title>
+		<link rel="stylesheet" href="src/main.css" />
 	</head>
-	<body>
-		<div class="container">
-			<h2 class="main-header">E-Kell Web</h2>
-			<h2>Palun logi sisse</h2>
-			<form>
-				<div class="input-group">
-					<label for="username">Kasutaja</label>
-					<input type="text" id="username" name="username" required />
-				</div>
-				<div class="input-group">
-					<label for="password">Salasõna</label>
-					<input type="password" id="password" name="password" required />
-				</div>
-				<div class="button-group">
-					<button type="submit" class="btn-login" id="login-btn">Logi sisse</button>
-					<button type="button" class="btn-register" id="signup-btn">Registreeru</button>
-				</div>
-			</form>
+	<body class="h-screen bg-slate-200">
+		<div class="container w-full mx-auto h-full flex flex-col items-center justify-center">
+			<div class="h-[364px] w-[364px] bg-white shadow-2xl rounded-lg p-4 flex flex-col items-center justify-start">
+				<h2 class="font-bold text-gray-900 text-3xl my-2">🌐 E-Kell Web</h2>
+				<h2 class="font-medium text-gray-900 text-xl my-1">Palun logi sisse 👇</h2>
+				<form class="w-full">
+					<div class="w-full mt-4 flex flex-col justify-center items-start">
+						<label class="text-lg font-medium text-gray-900" for="username">Kasutaja</label>
+						<input class="w-full h-10 rounded-md border border-slate-300" type="text" id="username" name="username" required />
+					</div>
+					<div class="w-full mt-4 flex flex-col justify-center items-start">
+						<label class="text-lg font-medium text-gray-900" for="password">Salasõna</label>
+						<input class="w-full h-10 rounded-md border border-slate-300" type="password" id="password" name="password" required />
+					</div>
+					<div class="w-full mt-6 flex flex-row justify-between items-center">
+						<button
+							class="bg-blue-500 hover:bg-blue-600 px-4 py-2 font-semibold text-white text-lg rounded-lg"
+							type="submit"
+							class="btn-login"
+							id="login-btn"
+						>
+							Logi sisse
+						</button>
+						<button
+							class="bg-white hover:bg-slate-400 border-2 border-gray-400 px-4 py-2 font-semibold text-gray-900 text-lg rounded-lg"
+							type="button"
+							class="btn-register"
+							id="signup-btn"
+						>
+							Registreeru
+						</button>
+					</div>
+				</form>
+			</div>
 		</div>
 		<script src="src/login.js"></script>
 	</body>
