@@ -4,12 +4,8 @@
 		<meta charset="utf-8" />
 		<meta http-equiv="x-ua-compatible" content="ie=edge" />
 		<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
-		<link rel="icon" href="https://y3yetqtujdtv2xbv.umso.colib_opzxqibVtXKLgnzk/k4c01zxvndfl9cru.png" />
 		<title></title>
-		<meta name="twitter:title" />
-		<meta name="description" />
-		<meta name="twitter:description" />
-		<link rel="canonical" href="https://y3yetqtujdtv2xbv.umso.co/" />
+		<link rel="stylesheet" href="make.css" />
 		<link
 			href="https://fonts.googleapis.com/css2?family=Libre Franklin:wght@800&amp;family=Noto Serif Georgian:wght@400;500;600&amp;display=block"
 			rel="stylesheet"
@@ -24,7 +20,7 @@
 							<div class="_32caed59" style="--gap: 1; font-size: 16px">
 								<a href="/"
 									><div class="_8c82ce03" style="--scale: 1">
-										<img src="lib_opzxqibVtXKLgnzk/k4c01zxvndfl9cru.png" class="_b9923f60" alt="Layer 3.png" />
+										<h1>NIGGA</h1>
 									</div>
 									<span class="_11650ac9"></span
 								></a>
@@ -37,8 +33,7 @@
 							<li><a href="/kontakt">Kontakt</a></li>
 						</ul>
 						<div class="um-nav-buttons">
-							<a href="/logi-sisse" id="q7qga8pkqo8" class="_e72e75b2 btn"><span>Loo konto</span></a
-							><a href="/logi-sisse" id="ikdl3dtciv" class="_89517563 btn"><span>Logi sisse</span></a>
+							<a href="/logi-sisse" id="ikdl3dtciv" class="_89517563 btn"><span>Web Client</span></a>
 						</div>
 					</nav>
 					<button id="5buhitzkh8-drawerTrigger" class="um-nav-drawerTrigger" title="Open Mobile Menu"></button>
@@ -408,193 +403,6 @@
 					<a class="cookieBannerButton dark" href="#" target="_blank" rel="noopener noreferrer">View Cookie Policy</a
 					><button id="cookieSettingsSave" class="cookieBannerButton primary dark">Save</button>
 				</div>
-				<script>
-					!(function () {
-						const e = 'no',
-							t = ['strictly_necessary'],
-							n = ['strictly_necessary', 'functionality', 'performance', 'targeting'],
-							o = 'cookie_consent',
-							c = 'c_id',
-							i = '0.0.1',
-							r = ['landen_user_auth', 'landen_user_auth_dev', 'u_sp', 'lang', 'c_id'];
-						function s(e) {
-							let t = document.cookie.split(';');
-							for (let n = 0; n < t.length; n++) {
-								let o = t[n].split('=');
-								if (e === o[0].trim()) return decodeURIComponent(o[1]);
-							}
-							return null;
-						}
-						function l() {
-							let e = s(o);
-							if (e) {
-								const t = JSON.parse(e);
-								return Array.isArray(t) ? t : t.split(',');
-							}
-							return t;
-						}
-						function d(e, t, n) {
-							let o = new Date();
-							o.setTime(o.getTime() + 24 * n * 60 * 60 * 1e3);
-							const c = 'expires=' + o.toUTCString();
-							document.cookie = e + '=' + t + ';' + c + ';path=/';
-						}
-						function u(e) {
-							d(o, encodeURIComponent(JSON.stringify(e.join(','))), 360);
-						}
-						function a(e) {
-							n.forEach((t) => {
-								document.querySelectorAll('[data-cs-category=' + t + ']').forEach((n) => {
-									if (n && 'SCRIPT' !== n.tagName) return;
-									let o = document.createElement('script');
-									e.includes(t) ? (o.type = 'text/javascript') : (o.type = 'text/plain'),
-										m(n.src) || (o.src = n.src),
-										m(n.innerText) || (o.innerText = n.innerText),
-										0 !== n.classList.length && (o.classList = n.classList),
-										m(n.id) || (o.id = n.id),
-										o.setAttribute('data-cs-category', t),
-										n.remove(),
-										document.head.appendChild(o);
-								});
-							});
-						}
-						function m(e) {
-							return !(void 0 !== e && e);
-						}
-						function f() {
-							!(function () {
-								let e = document.cookie.split('; ');
-								for (let t = 0; t < e.length; t++) {
-									let n = window.location.hostname.split('.');
-									for (; n.length > 0; ) {
-										let o = encodeURIComponent(e[t].split(';')[0].split('=')[0]);
-										if (r.includes(o)) return;
-										let c = o + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=' + n.join('.') + ' ;path=',
-											i = location.pathname.split('/');
-										for (document.cookie = c + '/'; i.length > 0; ) (document.cookie = c + i.join('/')), i.pop();
-										n.shift();
-									}
-								}
-							})();
-							const e = (function () {
-								let e = document.getElementsByTagName('input'),
-									n = [];
-								return (
-									Array.prototype.forEach.call(e, function (e, t) {
-										e.checked && n.push(e.value);
-									}),
-									n || t
-								);
-							})();
-							u(e), window.CloseModal('cookieSettings'), a(e), p(e);
-						}
-						function p(e) {
-							let t = (function () {
-								let e = s(c);
-								if (!e) {
-									const e = Math.random().toString(36).substr(2, 6);
-									return d(c, e, 360), e;
-								}
-								return e;
-							})();
-							const n = new XMLHttpRequest();
-							n.open('POST', window.location.origin + '/api/consent-record', !0),
-								n.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8'),
-								n.send(JSON.stringify({ consentId: t, acceptedCategories: e, cookieBannerVersion: i, policyVersion: '1.0' })),
-								(n.onload = function () {
-									this.status < 200 && this.status >= 400 && console.error('http request failed. see request for more details');
-								}),
-								(n.onerror = function () {
-									console.error('request failed');
-								});
-						}
-						function g() {
-							window.OpenModal('cookieSettings');
-							const e = l();
-							var t;
-							(t = e),
-								n.forEach((e) => {
-									let n = document.querySelectorAll('.cookieSettingsCheckboxes input[name="' + e + '"]');
-									0 !== n.length ? (n[0].checked = !!t.includes(e)) : console.error("couldn't set consent checkboxes");
-								});
-						}
-						function y() {
-							!(function () {
-								const e = document.getElementById('cookieSettingsButton'),
-									t = document.querySelector('.umsoPluginTarget');
-								e
-									? (t && (e.classList.add('cookieSettingsButtonRelative'), t.append(e)), (e.style.display = 'flex'))
-									: console.error('cookieSettingsButton not found');
-							})();
-							const e = document.getElementById('bannerWrapper');
-							e && (e.style.display = 'none'),
-								(function () {
-									const e = document.getElementById('madeWithUmso');
-									null !== e && e.classList.add('badge--center');
-								})();
-						}
-						function h() {
-							!(function () {
-								const e = document.getElementById('cookieSettingsButton');
-								e ? (e.style.display = 'none') : console.error('cookieSettingsButton not found');
-							})();
-							const e = document.getElementById('bannerWrapper');
-							e && (e.style.display = 'flex');
-						}
-						!(function () {
-							const e = document.getElementById('bannerAcceptAllButton'),
-								c = document.getElementById('bannerRejectAllButton'),
-								i = document.getElementById('bannerSettingsButton'),
-								r = document.getElementById('cookieSettingsButton'),
-								l = document.getElementById('cookieSettingsSave'),
-								d = document.querySelector('.umsoModalOverlay');
-							e
-								? e.addEventListener('click', () => {
-										u(n), y(), a(n), p(n);
-								  })
-								: console.error('btnBannerAcceptAll not found'),
-								c
-									? c.addEventListener('click', () => {
-											u(t), y(), p(t);
-									  })
-									: console.error('btnBannerRejectAll not found'),
-								i
-									? i.addEventListener('click', () => {
-											g(), y();
-									  })
-									: console.error('btnBannerSettings not found'),
-								r
-									? r.addEventListener('click', () => {
-											g();
-									  })
-									: console.error('btnCookieSettings not found'),
-								l
-									? l.addEventListener('click', () => {
-											f();
-									  })
-									: console.error('btnConsentSave not found'),
-								d
-									? d.addEventListener('click', () => {
-											s(o) ? y() : h();
-									  })
-									: console.error('bannerDisplay not found');
-						})(),
-							(function () {
-								if ('yes' === e) {
-									a(l());
-								}
-							})(),
-							n.forEach((e) => {
-								let t = document.querySelector('#checkbox_' + e + ' > .categorySummary');
-								t &&
-									t.addEventListener('click', () => {
-										let t = document.querySelectorAll('.cookieSettingsCheckboxes input[name="' + e + '"]');
-										t[0].checked = !t[0].checked;
-									});
-							}),
-							document.cookie.match(o) ? y() : h();
-					})();
-				</script>
 			</div>
 		</div>
 	</body>
