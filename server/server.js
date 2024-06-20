@@ -29,44 +29,70 @@ app.use(cors());
 
 export const clients = new Map();
 
-app.get('/', (req, res) => {
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/login', (req, res) => {
 	res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.get('/client', (req, res) => {
+	res.sendFile(path.join(__dirname, 'public', 'main.html'));
+});
 
 // Register route
 app.post('/api/register', async (req, res) => {
 	const UsersDB = new sqlite3.Database(path.join(__dirname, 'data', 'data.db'));
+	const runAsyncSys = promisify(UsersDB.run.bind(UsersDB));
+	const closeAsyncSys = promisify(UsersDB.close.bind(UsersDB));
+	try {
+		const { username, password } = req.body;
+		const hashedPassword = await bcrypt.hash(password, 10);
 
-	const { username, password } = req.body;
-	const hashedPassword = await bcrypt.hash(password, 10);
-
-	const stmt = UsersDB.prepare('INSERT INTO User (username, password) VALUES (?, ?)');
-	stmt.run([username, hashedPassword], function (err) {
-		if (err) {
-			UsersDB.close();
-			return res.status(400).send('User registration failed');
-		}
-		res.status(201).send('User registered');
-		UsersDB.close();
-	});
+		await runAsyncSys('INSERT INTO User (username, password) VALUES (?, ?)', [username, hashedPassword]);
+		await closeAsyncSys();
+		await res.json({ status: 'OK' });
+	} catch (error) {
+		await closeAsyncSys();
+		return res.status(500).send();
+	}
 });
 
 // Login route
 app.post('/api/login', async (req, res) => {
 	const UsersDB = new sqlite3.Database(path.join(__dirname, 'data', 'data.db'));
-	const { username, password } = req.body;
+	const runAsyncSys = promisify(UsersDB.get.bind(UsersDB));
+	const closeAsyncSys = promisify(UsersDB.close.bind(UsersDB));
+	try {
+		const { username, password } = req.body;
 
-	UsersDB.get('SELECT * FROM User WHERE username = ?', [username], async (err, user) => {
-		if (err || !user || !(await bcrypt.compare(password, user.password))) {
-			UsersDB.close();
-			return res.status(401).send('Invalid credentials');
+		const user = await runAsyncSys('SELECT * FROM User WHERE username = ?', [username]);
+
+		if (!user || !(await bcrypt.compare(password, user.password))) {
+			const error = new Error();
+			throw error;
 		}
-		const token = jwt.sign({ userName: user.username }, config.JWT_SECRET);
-		res.json({ token });
-		UsersDB.close();
-	});
+		const token = await jwt.sign({ userName: user.username }, config.JWT_SECRET);
+
+		await res.json({ token });
+
+		await closeAsyncSys();
+	} catch {
+		await closeAsyncSys();
+		return res.status(500).send();
+	}
+});
+
+app.get('/api/auth', async (req, res) => {
+	const token = req.headers['authorization'];
+	if (!token || !checkToken(token)) {
+		return res.status(400).send();
+	} else {
+		try {
+			res.json({ resp: 'OK' });
+		} catch (error) {
+			console.log('FAIL');
+		}
+	}
 });
 
 function findClient(school) {
@@ -120,7 +146,7 @@ app.post('/api/enable_plan', async (req, res) => {
 		} catch (error) {
 			if (error.type === 'NOCLIENT') {
 				res.json({ STATUS: 'OFFLINE' });
-				console.log(`NOT ENABLED ${req.body.name} | ${school}`);
+				console.log(`NOT ENABLED PLAN ${req.body.name} | ${school}`);
 				return;
 			} else {
 				console.error('ENABLE ERROR:', error.type);
@@ -317,6 +343,34 @@ app.post('/api/new_plan', async (req, res) => {
 	}
 });
 
+function checkDBExistance(filePath) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			await fs.access(filePath, fs.constants.F_OK);
+			resolve();
+		} catch (error) {
+			try {
+				const template = path.join(__dirname, 'data', `template`);
+				const dest = path.dirname(filePath);
+				await fs.mkdir(dest, { recursive: true });
+				for (let i = 0; i < 11; i++) {
+					if (i < 10) {
+						let file = i + 1;
+						await fs.copyFile(path.join(template, `${file}.db`), path.join(dest, `${file}.db`));
+					} else {
+						let file = 'system';
+						await fs.copyFile(path.join(template, `${file}.db`), path.join(dest, `${file}.db`));
+					}
+				}
+
+				resolve();
+			} catch (mkdirError) {
+				reject(mkdirError);
+			}
+		}
+	});
+}
+
 app.get('/api/preset', async (req, res) => {
 	const token = req.headers['authorization'];
 	if (!token || !checkToken(token)) {
@@ -324,6 +378,9 @@ app.get('/api/preset', async (req, res) => {
 	} else {
 		try {
 			const school = checkToken(token);
+
+			await checkDBExistance(path.join(__dirname, 'data', `${school}`, `central_data`, `system.db`));
+
 			const dbSystem = new sqlite3.Database(path.join(__dirname, 'data', `${school}`, `central_data`, `system.db`));
 			// const fileMain = path.join(__dirname, 'data', `${ws.schoolName}`, `central_data`, `${msg.db_index}.db`);
 
@@ -347,7 +404,7 @@ app.get('/api/preset', async (req, res) => {
 				});
 			}
 		} catch (error) {
-			console.error('PRESET ERROR:', error.type);
+			console.error('PRESET ERROR:', error);
 			return res.status(500).send();
 		}
 	}

@@ -46,8 +46,25 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	const token = localStorage.getItem('token');
-	if (token) {
-		window.location.href = 'main.html';
+	async function Auth() {
+		const token = await localStorage.getItem('token');
+		if (token) {
+			const response = await fetch('/api/auth', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: token,
+				},
+			});
+
+			if (response.ok) {
+				document.location.href = '/client';
+			} else {
+				localStorage.removeItem('token');
+				document.location.href = '/login';
+			}
+		}
 	}
+
+	Auth();
 });

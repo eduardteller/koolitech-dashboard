@@ -46,9 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const processed = await response.json();
 			schName = processed.school;
 			setDayButtons();
-			presetDataProcess(processed.data);
-
-			setMainLabel();
+			await presetDataProcess(processed.data);
 		} else {
 			hideSpinner('VIGA');
 			setMainLabelTimer();
@@ -56,80 +54,86 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function presetDataProcess(data) {
-		removeAllPresets();
-		userDatabaseIndexes = [];
-		userDatabaseNames = [];
-		data.forEach((header) => {
-			Object.entries(header).forEach(([key, value]) => {
-				const newItem = document.createElement('li');
-				if (key === 'Name') {
-					newItem.classList.add('preset-item-plan', 'list-plan-tail', 'regular');
-					newItem.textContent = value;
-					presetListPlan.appendChild(newItem);
-					userDatabaseNames.push(value);
-				} else if (key === 'DbId') {
-					userDatabaseIndexes.push(value);
-				}
-				if (key === 'Current' && value === 1) {
-					const lastItem = presetListPlan.lastElementChild;
-					if (lastItem) {
-						lastItem.classList.remove('regular');
-						lastItem.classList.add('active');
-						activePresetPlan = lastItem.textContent;
+		return new Promise((resolve, reject) => {
+			removeAllPresets();
+			userDatabaseIndexes = [];
+			userDatabaseNames = [];
+			data.forEach((header) => {
+				Object.entries(header).forEach(([key, value]) => {
+					const newItem = document.createElement('li');
+					if (key === 'Name') {
+						newItem.classList.add('preset-item-plan', 'list-plan-tail', 'regular');
+						newItem.textContent = value;
+						presetListPlan.appendChild(newItem);
+						userDatabaseNames.push(value);
+					} else if (key === 'DbId') {
+						userDatabaseIndexes.push(value);
 					}
-				}
-			});
-		});
-		presetItemsPlan = document.querySelectorAll('.preset-item-plan');
-		setPlans();
-		triggerPlanClick();
-		setMainLabel();
-	}
-
-	function tableDataProcess(data) {
-		removeTableData();
-		const initial = table.querySelector('thead').insertRow(-1);
-		let i = 0;
-		for (i = 0; i < 4; i++) {
-			const cell = document.createElement('th');
-			if (i === 0) {
-				cell.classList.add('list-table-h-tail');
-				cell.textContent = 'Nimi';
-				cell.contentEditable = false;
-			} else if (i === 1) {
-				cell.classList.add('list-table-h-tail');
-				cell.textContent = 'Aeg';
-				cell.contentEditable = false;
-			} else if (i === 2) {
-				cell.classList.add('list-table-h-tail');
-				cell.textContent = 'Kirjeldus';
-				cell.contentEditable = false;
-			} else if (i === 3) {
-				cell.classList.add('list-table-h-tail');
-				cell.textContent = 'Helifail';
-				cell.contentEditable = false;
-			}
-			initial.appendChild(cell);
-		}
-		if (data[0] !== undefined && data[0] !== null && data[0] !== '') {
-			data.forEach((rowData) => {
-				const newRow = table.querySelector('tbody').insertRow(-1);
-
-				Object.entries(rowData).forEach(([key, value]) => {
-					if (key === 'Helifail') {
-						const cell = newRow.insertCell(-1);
-						cell.contentEditable = false;
-						cell.textContent = value;
-						cell.classList.add('list-table-tail');
-					} else if (key !== 'Id') {
-						const cell = newRow.insertCell(-1);
-						cell.contentEditable = true;
-						cell.textContent = value;
-						cell.classList.add('list-table-tail');
+					if (key === 'Current' && value === 1) {
+						const lastItem = presetListPlan.lastElementChild;
+						if (lastItem) {
+							lastItem.classList.remove('regular');
+							lastItem.classList.add('active');
+							activePresetPlan = lastItem.textContent;
+						}
 					}
 				});
 			});
-		}
+			presetItemsPlan = document.querySelectorAll('.preset-item-plan');
+			setPlans();
+			triggerPlanClick();
+			// setMainLabel();
+			resolve();
+		});
+	}
+
+	function tableDataProcess(data) {
+		return new Promise((resolve, reject) => {
+			removeTableData();
+			const initial = table.querySelector('thead').insertRow(-1);
+			let i = 0;
+			for (i = 0; i < 4; i++) {
+				const cell = document.createElement('th');
+				if (i === 0) {
+					cell.classList.add('list-table-h-tail');
+					cell.textContent = 'Nimi';
+					cell.contentEditable = false;
+				} else if (i === 1) {
+					cell.classList.add('list-table-h-tail');
+					cell.textContent = 'Aeg';
+					cell.contentEditable = false;
+				} else if (i === 2) {
+					cell.classList.add('list-table-h-tail');
+					cell.textContent = 'Kirjeldus';
+					cell.contentEditable = false;
+				} else if (i === 3) {
+					cell.classList.add('list-table-h-tail');
+					cell.textContent = 'Helifail';
+					cell.contentEditable = false;
+				}
+				initial.appendChild(cell);
+			}
+			if (data[0] !== undefined && data[0] !== null && data[0] !== '') {
+				data.forEach((rowData) => {
+					const newRow = table.querySelector('tbody').insertRow(-1);
+
+					Object.entries(rowData).forEach(([key, value]) => {
+						if (key === 'Helifail') {
+							const cell = newRow.insertCell(-1);
+							cell.contentEditable = false;
+							cell.textContent = value;
+							cell.classList.add('list-table-tail');
+						} else if (key !== 'Id') {
+							const cell = newRow.insertCell(-1);
+							cell.contentEditable = true;
+							cell.textContent = value;
+							cell.classList.add('list-table-tail');
+						}
+					});
+				});
+			}
+			resolve();
+		});
 	}
 
 	addRowBtn.addEventListener('click', function () {
@@ -236,26 +240,23 @@ document.addEventListener('DOMContentLoaded', () => {
 				}
 				statusSet(true);
 				setMainLabel();
-			} else {
-				statusSet(false);
-				hideSpinner('Viga!');
-				setMainLabelTimer();
 			}
 		} else {
-			hideSpinner('Viga!');
+			statusSet(false);
+			hideSpinner('Ühendus kooli arvutiga puudub!');
 			setMainLabelTimer();
 		}
 	});
 
-	async function setMainLabelTimer() {
+	function setMainLabelTimer() {
 		setTimeout(() => {
 			setMainLabel();
 		}, 5000);
 	}
 
 	enableBtn.addEventListener('click', async function () {
-		showSpinner('Aktiveerin');
 		if (selectedPresetPlan != null) {
+			showSpinner('Aktiveerin...');
 			const response = await fetch('/api/enable_plan', {
 				method: 'POST',
 				headers: {
@@ -279,30 +280,29 @@ document.addEventListener('DOMContentLoaded', () => {
 					setMainLabelTimer();
 				}
 			} else {
-				hideSpinner('Viga!');
+				statusSet(false);
+				hideSpinner('Ühendus kooli arvutiga puudub!');
 				setMainLabelTimer();
 			}
 		}
 	});
 
 	logOutBtn.onclick = function () {
-		// Check if the token exists before deleting
 		if (localStorage.getItem('token')) {
-			// Remove the token from local storage
 			localStorage.removeItem('token');
 			console.log('Token deleted successfully');
-			window.location.href = 'login.html';
+			document.location.href = '/login';
 		} else {
 			console.log('No token found in local storage');
-			window.location.href = 'login.html';
+			document.location.href = '/login';
 		}
 	};
 
 	newPlanBtn.addEventListener('click', async function () {
-		showSpinner('Uuendan...');
 		if (presetListPlan.children.length < 10) {
 			await pullupModal();
 			if (newPlanName) {
+				showSpinner('Uuendan...');
 				const response = await fetch('/api/new_plan', {
 					method: 'POST',
 					headers: {
@@ -320,24 +320,23 @@ document.addEventListener('DOMContentLoaded', () => {
 					} else {
 						statusSet(false);
 					}
-					presetDataProcess(processed.data);
-					setMainLabel();
+					await presetDataProcess(processed.data);
 				} else {
+					statusSet(false);
 					hideSpinner('Viga!');
 					setMainLabelTimer();
 				}
-
 				newPlanName = '';
 			}
 		} else {
-			hideSpinner('Viga!');
-			setMainLabelTimer();
+			setMainLabel();
 			alert('Liiga palju plaane, palun kustutage mõned ära!');
 		}
 	});
 
 	delPlanBtn.addEventListener('click', async function () {
 		if (selectedPresetPlan !== null) {
+			showSpinner('Uuendan...');
 			const response = await fetch('/api/del_plan', {
 				method: 'POST',
 				headers: {
@@ -357,9 +356,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				} else {
 					statusSet(false);
 				}
-				presetDataProcess(processed.data);
-				setMainLabel();
+				await presetDataProcess(processed.data);
 			} else {
+				statusSet(false);
 				hideSpinner('Viga!');
 				setMainLabelTimer();
 			}
@@ -389,10 +388,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			setMainLabel();
 		} else {
-			hideSpinner('Tekkis viga!');
-			setTimeout(() => {
-				setMainLabel();
-			}, 5000);
+			statusSet(false);
+			hideSpinner('Viga!');
+			setMainLabelTimer();
 		}
 	}
 
@@ -416,9 +414,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	async function setDayButtons() {
+	function setDayButtons() {
 		presetItemsDays.forEach((item) => {
 			item.addEventListener('click', async function () {
+				// showSpinner('Tootlen...');
 				presetItemsDays.forEach((i) => i.classList.remove('selected'));
 				item.classList.add('selected');
 				const selectedPresetDay = item.textContent;
@@ -465,8 +464,8 @@ document.addEventListener('DOMContentLoaded', () => {
 					} else {
 						statusSet(false);
 					}
-					tableDataProcess(processed.data);
-					setMainLabel();
+					await tableDataProcess(processed.data);
+					// setMainLabel();
 				} else {
 					hideSpinner('VIGA');
 					setMainLabelTimer();
@@ -485,12 +484,17 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function triggerPlanClick() {
+		let check = false;
 		for (let i = 0; i < presetItemsPlan.length; i++) {
 			const item = presetItemsPlan[i];
 			if (item.textContent === activePresetPlan) {
 				item.dispatchEvent(new Event('click'));
+				check = true;
 				return;
 			}
+		}
+		if (!check && presetItemsPlan) {
+			presetItemsPlan[0].dispatchEvent(new Event('click'));
 		}
 	}
 
@@ -512,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function setPlans() {
 		presetItemsPlan.forEach((item) => {
-			item.addEventListener('click', async function () {
+			item.addEventListener('click', function () {
 				presetItemsPlan.forEach((i) => {
 					i.classList.remove('selected');
 				});
@@ -531,10 +535,6 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 					selDBIndex = userDatabaseIndexes[j];
 					triggerDayClick('Esmaspäev');
-
-					const containerMain = document.getElementById('cntMain');
-					containerMain.classList.remove('hidden');
-
 					setMainLabel();
 				}
 			});
@@ -623,6 +623,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (token) {
 		Connect(token);
 	} else {
-		console.log('No existing token');
+		document.location.href = '/login';
 	}
 });
