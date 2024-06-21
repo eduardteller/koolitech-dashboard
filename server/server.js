@@ -614,9 +614,9 @@ wss.on('connection', function connection(ws, req) {
 
 					await cmpDBModDate(fileMain, filePath, ws.schoolName);
 
-					if (path.basename(filePath) === 'system.db') {
-						await sendMessage(JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
-					}
+					// if (path.basename(filePath) === 'system.db') {
+					// 	await sendMessage(JSON.stringify({ type: 'refresh_req' }), ws.schoolName);
+					// }
 				} catch (error) {
 					console.error('db_data error:', error);
 				}
