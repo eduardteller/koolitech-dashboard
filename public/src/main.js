@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const cancelButton = document.getElementById('cancelButton');
 	const elementNameInput = document.getElementById('elementName');
 	const statusHead = document.getElementById('status-head');
+	const modeBtn = document.getElementById('clr-btn');
 
 	let newPlanName = '';
 	let selectedPresetPlan = null;
@@ -399,10 +400,16 @@ document.addEventListener('DOMContentLoaded', () => {
 			statusHead.textContent = 'Ühendus kooli arvutiga: Online 🟢';
 			statusHead.classList.add('bg-green-400');
 			statusHead.classList.remove('bg-red-400');
+
+			const nblab = document.getElementById('nb-label');
+			nblab.classList.add('hidden');
 		} else {
 			statusHead.textContent = 'Ühendus kooli arvutiga: Offline 🔴';
 			statusHead.classList.remove('bg-green-400');
 			statusHead.classList.add('bg-red-400');
+
+			const nblab = document.getElementById('nb-label');
+			nblab.classList.remove('hidden');
 		}
 	}
 
@@ -625,4 +632,21 @@ document.addEventListener('DOMContentLoaded', () => {
 	} else {
 		document.location.href = '/login';
 	}
+
+	// On page load or when changing themes, best to add inline in `head` to avoid FOUC
+	if (localStorage.theme === 'dark') {
+		document.documentElement.classList.add('dark');
+	} else {
+		document.documentElement.classList.remove('dark');
+	}
+
+	modeBtn.onclick = function () {
+		if (localStorage.theme === 'dark') {
+			document.documentElement.classList.remove('dark');
+			localStorage.theme = 'light';
+		} else {
+			document.documentElement.classList.add('dark');
+			localStorage.theme = 'dark';
+		}
+	};
 });

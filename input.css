@@ -8,27 +8,27 @@
 	}
 
 	.list-table-h-tail {
-		@apply p-4 text-left text-sm font-semibold text-gray-900 uppercase border;
+		@apply p-4 text-left text-sm font-semibold text-gray-900 dark:text-white uppercase border dark:border-zinc-500;
 	}
 
 	.list-table-tail {
-		@apply p-4 whitespace-nowrap border-y border-x text-gray-900;
+		@apply p-4 whitespace-nowrap border-y border-x text-gray-900 dark:text-white dark:border-zinc-500;
 	}
 
 	.active.selected {
-		@apply bg-blue-500 hover:bg-blue-600;
-	}
-
-	.regular.selected {
-		@apply bg-slate-400 hover:bg-slate-500;
+		@apply bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500;
 	}
 
 	.active {
-		@apply bg-blue-300 hover:bg-blue-400;
+		@apply bg-blue-300 hover:bg-blue-400 dark:bg-blue-400 dark:hover:bg-blue-300;
+	}
+
+	.regular.selected {
+		@apply bg-zinc-400 hover:bg-zinc-500  dark:bg-zinc-300 dark:hover:bg-zinc-200;
 	}
 
 	.regular {
-		@apply bg-slate-200 hover:bg-slate-300;
+		@apply bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-500 dark:hover:bg-zinc-400;
 	}
 	.errorClass {
 		@apply bg-red-400;
