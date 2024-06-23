@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const user = document.getElementById('username');
 	const pass = document.getElementById('password');
 
+	const modeBtn = document.getElementById('clr-btn');
+
 	singup.addEventListener('click', async (e) => {
 		e.preventDefault();
 		const username = user.value;
@@ -65,6 +67,27 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 	}
+
+	if (localStorage.theme === 'dark') {
+		document.documentElement.classList.add('dark');
+	} else {
+		document.documentElement.classList.remove('dark');
+	}
+
+	modeBtn.onclick = function () {
+		if (localStorage.theme === 'dark') {
+			document.documentElement.classList.remove('dark');
+			localStorage.theme = 'light';
+		} else {
+			document.documentElement.classList.add('dark');
+			localStorage.theme = 'dark';
+		}
+	};
+
+	const logo = document.getElementById('logo-btn');
+	logo.onclick = function () {
+		document.location.href = '/';
+	};
 
 	Auth();
 });

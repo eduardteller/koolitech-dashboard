@@ -649,4 +649,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			localStorage.theme = 'dark';
 		}
 	};
+
+	const logo = document.getElementById('logo-btn');
+	logo.onclick = function () {
+		document.location.href = '/';
+	};
 });
