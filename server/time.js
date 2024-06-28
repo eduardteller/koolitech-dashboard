@@ -88,7 +88,7 @@ cron.schedule('* * * * *', async () => {
 		);
 		await closeAsyncTime();
 
-		console.log('Updated timer values for all users.');
+		// console.log('Updated timer values for all users.');
 	} catch (err) {
 		console.error('Error updating timers:', err);
 	}

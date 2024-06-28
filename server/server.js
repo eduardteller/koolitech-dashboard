@@ -8,9 +8,11 @@ import http from 'http';
 import config from '../private/config.js';
 import cors from 'cors';
 import bcrypt from 'bcrypt';
+import cron from 'node-cron';
 import { fileURLToPath } from 'url';
 import { promisify } from 'util';
 import { sendMessage, cmpDBModDate, sendDBFile } from './func.js';
+import e from 'express';
 
 // const privateKey = await fs.readFile('./private/key.pem', 'utf8');
 // const certificate = await fs.readFile('./private/cert.pem', 'utf8');
@@ -64,11 +66,12 @@ app.post('/api/register', async (req, res) => {
 		});
 
 		if (!response2.ok) {
-			throw new Error();
+			throw new Error('response shit');
 		}
 
 		res.json({ status: 'OK' });
 	} catch (error) {
+		console.error(error);
 		await closeAsyncSys();
 		return res.status(500).send();
 	}
@@ -101,6 +104,44 @@ app.post('/api/login', async (req, res) => {
 	} catch {
 		await closeAsyncSys();
 		return res.status(500).send();
+	}
+});
+
+cron.schedule('*/10 * * * *', async () => {
+	if (clients) {
+		try {
+			for (const [client, schoolName] of clients.entries()) {
+				const response = await fetch('http://localhost:5091/get_timer', {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						user: schoolName,
+					},
+				});
+
+				if (response.ok) {
+					const processed = await response.json();
+					if (processed.time > 60000) {
+						console.log('ok');
+						sendMessage(
+							JSON.stringify({ type: 'timer_left', status: false }),
+							schoolName
+						);
+					} else {
+						console.log('no');
+
+						sendMessage(
+							JSON.stringify({ type: 'timer_left', status: true }),
+							schoolName
+						);
+					}
+				} else {
+					throw new Error('somenths wrong');
+				}
+			}
+		} catch (err) {
+			console.error('Error sending timer info:', err);
+		}
 	}
 });
 
