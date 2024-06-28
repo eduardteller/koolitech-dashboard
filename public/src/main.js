@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const logOutBtn = document.getElementById('log-out');
 
 	const alarmBtn = document.getElementById('haire-btn');
+	const alarmBtnMain = document.getElementById('alarmBtn');
 
 	const presetListPlan = document.getElementById('preset-list-plan');
 	let presetItemsPlan = document.querySelectorAll('.preset-item-plan');
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const H1Text = document.getElementById('heada');
 
 	const overlay = document.getElementById('overlay');
+	const overlayAlarm = document.getElementById('overlay-alarm');
 	const saveButton = document.getElementById('saveButton');
 	const cancelButton = document.getElementById('cancelButton');
 	const elementNameInput = document.getElementById('elementName');
@@ -63,7 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
 				Object.entries(header).forEach(([key, value]) => {
 					const newItem = document.createElement('li');
 					if (key === 'Name') {
-						newItem.classList.add('preset-item-plan', 'list-plan-tail', 'regular');
+						newItem.classList.add(
+							'preset-item-plan',
+							'list-plan-tail',
+							'regular'
+						);
 						newItem.textContent = value;
 						presetListPlan.appendChild(newItem);
 						userDatabaseNames.push(value);
@@ -219,7 +225,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	alarmBtn.addEventListener('click', async function () {
+	alarmBtn.addEventListener('click', function () {
+		overlayAlarm.classList.remove('hidden');
+		const bodymain = document.getElementById('bbody');
+		bodymain.classList.add('overflow-hidden');
+	});
+
+	alarmBtnMain.addEventListener('click', async function () {
 		showSpinner('Saadan Haire Request...');
 
 		const response = await fetch('/api/alarm_req', {
@@ -235,9 +247,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			const processed = await response.json();
 			if (processed.STATUS === 'ONLINE') {
 				if (processed.alarm === 'alarm_stopped') {
-					alarmBtn.textContent = 'Haire Start 🚨';
+					alarmBtnMain.textContent = 'Käivita kooli häire 🚨';
+					alarmBtnMain.classList.remove('animate-pulse');
 				} else if (processed.alarm === 'alarm_started') {
-					alarmBtn.textContent = 'Haire Stop 🚨';
+					alarmBtnMain.textContent = 'Peata kooli häire... 🚨';
+					alarmBtnMain.classList.add('animate-pulse');
 				}
 				statusSet(true);
 				setMainLabel();
@@ -482,7 +496,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function triggerDayClick(presetText) {
-		const item = Array.from(presetItemsDays).find((i) => i.textContent === presetText);
+		const item = Array.from(presetItemsDays).find(
+			(i) => i.textContent === presetText
+		);
 		if (item) {
 			item.dispatchEvent(new Event('click'));
 		} else {
@@ -626,12 +642,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		overlay.classList.add('hidden');
 	}
 
-	const token = localStorage.getItem('token');
-	if (token) {
-		Connect(token);
-	} else {
-		document.location.href = '/login';
-	}
+	// const token = localStorage.getItem('token');
+	// if (token) {
+	// 	Connect(token);
+	// } else {
+	// 	document.location.href = '/login';
+	// }
 
 	// On page load or when changing themes, best to add inline in `head` to avoid FOUC
 	if (localStorage.theme === 'dark') {
