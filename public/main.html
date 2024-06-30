@@ -272,7 +272,7 @@
 			class="fixed inset-0 bg-gray-400 bg-opacity-75 flex items-center justify-center hidden"
 			id="overlay"
 		>
-			<div class="bg-white p-8 rounded-lg shadow-lg hidden">
+			<div class="bg-white p-8 rounded-lg shadow-lg">
 				<h2 class="mb-4 text-xl font-semibold">Uue Plaani Nimi</h2>
 				<input
 					type="text"
@@ -302,8 +302,14 @@
 			id="overlay-alarm"
 		>
 			<div
-				class="bg-white p-8 rounded-lg shadow-lg flex flex-col justify-start items-center w-[40%]"
+				class="relative bg-white p-8 rounded-lg shadow-lg flex flex-col justify-start items-center w-[40%]"
 			>
+				<button
+					id="close-overlay-alarm"
+					class="absolute top-2 right-2 bg-gray-300 rounded-lg text-center px-2 text-xl text-gray-700 hover:bg-gray-400"
+				>
+					&times;
+				</button>
 				<h2 class="mb-4 text-4xl font-libre">Tähelepanu!</h2>
 				<p class="font-normal text-xl text-center">
 					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur

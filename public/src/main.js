@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const overlay = document.getElementById('overlay');
 	const overlayAlarm = document.getElementById('overlay-alarm');
+	const overlayAlarmCloseBtn = document.getElementById('close-overlay-alarm');
 	const saveButton = document.getElementById('saveButton');
 	const cancelButton = document.getElementById('cancelButton');
 	const elementNameInput = document.getElementById('elementName');
@@ -229,6 +230,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		overlayAlarm.classList.remove('hidden');
 		const bodymain = document.getElementById('bbody');
 		bodymain.classList.add('overflow-hidden');
+		overlayAlarmCloseBtn.onclick = () => {
+			overlayAlarm.classList.add('hidden');
+			bodymain.classList.remove('overflow-hidden');
+		};
 	});
 
 	alarmBtnMain.addEventListener('click', async function () {
@@ -441,7 +446,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				// showSpinner('Tootlen...');
 				presetItemsDays.forEach((i) => i.classList.remove('selected'));
 				item.classList.add('selected');
-				const selectedPresetDay = item.textContent;
+				const selectedPresetDay = item.textContent.trim();
+				console.log(selectedPresetDay);
 
 				switch (selectedPresetDay) {
 					case 'Esmaspäev':
@@ -497,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function triggerDayClick(presetText) {
 		const item = Array.from(presetItemsDays).find(
-			(i) => i.textContent === presetText
+			(i) => i.textContent.trim() === presetText
 		);
 		if (item) {
 			item.dispatchEvent(new Event('click'));
@@ -642,12 +648,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		overlay.classList.add('hidden');
 	}
 
-	// const token = localStorage.getItem('token');
-	// if (token) {
-	// 	Connect(token);
-	// } else {
-	// 	document.location.href = '/login';
-	// }
+	const token = localStorage.getItem('token');
+	if (token) {
+		Connect(token);
+	} else {
+		document.location.href = '/login';
+	}
 
 	// On page load or when changing themes, best to add inline in `head` to avoid FOUC
 	if (localStorage.theme === 'dark') {

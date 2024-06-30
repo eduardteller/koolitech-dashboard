@@ -564,7 +564,7 @@ app.get('/api/fetch', async (req, res) => {
 			}
 			// console.log(`SUCCESFULLY FETCHED ${day} TO WEB: ${school}`);
 		} catch (error) {
-			console.error('FETCH ERROR:', error.type);
+			console.error('FETCH ERROR:', error);
 			return res.status(500).send();
 		}
 	}
@@ -654,7 +654,7 @@ app.post('/api/update', async (req, res) => {
 					`SUCCESFULLY UPDATED ${req.body.dbid}.db BY WEB CLIENT FROM ${school}`
 				);
 			} else {
-				console.error('UPDATE ERROR:', error.type);
+				console.error('UPDATE ERROR:', error);
 				return res.status(500).send();
 			}
 		}
