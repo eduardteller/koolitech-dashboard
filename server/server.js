@@ -12,7 +12,6 @@ import cron from 'node-cron';
 import { fileURLToPath } from 'url';
 import { promisify } from 'util';
 import { sendMessage, cmpDBModDate, sendDBFile } from './func.js';
-import e from 'express';
 
 // const privateKey = await fs.readFile('./private/key.pem', 'utf8');
 // const certificate = await fs.readFile('./private/cert.pem', 'utf8');
