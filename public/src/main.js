@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				presetItemsDays.forEach((i) => i.classList.remove('selected'));
 				item.classList.add('selected');
 				const selectedPresetDay = item.textContent.trim();
-				console.log(selectedPresetDay);
+				// console.log(selectedPresetDay);
 
 				switch (selectedPresetDay) {
 					case 'Esmaspäev':
@@ -616,6 +616,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	function pullupModal() {
 		return new Promise((resolve) => {
 			overlay.classList.remove('hidden');
+			const bodymain = document.getElementById('bbody');
+			bodymain.classList.add('overflow-hidden');
 			elementNameInput.value = ''; // Clear the input field
 			saveButton.addEventListener('click', function () {
 				const elementName = elementNameInput.value.trim().toUpperCase();
@@ -646,6 +648,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function closeModal() {
 		overlay.classList.add('hidden');
+		const bodymain = document.getElementById('bbody');
+
+		bodymain.classList.remove('overflow-hidden');
 	}
 
 	const token = localStorage.getItem('token');
