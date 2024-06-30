@@ -106,7 +106,7 @@ app.post('/api/login', async (req, res) => {
 	}
 });
 
-cron.schedule('*/10 * * * *', async () => {
+cron.schedule('* * * * *', async () => {
 	if (clients) {
 		try {
 			for (const [client, schoolName] of clients.entries()) {
