@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (response.ok) {
 			const data = await response.json();
 			localStorage.setItem('token', data.token);
-			window.location.href = 'main.html';
+			document.location.href = '/client';
 		} else {
 			alert('Invalid credentials');
 		}
