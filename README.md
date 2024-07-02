@@ -1,7 +1,9 @@
-E-Kell Web 🌐
+# KooliTech Main Repo
 
-Copyrighted!
+**Made and sustained by Lucky Word**
 
-In the making of E-Kell Web were used copyrighted materials, please don't sue us!
+- `server.js`
+- `time.js`
+- `tool.js`
 
-BY: Lucky Word
+**In the making of E-Kell Web were used copyrighted materials, please don't sue us!**
