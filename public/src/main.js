@@ -296,12 +296,12 @@ document.addEventListener('DOMContentLoaded', () => {
 					}, 100);
 				} else {
 					statusSet(false);
-					hideSpinner('Viga!');
+					hideSpinner('Ühendus kooli arvutiga puudub!');
 					setMainLabelTimer();
 				}
 			} else {
 				statusSet(false);
-				hideSpinner('Ühendus kooli arvutiga puudub!');
+				hideSpinner('Viga!');
 				setMainLabelTimer();
 			}
 		}
