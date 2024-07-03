@@ -11,6 +11,9 @@ module.exports = {
 				newblue: '#0866ff',
 				newred: '#ff0000',
 			},
+			screens: {
+				xsm: '384px',
+			},
 		},
 	},
 	darkMode: 'selector',

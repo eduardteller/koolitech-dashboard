@@ -28,7 +28,7 @@
 		<div id="cntMain" class="container w-full mx-auto">
 			<div class="w-full h-full mt-8 flex flex-col justify-start items-center">
 				<div
-					class="bg-white dark:bg-zinc-800 h-full mb-2 rounded-lg shadow-lg p-4 flex flex-row justify-center items-center"
+					class="bg-white dark:bg-zinc-800 h-full mb-2 rounded-lg shadow-lg p-4 flex flex-row justify-center items-center w-[90%] max-w-96"
 				>
 					<div class="h-full flex flex-col justify-center items-center">
 						<h1
@@ -41,7 +41,7 @@
 				</div>
 				<div
 					id="nb-label"
-					class="bg-orange-300 h-8 mb-8 rounded-lg shadow-lg p-4 flex flex-row justify-center items-center"
+					class="bg-orange-300 h-12 sm:h-8 mb-8 rounded-lg shadow-lg p-4 flex flex-row justify-center items-center w-[90%] max-w-96"
 				>
 					<h1 class="font-normal text-md text-gray-900">
 						⚠️ NB! Koik muudatused salvestuvad ainult pilve!
@@ -96,7 +96,7 @@
 						</div>
 					</div>
 					<div
-						class="order-3 lg:order-2 bg-white dark:bg-zinc-800 h-full w-full lg:w-1/2 min-w-96 rounded-lg shadow-lg p-4 flex flex-col items-center justify-center"
+						class="order-3 lg:order-2 bg-white dark:bg-zinc-800 h-full w-[90%] lg:w-1/2 rounded-lg shadow-lg p-4 flex flex-col items-center justify-center"
 					>
 						<h1
 							class="text-3xl font-semibold mb-4 h-8 text-gray-900 dark:text-white"
@@ -108,64 +108,15 @@
 							class="w-full max-w-2xl h-96 overflow-y-auto mb-4 border dark:border-zinc-500"
 						>
 							<table class="w-full" id="data-table">
-								<thead class="bg-gray-50 dark:bg-zinc-700">
+								<thead class="bg-gray-50 dark:bg-zinc-700 w-full">
 									<tr>
-										<th class="list-table-h-tail min-w-24 w-32">Nimi</th>
-										<th class="list-table-h-tail min-w-24 w-32">Aeg</th>
-										<th class="list-table-h-tail min-w-24 w-32">Kirjeldus</th>
-										<th class="list-table-h-tail min-w-24 w-32">Helifail</th>
+										<th class="list-table-h-tail w-1/4">Nimi</th>
+										<th class="list-table-h-tail w-1/4">Aeg</th>
+										<th class="list-table-h-tail w-1/4">Kirjeldus</th>
+										<th class="list-table-h-tail w-1/4">Helifail</th>
 									</tr>
 								</thead>
-								<tbody class="bg-white dark:bg-zinc-600">
-									<!-- <tr>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-									</tr>
-									<tr>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-									</tr>
-									<tr>
-										<td class="list-table-tail errorClass">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-									</tr>
-									<tr>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-									</tr>
-									<tr>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-									</tr>
-									<tr>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-									</tr>
-									<tr>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-									</tr>
-									<tr>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-										<td class="list-table-tail">TESTING</td>
-									</tr> -->
-								</tbody>
+								<tbody class="bg-white dark:bg-zinc-600"></tbody>
 							</table>
 						</div>
 						<div
@@ -193,7 +144,7 @@
 					</div>
 
 					<div
-						class="order-2 lg:order-3 h-full w-48 bg-white dark:bg-zinc-800 rounded-lg shadow-lg lg:mb-0 ml-4 mb-4 flex flex-col justify-start items-center"
+						class="order-2 lg:order-3 h-full w-48 bg-white dark:bg-zinc-800 rounded-lg shadow-lg lg:mb-0 lg:ml-4 mb-4 flex flex-col justify-start items-center"
 					>
 						<h1
 							class="font-semibold text-xl text-gray-900 mt-4 h-8 text-center dark:text-white"
@@ -243,7 +194,7 @@
 					</div>
 				</div>
 				<div
-					class="bg-white dark:bg-zinc-800 w-full lg:w-1/2 min-w-80 my-8 rounded-lg shadow-lg p-4"
+					class="bg-white dark:bg-zinc-800 lg:w-1/2 w-[90%] my-8 rounded-lg shadow-lg p-4"
 				>
 					<div class="flex flex-col justify-start items-center w-full h-full">
 						<h1
@@ -269,27 +220,29 @@
 		</div>
 
 		<div
-			class="fixed inset-0 bg-gray-400 bg-opacity-75 flex items-center justify-center hidden"
+			class="fixed inset-0 bg-zinc-600 bg-opacity-75 flex items-center justify-center hidden"
 			id="overlay"
 		>
-			<div class="bg-white p-8 rounded-lg shadow-lg">
-				<h2 class="mb-4 text-xl font-semibold">Uue Plaani Nimi</h2>
+			<div class="bg-white dark:bg-zinc-800 p-8 rounded-lg shadow-lg">
+				<h2 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+					Uue Plaani Nimi
+				</h2>
 				<input
 					type="text"
 					id="elementName"
 					placeholder="Sisesta uus nimi..."
-					class="border border-gray-300 p-2 rounded w-full mb-4"
+					class="border border-gray-300 dark:border-zinc-500 bg-white dark:bg-zinc-700 p-2 rounded w-full mb-4"
 				/>
 				<div class="flex justify-end space-x-4">
 					<button
 						id="saveButton"
-						class="bg-blue-500 text-white px-4 py-2 rounded"
+						class="bg-blue-500 text-white px-4 py-2 rounded font-semibold"
 					>
 						Ok
 					</button>
 					<button
 						id="cancelButton"
-						class="bg-gray-500 text-white px-4 py-2 rounded"
+						class="bg-zinc-500 text-white px-4 py-2 rounded font-semibold"
 					>
 						Tagasi
 					</button>
@@ -302,16 +255,20 @@
 			id="overlay-alarm"
 		>
 			<div
-				class="relative bg-white p-8 rounded-lg shadow-lg flex flex-col justify-start items-center w-[40%]"
+				class="relative bg-white dark:bg-zinc-800 p-8 rounded-lg shadow-lg flex flex-col justify-start items-center w-[80%] lg:w-[40%]"
 			>
 				<button
 					id="close-overlay-alarm"
-					class="absolute top-2 right-2 bg-gray-300 rounded-lg text-center px-2 text-xl text-gray-700 hover:bg-gray-400"
+					class="absolute top-2 right-2 bg-zinc-300 dark:bg-zinc-600 rounded-lg text-center px-2 text-xl text-gray-900 dark:text-white dark:hover:bg-zinc-500 hover:bg-zinc-400"
 				>
 					&times;
 				</button>
-				<h2 class="mb-4 text-4xl font-libre">Tähelepanu!</h2>
-				<p class="font-normal text-xl text-center">
+				<h2 class="mb-4 text-4xl font-libre text-gray-900 dark:text-white">
+					Tähelepanu!
+				</h2>
+				<p
+					class="font-normal text-xl text-center text-gray-900 dark:text-white"
+				>
 					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur
 					modi quam eum tempore, minima nam. Ipsam unde dolorum temporibus,
 					sequi animi non saepe impedit placeat architecto, facere error in
