@@ -3,7 +3,13 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Fitlap Copy</title>
+		<meta
+			name="description"
+			content="kooli tehnika lahendused, kooli tarkvara lahendused"
+		/>
+		<link rel="icon" type="image/x-icon" href="src/img/K.png" />
+
+		<title>KooliTech</title>
 		<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 		<link
 			rel="preload"
@@ -25,44 +31,65 @@
 		></div> -->
 
 		<header
-			class="bg-white shadow-md sticky top-0 z-50 font-nunito"
+			class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 sticky top-0 z-50 font-nunito transition duration-100"
 			id="header"
 		>
 			<div
 				class="max-w-screen-xl mx-auto py-4 px-6 sm:px-8 lg:px-10 flex flex-row items-center justify-between"
 			>
-				<h1 class="text-2xl font-bold text-gray-800">KooliTech</h1>
-				<button
-					class="px-4 py-2 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white transition duration-200 hover:from-indigo-400 hover:via-purple-400 hover:to-pink-400 font-semibold"
-				>
-					E-Kell Web
+				<button id="header-lbl" class="text-2xl font-bold text-white">
+					KooliTech
 				</button>
+				<div class="flex flex-row items-center justify-start">
+					<button
+						id="btn-contact"
+						class="text-white mr-8 font-semibold hover:text-opacity-50 transition duration-100"
+					>
+						Kontakt
+					</button>
+					<button
+						id="btn-about"
+						class="text-white mr-8 font-semibold hover:text-opacity-50 transition duration-100"
+					>
+						Meist
+					</button>
+					<button
+						class="px-4 py-2 rounded-2xl bg-white hover:bg-opacity-50 text-pink-500 transition duration-200 font-semibold"
+						id="header-btn"
+					>
+						E-Kell Web
+					</button>
+				</div>
 			</div>
 		</header>
 
 		<main class="font-nunito">
-			<div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
+			<div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
 				<div
-					class="flex flex-row items-start justify-start container mx-auto max-w-screen-xl px-4 py-8"
+					class="flex flex-row items-start justify-start container mx-auto max-w-screen-xl p-8"
 				>
-					<div class="w-1/2 flex flex-col">
+					<div class="flex flex-col w-1/2" data-aos="fade-right">
 						<h1 class="text-6xl text-white font-bold leading-tight">
 							Personaalne toitumiskava
 						</h1>
-						<p class="text-3xl font-normal text-white mt-4">
+						<p class="text-3xl font-normal text-white mt-2">
 							kaalu langetamiseks
 						</p>
 						<button
-							class="mt-8 bg-green-400 px-8 py-2 rounded-full max-w-md text-white font-bold text-lg"
+							class="mt-6 bg-green-400 px-8 py-2 rounded-full max-w-md text-white font-bold text-lg"
 						>
 							Liitu tasuta
 						</button>
+						<div class="w-full flex flex-row items-start justify-start">
+							<img src="src/img/appstore.png" alt="" />
+							<img src="src/img/googleplay.png" alt="" />
+						</div>
 					</div>
-					<div class="w-1/2">
+					<div class="ml-4">
 						<img
-							class="ml-4 w-[725px] h-[400px]"
+							data-aos="fade-left"
+							class="h-[400px] w-auto absolute"
 							src="src/img/fitlap-mockup.png"
-							alt=""
 						/>
 					</div>
 				</div>
@@ -71,7 +98,7 @@
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 1200 120"
 					preserveAspectRatio="none"
-					class="bg-transparent pt-32"
+					class="bg-transparent pt-20 -mb-1"
 				>
 					<path
 						d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
@@ -82,6 +109,7 @@
 
 			<div
 				class="flex flex-col items-center justify-center container mx-auto max-w-screen-xl"
+				data-aos="fade-up"
 			>
 				<h1 class="text-3xl font-bold text-center text-slate-900 w-2/3">
 					Langeta kaalu kiirete ja lihtsate retseptidega
@@ -338,6 +366,71 @@
 							</p>
 						</div>
 					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">Kuidas Fitlap töötab?</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Loome sulle sinu andmete (pikkus, vanus, sugu, kaal ja eesmärk)
+								põhjal personaalse toitumiskava. Toitumiskavas on retseptide
+								kogused vastavalt sinu vajadustele.
+							</p>
+						</div>
+					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">Kuidas Fitlap töötab?</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Loome sulle sinu andmete (pikkus, vanus, sugu, kaal ja eesmärk)
+								põhjal personaalse toitumiskava. Toitumiskavas on retseptide
+								kogused vastavalt sinu vajadustele.
+							</p>
+						</div>
+					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">Kuidas Fitlap töötab?</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Loome sulle sinu andmete (pikkus, vanus, sugu, kaal ja eesmärk)
+								põhjal personaalse toitumiskava. Toitumiskavas on retseptide
+								kogused vastavalt sinu vajadustele.
+							</p>
+						</div>
+					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">Kuidas Fitlap töötab?</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Loome sulle sinu andmete (pikkus, vanus, sugu, kaal ja eesmärk)
+								põhjal personaalse toitumiskava. Toitumiskavas on retseptide
+								kogused vastavalt sinu vajadustele.
+							</p>
+						</div>
+					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">Kuidas Fitlap töötab?</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Loome sulle sinu andmete (pikkus, vanus, sugu, kaal ja eesmärk)
+								põhjal personaalse toitumiskava. Toitumiskavas on retseptide
+								kogused vastavalt sinu vajadustele.
+							</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</main>
@@ -391,6 +484,67 @@
 		<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 		<script>
 			AOS.init();
+		</script>
+		<script>
+			window.addEventListener('scroll', function () {
+				var header = document.getElementById('header');
+				var headerBTN = document.getElementById('header-btn');
+				var headerLabel = document.getElementById('header-lbl');
+				var headerContact = document.getElementById('btn-contact');
+				var headerAbout = document.getElementById('btn-about');
+				var scrollPosition = window.scrollY;
+
+				if (scrollPosition > 0) {
+					headerLabel.classList.remove('text-white');
+					headerLabel.classList.add('text-gray-900');
+
+					headerBTN.classList.remove('bg-white', 'text-pink-500');
+					headerBTN.classList.add('bg-newblue', 'text-white');
+
+					header.classList.remove(
+						'bg-gradient-to-r',
+						'from-indigo-500',
+						'via-purple-500',
+						'to-pink-500'
+					); // Change to your desired color class
+					header.classList.add('bg-white', 'shadow-md'); // Change to your desired color class
+
+					headerContact.classList.remove('text-white');
+					headerContact.classList.add('text-gray-800');
+
+					headerAbout.classList.remove('text-white');
+					headerAbout.classList.add('text-gray-800');
+				} else {
+					headerLabel.classList.add('text-white');
+					headerLabel.classList.remove('text-gray-900');
+
+					headerBTN.classList.add('bg-white', 'text-pink-500');
+					headerBTN.classList.remove('bg-newblue', 'text-white');
+
+					header.classList.add(
+						'bg-gradient-to-r',
+						'from-indigo-500',
+						'via-purple-500',
+						'to-pink-500'
+					); // Change to your desired color class
+					header.classList.remove('bg-white', 'shadow-md'); // Change to your desired color class
+
+					headerContact.classList.add('text-white');
+					headerContact.classList.remove('text-gray-800');
+
+					headerAbout.classList.add('text-white');
+					headerAbout.classList.remove('text-gray-800');
+				}
+			});
+		</script>
+		<script type="application/ld+json">
+			{
+				"@context": "https://koolitech.ee",
+				"@type": "KooliTech OÜ",
+				"name": "KooliTech",
+				"url": "https://koolitech.ee",
+				"logo": "https://koolitech.ee/src/img/K.png"
+			}
 		</script>
 	</body>
 </html>
