@@ -6,6 +6,7 @@ module.exports = {
 		extend: {
 			fontFamily: {
 				libre: ['"Libre Franklin"', 'sans-serif'],
+				nunito: ['Nunito', 'sans-serif'],
 			},
 			colors: {
 				newblue: '#0866ff',
