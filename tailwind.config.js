@@ -11,6 +11,7 @@ module.exports = {
 			colors: {
 				newblue: '#0866ff',
 				newred: '#ff0000',
+				newgreen: '#00ff00',
 			},
 			screens: {
 				xsm: '384px',
