@@ -2053,12 +2053,24 @@ details.collapse summary::-webkit-details-marker {
   height: 100vh;
 }
 
+.h-20 {
+  height: 5rem;
+}
+
 .max-h-10 {
   max-height: 2.5rem;
 }
 
 .max-h-60 {
   max-height: 15rem;
+}
+
+.max-h-96 {
+  max-height: 24rem;
+}
+
+.min-h-48 {
+  min-height: 12rem;
 }
 
 .w-1\/2 {
@@ -2817,6 +2829,14 @@ details.collapse summary::-webkit-details-marker {
     height: 560px;
   }
 
+  .md\:h-10 {
+    height: 2.5rem;
+  }
+
+  .md\:max-h-60 {
+    max-height: 15rem;
+  }
+
   .md\:w-1\/2 {
     width: 50%;
   }
@@ -2827,6 +2847,14 @@ details.collapse summary::-webkit-details-marker {
 
   .md\:w-2\/3 {
     width: 66.666667%;
+  }
+
+  .md\:w-32 {
+    width: 8rem;
+  }
+
+  .md\:w-auto {
+    width: auto;
   }
 
   .md\:max-w-md {
