@@ -1968,14 +1968,6 @@ details.collapse summary::-webkit-details-marker {
   margin-top: 2rem;
 }
 
-.mr-6 {
-  margin-right: 1.5rem;
-}
-
-.mr-24 {
-  margin-right: 6rem;
-}
-
 .flex {
   display: flex;
 }
@@ -2067,10 +2059,6 @@ details.collapse summary::-webkit-details-marker {
 
 .max-h-60 {
   max-height: 15rem;
-}
-
-.max-h-\[560px\] {
-  max-height: 560px;
 }
 
 .w-1\/2 {
@@ -2215,6 +2203,14 @@ details.collapse summary::-webkit-details-marker {
   --tw-space-x-reverse: 0;
   margin-right: calc(1rem * var(--tw-space-x-reverse));
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.self-end {
+  align-self: flex-end;
+}
+
+.self-center {
+  align-self: center;
 }
 
 .overflow-hidden {
@@ -2547,10 +2543,6 @@ details.collapse summary::-webkit-details-marker {
 
 .pt-8 {
   padding-top: 2rem;
-}
-
-.pr-20 {
-  padding-right: 5rem;
 }
 
 .text-center {
