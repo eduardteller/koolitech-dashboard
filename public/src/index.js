@@ -102,7 +102,6 @@ window.addEventListener('scroll', function () {
 });
 
 document.getElementById('scroll-btn').addEventListener('click', function () {
-	document
-		.getElementById('hui')
-		.scrollIntoView(true, { behavior: 'smooth', block: 'start' });
+	const nick = document.getElementById('hui');
+	nick.scrollIntoView(true, { behavior: 'smooth' });
 });
