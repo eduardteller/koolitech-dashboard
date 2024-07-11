@@ -3,32 +3,72 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>KooliTech</title>
-		<link rel="stylesheet" href="src/main.css" />
+		<meta
+			name="description"
+			content="kooli tehnika lahendused, kooli tarkvara lahendused"
+		/>
 		<link rel="icon" type="image/x-icon" href="src/img/K.png" />
+
+		<title>KooliTech</title>
+		<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+		<link
+			rel="preload"
+			href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap"
+			as="style"
+			onload="this.onload=null;this.rel='stylesheet'"
+		/>
+		<noscript>
+			<link
+				rel="stylesheet"
+				href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap"
+			/>
+		</noscript>
+		<link rel="stylesheet" href="src/main.css" />
 	</head>
-	<body class="h-screen bg-slate-200">
-		<header class="bg-gray-900 w-full h-[70px] border-b border-white">
-			<div class="h-full w-full flex flex-row justify-between items-center p-4">
-				<button id="logo-btn" class="text-2xl font-bold text-white font-libre">
-					KooliTech.ee
-				</button>
-				<div class="flex flex-row justify-between items-center">
+	<body class="">
+		<!-- <div
+			class="absolute h-[1000px] bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 z-0"
+		></div> -->
+
+		<header
+			class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 sticky top-0 z-50 font-nunito transition duration-100"
+			id="header"
+		>
+			<div
+				class="max-w-screen-xl mx-auto py-4 px-6 sm:px-8 lg:px-10 flex flex-row items-center justify-between"
+			>
+				<div class="flex flex-row items-center justify-start">
+					<!-- <img
+						id="header-logo"
+						class="max-h-10 w-auto object-contain"
+						src="src/img/K.png"
+						alt=""
+					/> -->
 					<button
-						id="contact-btn"
-						class="mr-8 text-white hover:underline font-semibold hidden lg:block"
+						id="header-lbl"
+						class="text-2xl font-bold font-libre text-white"
+					>
+						KooliTech
+					</button>
+				</div>
+				<!-- <button id="header-lbl" class="">
+				</button> -->
+				<div class="flex flex-row items-center justify-start">
+					<button
+						id="btn-contact"
+						class="text-white mr-8 font-semibold hover:text-opacity-50 transition duration-100"
 					>
 						Kontakt
 					</button>
 					<button
-						href=""
-						class="mr-8 text-white hover:underline font-semibold hidden lg:block"
+						id="btn-about"
+						class="text-white mr-8 font-semibold hover:text-opacity-50 transition duration-100"
 					>
-						KKK
+						Meist
 					</button>
 					<button
-						id="client-btn"
-						class="py-2 px-4 bg-blue-500 hover:bg-slate-200 transition duration-200 text-gray-900 rounded-xl font-semibold"
+						class="px-4 py-2 rounded-2xl bg-white hover:bg-opacity-50 text-purple-500 transition duration-200 font-semibold"
+						id="header-btn"
 					>
 						E-Kell Web
 					</button>
@@ -36,323 +76,475 @@
 			</div>
 		</header>
 
-		<main class="w-full bg-gray-950">
-			<div class="container mx-auto w-full">
-				<div class="w-full h-full flex flex-col justify-start items-center">
-					<h1 class="mt-16 font-bold text-6xl text-white font-libre">E-KELL</h1>
-					<h2
-						class="mt-4 font-semibold text-2xl w-4/5 text-center text-white font-libre"
-					>
-						Lihtne viis edastada helisignaali kasutaja poolt loodud ajakava
-						järgi, ning paljugi muud!
-					</h2>
+		<main class="font-nunito">
+			<div class="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500">
+				<div
+					class="flex flex-row items-start justify-start container mx-auto max-w-screen-xl p-8"
+				>
+					<div class="flex flex-col w-1/2" data-aos="fade-right">
+						<h1 class="text-6xl text-white font-bold leading-tight w-1/2">
+							Kõikvõimas koolikell
+						</h1>
+						<p class="text-3xl font-normal text-white mt-2">
+							Muuda koolipäevad lihtsaks ja turvaliseks!
+						</p>
+						<button
+							id="scroll-btn"
+							class="mt-6 bg-green-400 hover:bg-opacity-50 transition duration-100 px-8 py-2 rounded-full max-w-md text-white font-bold text-lg"
+						>
+							Uuri lähemalt
+						</button>
+					</div>
+					<div class="ml-4">
+						<img
+							data-aos="fade-left"
+							class="h-[400px] w-auto absolute"
+							src="src/img/main-ekell.png"
+						/>
+					</div>
+				</div>
+				<svg
+					data-name="Layer 1"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 1200 120"
+					preserveAspectRatio="none"
+					class="bg-transparent pt-20 -mb-1"
+				>
+					<path
+						d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+						fill="#ffffff"
+					></path>
+				</svg>
+			</div>
+
+			<div
+				class="flex flex-col items-center justify-center container mx-auto max-w-screen-xl"
+				data-aos="fade-up"
+			>
+				<h1 class="text-3xl font-bold text-center text-slate-900 w-2/3">
+					E-Kell, teie nutikas koolikellade ja häiresüsteemide lahendus!
+				</h1>
+				<p
+					class="font-normal text-center text-zinc-900 mt-4 mx-auto w-2/3"
+					id="hui"
+				>
+					KooliTech E-Kell tarkvara automatiseerib ajamahukad ülesanded,
+					pakkudes tõhusa lahenduse tunniplaanide ja koolikellade juhtimiseks.
+					See kaugjuhitav ja paindlik süsteem lihtsustab koolikorraldust, muutes
+					õpetajate töö stressivabaks ja efektiivseks.
+				</p>
+			</div>
+
+			<div
+				class="flex flex-row items-center justify-center mt-16 max-w-screen-xl mx-auto container px-4 pt-8"
+			>
+				<!-- <h1 class="text-3xl font-semibold text-center text-zinc-900 w-1/2">
+					Langeta kaalu kiirete ja lihtsate retseptidega
+				</h1> -->
+				<div data-aos="fade-right" data-aos-offset="200" class="w-1/2">
 					<img
-						class="p-2 bg-gray-800 rounded-xl w-[80%] lg:w-[60%] my-8"
-						src="src/img/nigga2.jpg"
-						alt="pilt"
+						class="max-h-[560px] mx-auto"
+						src="src/img/iphone-meal-plan.png"
+						alt=""
 					/>
-					<div class="h-32 flex flex-col items-center justify-center">
-						<button
-							class="p-4 bg-newred hover:border-2 border-white animate-bounce rounded-xl text-white font-semibold text-center text-xl"
-						>
-							Kirjuta meile
-						</button>
+				</div>
+				<div data-aos="fade-left" data-aos-offset="200" class="w-1/2">
+					<h3 class="text-3xl font-bold text-zinc-900">
+						E-Kell tarkvara peamised võimalused:
+					</h3>
+
+					<ul class="mt-8 text-zinc-900 font-normal">
+						<li class="mb-4">
+							✅ Tunniplaanid: Mugav ja kiire koolikellade haldamine, võimaldab
+							täpselt ajastada tunnialguseid ja -lõppe.
+						</li>
+						<li class="mb-4">
+							✅ Kaugelt haldamine: Tarkvara saab hallata kõikjalt, näiteks
+							puhkuselt. Kaugjuhtimine hõlmab endas tunniplaanide muutmist ja
+							häire käivitamist
+						</li>
+						<li class="mb-4">
+							✅ Häiresüsteem: Võimaldab koolis häireid ja hädaolukorra signaale
+							kaugelt juhtida.
+						</li>
+						<li class="mb-4">
+							✅ Kohandatud helid: Võimalus lisada ja kasutada oma helifaile
+							vastavalt vajadusele.
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div
+				data-aos="fade-up"
+				data-aos-delay="100"
+				class="container mx-auto flex justify-center items-center"
+			>
+				<button
+					id="btn-buy-1"
+					class="px-4 py-2 bg-green-500 hover:bg-opacity-50 text-white font-semibold rounded-full"
+				>
+					Telli nüüd
+				</button>
+			</div>
+
+			<div class="bg-slate-100 pb-16">
+				<div
+					class="flex flex-row items-center justify-center mt-16 max-w-screen-xl mx-auto container px-4 pt-8"
+				>
+					<!-- <h1 class="text-3xl font-semibold text-center text-zinc-900 w-1/2">
+						Langeta kaalu kiirete ja lihtsate retseptidega
+					</h1> -->
+					<div data-aos="fade-right" data-aos-offset="200" class="w-1/2">
+						<h3 class="text-3xl font-bold text-zinc-900">E-Kell veebiliides</h3>
+						<ul class="mt-8 text-zinc-900 font-normal">
+							<li class="mt-4">
+								✅ Lihtne juurdepääs: Saate tarkvara juhtida kõikjalt, kus on
+								internetiühendus.
+							</li>
+							<li class="mt-4">
+								✅ Reaalajas haldamine: Muudatused rakenduvad koheselt, tagades
+								sujuva ja kiire töökorralduse.
+							</li>
+							<li class="mt-4">
+								✅ Kasutajasõbralik liides: Intuitiivne ja hõlpsasti kasutatav,
+								sobib igas vanuses kasutajatele.
+							</li>
+							<li class="mt-4">
+								✅ Mitme seadme tugi: Töötab nii arvutis, tahvelarvutis kui ka
+								nutitelefonis, pakkudes maksimaalset paindlikkust.
+							</li>
+						</ul>
 					</div>
-					<div
-						class="w-4/5 lg:h-[500px] flex flex-col items-center justify-start lg:flex-row py-4 mt-16 mb-8 lg:mg-0"
+					<div data-aos="fade-left" data-aos-offset="200" class="w-1/2">
+						<img
+							class="max-h-[560px] mx-auto"
+							src="src/img/iphone-recipes.png"
+							alt=""
+						/>
+					</div>
+				</div>
+				<div
+					data-aos-delay="100"
+					data-aos="fade-up"
+					class="container mx-auto flex justify-center items-center"
+				>
+					<button
+						id="btn-buy-2"
+						class="px-4 py-2 bg-green-500 hover:bg-opacity-50 text-white font-semibold rounded-full"
 					>
+						Vajame seda
+					</button>
+				</div>
+			</div>
+
+			<div
+				class="flex flex-row items-center justify-center max-w-screen-xl mx-auto container px-4 pt-8"
+			>
+				<!-- <h1 class="text-3xl font-semibold text-center text-zinc-900 w-1/2">
+				Langeta kaalu kiirete ja lihtsate retseptidega
+			</h1> -->
+				<div data-aos="fade-right" data-aos-offset="200" class="w-1/2">
+					<img
+						class="max-h-[560px] mx-auto"
+						src="src/img/iphone-goals.png"
+						alt=""
+					/>
+				</div>
+				<div data-aos="fade-left" data-aos-offset="200" class="w-1/2">
+					<h3 class="text-3xl font-bold text-zinc-900">E-Kell häiresüsteem</h3>
+
+					<ul class="mt-8 text-zinc-900 font-normal">
+						<li class="mb-4">
+							✅ Erinevad ohuliigid: Erinevate nuppude abil saab kiiresti
+							edastada täpse ohuteate.
+						</li>
+						<li class="mb-4">
+							✅ Lihtne kasutamine: Nupu vajutamisega saab koheselt käivitada
+							häire.
+						</li>
+						<li class="mb-4">
+							✅ Kaugjuhtimine: Häiret saab käivitada veebiliidese kaudu,
+							võimaldades kiiret reageerimist ka eemalt.
+						</li>
+						<li class="mb-4">
+							✅ Kohandatavus: Võimalus luua ja hallata eri tüüpi häireid
+							vastavalt vajadusele.
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div
+				data-aos="fade-up"
+				data-aos-delay="100"
+				class="container mx-auto flex justify-center items-center mb-16"
+			>
+				<button
+					id="btn-buy-3"
+					class="px-4 py-2 bg-green-500 hover:bg-opacity-50 text-white font-semibold rounded-full"
+				>
+					Kirjuta meile
+				</button>
+			</div>
+
+			<div class="w-full bg-white">
+				<div
+					class="flex flex-col items-center justify-center max-w-screen-xl mx-auto container text-zinc-900 py-16"
+				>
+					<h3 class="text-3xl font-bold mb-8">E-Kell tarkvara sisaldab:</h3>
+					<div class="flex flex-row items-start justify-start w-full px-4">
 						<div
-							class="lg:w-3/5 h-full flex flex-col items-start justify-start mb-8 lg:mb-0"
+							data-aos="fade-up"
+							data-aos-offset="200"
+							data-aos-delay="150"
+							class="w-1/3 flex flex-col items-center justify-start mr-4"
 						>
-							<h1 class="mb-4 text-white text-4xl font-libre">
-								Intuitiivselt Lihtne
-							</h1>
-							<h2 class="mb-4 font-normal text-white text-xl">
-								Eelkõige koolidele loodud tunniplaanil põhinev koolikell paljude
-								lisafunktsioonidega
-							</h2>
-							<div
-								class="flex flex-row items-start justify-start text-white mt-4"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="mx-2"
-									fill="currentColor"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-								>
-									<path d="M16 13h-3V3h-2v10H8l4 4 4-4zM4 19v2h16v-2H4z"></path>
-								</svg>
-								<h3 class="text-xl text-white font-semibold">
-									Lihtne Installeerimine
-								</h3>
-							</div>
-							<h4 class="text-lg ml-10 text-white font-normal lg:w-4/5">
-								Paar nupuvajutust ja saadki juba tarkvara kasutada.
+							<div class="text-7xl mb-4">📅</div>
+							<h4 class="text-2xl font-medium">
+								Automaatne tunniplaanide haldus
 							</h4>
-							<div
-								class="flex flex-row items-start justify-start text-white mt-4"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="mx-2"
-									fill="currentColor"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96z"
-									></path>
-								</svg>
-								<h3 class="text-xl text-white font-semibold">
-									Kaugelt Tarkvara Haldamine
-								</h3>
-							</div>
-							<h4 class="text-lg ml-10 text-white font-normal lg:w-4/5">
-								Olles isegi Türgis puhkusel, saad hallata tunniplaane, helide
-								muutmist, häire käivitamist ja kõike muud, mida saaksid kohapeal
-								teha.
-							</h4>
-							<div
-								class="flex flex-row items-start justify-start text-white mt-4"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="mx-2"
-									fill="currentColor"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"
-									></path>
-								</svg>
-								<h3 class="text-xl text-white font-semibold">
-									Lihtne Maksusüsteem
-								</h3>
-							</div>
-							<h4 class="text-lg ml-10 text-white font-normal lg:w-4/5">
-								Teie mugavuseks lõime paindliku maksusüsteemi - Maksa kord
-								aastas ja litsents uuendub automaatselt.
-							</h4>
+							<p class="text-center font-normal">
+								Lihtne ja kiire ajakava koostamine.
+							</p>
 						</div>
 						<div
-							class="rounded-xl lg:w-2/5 h-max p-2 flex flex-col justify-center items-center bg-gray-800"
+							data-aos="fade-up"
+							data-aos-offset="200"
+							data-aos-delay="250"
+							class="w-1/3 flex flex-col items-center justify-start mr-4"
 						>
-							<img
-								class="rounded-xl"
-								src="src/img/nigga.png"
-								alt="Kasutja Liides"
-							/>
+							<div class="text-7xl mb-4">🌍</div>
+							<h4 class="text-2xl font-medium">Kaugjuhtimine</h4>
+							<p class="text-center font-normal">
+								Võimalus juhtida kõiki funktsioone veebiliidese kaudu.
+							</p>
+						</div>
+						<div
+							data-aos="fade-up"
+							data-aos-offset="200"
+							data-aos-delay="350"
+							class="w-1/3 flex flex-col items-center justify-start"
+						>
+							<div class="text-7xl mb-4">🚨</div>
+							<h4 class="text-2xl font-medium">Häiresüsteem</h4>
+							<p class="text-center font-normal">
+								Erinevate ohuliikide häirete käivitamine.
+							</p>
 						</div>
 					</div>
-					<div class="h-32 flex flex-col items-center justify-center">
-						<button
-							class="p-4 bg-newred hover:border-2 border-white animate-bounce rounded-xl text-white font-semibold text-center text-xl"
+					<div class="flex flex-row items-start justify-start w-full mt-4 px-4">
+						<div
+							data-aos="fade-up"
+							data-aos-offset="200"
+							data-aos-delay="450"
+							class="w-1/3 flex flex-col items-center justify-start mr-4"
 						>
-							Osta Kohe
-						</button>
+							<div class="text-7xl mb-4">⚙️</div>
+							<h4 class="text-2xl font-medium">Paindlik kella seadistus</h4>
+							<p class="text-center font-normal">
+								Kohandatavad heliajad ja kestused.
+							</p>
+						</div>
+						<div
+							data-aos="fade-up"
+							data-aos-offset="200"
+							data-aos-delay="550"
+							class="w-1/3 flex flex-col items-center justify-start mr-4"
+						>
+							<div class="text-7xl mb-4">👌</div>
+							<h4 class="text-2xl font-medium">Kasutajasõbralik liides</h4>
+							<p class="text-center font-normal">
+								Intuitiivne ja hõlpsasti kasutatav.
+							</p>
+						</div>
+						<div
+							data-aos="fade-up"
+							data-aos-offset="200"
+							data-aos-delay="650"
+							class="w-1/3 flex flex-col items-center justify-start"
+						>
+							<div class="text-7xl mb-4">📩</div>
+							<h4 class="text-2xl font-medium">Klienditugi</h4>
+							<p class="text-center font-normal">
+								Meie tiim on alati valmis abistama ja lahendama kõiki Teie
+								küsimusi ning probleeme.
+							</p>
+						</div>
 					</div>
-					<h1
-						class="mt-16 mb-8 font-libre text-5xl text-white text-center w-4/5"
-					>
-						Natuke numbreid
+				</div>
+			</div>
+
+			<div class="mt-16">
+				<div class="px-4 flex flex-col justify-start items-center">
+					<h1 class="text-center font-bold text-3xl text-gray-900 mb-8">
+						Korduma kippuvad küsimused
 					</h1>
 					<div
-						class="w-4/5 bg-white rounded-lg h-28 p-1 mb-16 flex flex-row items-center justify-center"
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
 					>
-						<div
-							class="w-1/3 rounded-lg mr-1 h-full bg-gray-600 flex flex-col justify-center items-center"
-						>
-							<h3
-								class="font-semibold text-xl lg:text-3xl text-center text-white"
-							>
-								69
-							</h3>
-							<h5 class="font-normal text-sm text-center lg:text-lg text-white">
-								Õnneliku Kasutajat
-							</h5>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">
+							Kuidas paigaldada E-Kella tarkvara?
 						</div>
-						<div
-							class="w-1/3 rounded-lg mr-1 h-full bg-gray-600 flex flex-col justify-center items-center"
-						>
-							<h3
-								class="font-semibold text-xl lg:text-3xl text-center text-white"
-							>
-								69
-							</h3>
-							<h5 class="font-normal text-sm text-center lg:text-lg text-white">
-								Õnneliku Kasutajat
-							</h5>
-						</div>
-						<div
-							class="w-1/3 rounded-lg h-full bg-gray-600 flex flex-col justify-center items-center"
-						>
-							<h3
-								class="font-semibold text-xl lg:text-3xl text-center text-white"
-							>
-								69
-							</h3>
-							<h5 class="font-normal text-sm text-center lg:text-lg text-white">
-								Õnneliku Kasutajat
-							</h5>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Paigaldusprotsess on lihtne ja nõuab vaid mõne nupu vajutamist.
+								Järgige paigaldusjuhiseid meie veebisaidil.
+							</p>
 						</div>
 					</div>
-
 					<div
-						class="w-4/5 mt-16 mb-8 flex flex-col items-start justify-center"
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
 					>
-						<div>
-							<h1 class="mb-2 text-white text-4xl font-libre">
-								Peamised funktsioonid
-							</h1>
-							<h2 class="mb-4 font-normal text-white text-xl">
-								E-Kell on loodud teie mugavuse jaoks
-							</h2>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">
+							Kas E-Kell töötab kõikides seadmetes?
 						</div>
-						<div
-							class="mt-8 w-full flex flex-col lg:flex-row justify-center items-start"
-						>
-							<div
-								class="flex flex-wrap lg:flex-col items-start justify-start text-white lg:w-1/3 lg:pr-16"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="lg:mb-2 mr-2 lg:mr-0"
-									fill="currentColor"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
-									></path>
-								</svg>
-								<h3 class="text-xl text-white font-semibold">
-									Lihtne Installeerimine
-								</h3>
-								<h4 class="text-lg text-white font-normal">
-									Paar nupuvajutust ja saadki juba tarkvara kasutada.
-								</h4>
-							</div>
-							<div
-								class="flex flex-wrap lg:flex-col items-start justify-start text-white lg:w-1/3 lg:pr-16 mt-4 lg:mt-0"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="lg:mb-2 mr-2 lg:mr-0"
-									fill="currentColor"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"
-									></path>
-								</svg>
-								<h3 class="text-xl text-white font-semibold">
-									Kaugelt Tarkvara Haldamine
-								</h3>
-								<h4 class="text-lg text-white font-normal">
-									Olles isegi Türgis puhkusel, saad hallata tunniplaane, helide
-									muutmist, häire käivitamist ja kõike muud, mida saaksid
-									kohapeal teha.
-								</h4>
-							</div>
-							<div
-								class="flex flex-wrap lg:flex-col items-start justify-start text-white lg:w-1/3 mt-4 lg:mt-0"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="lg:mb-2 mr-2 lg:mr-0"
-									fill="currentColor"
-									width="24"
-									height="24"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
-									></path>
-								</svg>
-								<h3 class="text-xl text-white font-semibold">
-									Lihtne Maksusüsteem
-								</h3>
-								<h4 class="text-lg text-white font-normal">
-									Teie mugavuseks lõime paindliku maksusüsteemi - Maksa kord
-									aastas ja litsents uuendub automaatselt.
-								</h4>
-							</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Jah, meie tarkvara on ühilduv arvutite, tahvelarvutite ja
+								nutitelefonidega.
+							</p>
 						</div>
 					</div>
-					<div class="h-32 flex flex-col items-center justify-center">
-						<button
-							class="p-4 bg-newred hover:border-2 border-white animate-bounce rounded-xl text-white font-semibold text-center text-xl"
-						>
-							Vajame seda
-						</button>
-					</div>
-					<div class="w-4/5 my-16 flex flex-col items-start justify-center">
-						<div>
-							<h1 class="mb-2 text-white text-4xl font-libre">KKK</h1>
-							<h2 class="mb-4 font-normal text-white text-xl">
-								Teil on küsimusi E-KELL kohta? Siin on mõned vastused, mis
-								võivad teid aidata.
-							</h2>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">
+							Kuidas saab tarkvara kaugelt juhtida?
 						</div>
-						<div
-							class="mt-8 w-full flex lg:flex-row flex-col lg:justify-between items-start"
-						>
-							<div
-								class="flex flex-col items-start justify-start text-white lg:w-1/2 lg:mr-8 mb-4 lg:mb-0"
-							>
-								<h3 class="text-xl text-white font-semibold">Mis on E-KELL?</h3>
-								<h4 class="text-lg text-white font-normal">
-									E-KELL on tellimuspõhine tarkvara, mis võimaldab kasutajatel
-									planeerida ja mängida helisid vastavalt kohandatud ajakavale.
-								</h4>
-								<h3 class="text-xl mt-4 text-white font-semibold">
-									Kas ma saan kasutada enda helifaile?
-								</h3>
-								<h4 class="text-lg text-white font-normal">
-									Muidugi! Sättingutest saad lisada enda helisid ja kasutada
-									vastavalt vajadusele.
-								</h4>
-							</div>
-							<div
-								class="flex flex-col items-start justify-start text-white lg:w-1/2"
-							>
-								<h3 class="text-xl text-white font-semibold">
-									Kuidas toimub tarkvara litsentsi uuendus?
-								</h3>
-								<h4 class="text-lg text-white font-normal">
-									Tarkvara litsent kestab täpselt aasta, alates makse
-									laekumisest. Iga maksega uuendub litsents automaatselt.
-								</h4>
-								<h3 class="text-xl mt-4 text-white font-semibold">
-									Kas pakute kliendituge?
-								</h3>
-								<h4 class="text-lg text-white font-normal">
-									Jah! Meie tiim on valmis teid abistama iga kell mis tahes
-									küsimuste või probleemide korral.
-								</h4>
-							</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Kaugjuhtimine on võimalik veebiliidese kaudu, mis tagab
+								ligipääsu kõikjal, kus on internetiühendus.
+							</p>
+						</div>
+					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">
+							Kas on võimalik seadistada erinevaid häireliike?
+						</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Jah, tarkvaras on mitu nuppu erinevate ohuliikide häirete
+								käivitamiseks.
+							</p>
+						</div>
+					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">
+							Kuidas kohandada heliaegu ja kestusi?
+						</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Heliaegu ja kestusi saab kohandada tarkvara seadete menüüs
+								vastavalt kooli vajadustele.
+							</p>
+						</div>
+					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">
+							Kas tarkvara uuendused on automaatsed?
+						</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Jah, kõik uuendused toimuvad automaatselt ja kasutajad saavad
+								alati kõige värskema versiooni.
+							</p>
+						</div>
+					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">
+							Kas on võimalik proovida tarkvara enne ostmist?
+						</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Jah, pakume tasuta prooviperioodi, et saaksite tutvuda tarkvara
+								funktsioonidega.
+							</p>
+						</div>
+					</div>
+					<div
+						class="collapse collapse-arrow bg-white border max-w-screen-xl rounded-lg"
+					>
+						<input type="radio" name="my-accordion-2" checked="checked" />
+						<div class="collapse-title font-normal">
+							Kas klienditugi on saadaval?
+						</div>
+						<div class="collapse-content border-t w-full h-full bg-slate-100">
+							<p class="pt-4 font-light">
+								Meie pühendunud tugitiim on alati valmis abistama ja lahendama
+								kõiki küsimusi kiiresti ja tõhusalt. Võtke meiega ühendust
+								e-posti või telefoni teel.
+							</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</main>
-
-		<footer class="bg-gray-900 w-full h-48 border-t border-white">
+		<footer
+			class="py-8 w-full text-zinc-900 font-nunito mt-16 border-t flex flex-col items-start justify-between"
+		>
 			<div
-				class="h-full w-full flex flex-col items-center justify-between py-2"
+				class="container mx-auto flex flex-row items-start justify-start max-w-screen-xl px-4 pb-32"
 			>
-				<h2 class="text-white">Meie Kontaktid</h2>
-				<p class="text-white">&copy; 2024 KooliTech OÜ. All rights reserved.</p>
+				<div class="w-1/2">
+					<h3 class="font-medium mb-4">Klienditugi</h3>
+					<ul class="text-zinc-500 text-sm">
+						<li class="hover:text-zinc-600">
+							<button id="btn-contact-2" href="">Kontakt</button>
+						</li>
+						<li class="hover:text-zinc-600">
+							<button id="cookies-btn" href="">Küpsiste kasutamine</button>
+						</li>
+						<!-- <li class="hover:text-zinc-600">
+							<a href="">Müügi- ja kasutustingimused</a>
+						</li>
+						<li class="hover:text-zinc-600">
+							<a href="">Privaatsustingimused</a>
+						</li> -->
+					</ul>
+				</div>
+				<div class="w-1/2">
+					<h3 class="font-medium mb-4">KooliTech</h3>
+					<p class="text-zinc-500 text-sm">
+						KooliTech OÜ on spetsialiseerunud koolidele suunatud tarkvara
+						lahenduste pakkumisele. Meie teenuste hulka kuuluvad tarkvara
+						lahendused, tehnika müük ja rent ning tehnika paigaldusteenused
+					</p>
+				</div>
+			</div>
+			<div
+				class="container mx-auto flex flex-col items-center justify-center max-w-screen-xl px-4"
+			>
+				<p class="text-sm text-zinc-400">Copyright © 2024 KooliTech OÜ</p>
 			</div>
 		</footer>
+		<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+		<script type="application/ld+json">
+			{
+				"@context": "https://koolitech.ee",
+				"@type": "KooliTech OÜ",
+				"name": "KooliTech",
+				"url": "https://koolitech.ee",
+				"logo": "https://koolitech.ee/src/img/K.png"
+			}
+		</script>
 		<script src="src/index.js"></script>
 	</body>
 </html>

@@ -12,6 +12,7 @@ import cron from 'node-cron';
 import { fileURLToPath } from 'url';
 import { promisify } from 'util';
 import { sendMessage, cmpDBModDate, sendDBFile } from './func.js';
+import nodemailer from 'nodemailer';
 
 // const privateKey = await fs.readFile('./private/key.pem', 'utf8');
 // const certificate = await fs.readFile('./private/cert.pem', 'utf8');
@@ -36,8 +37,64 @@ app.get('/login', (req, res) => {
 	res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+// app.get('/about', (req, res) => {
+// 	res.sendFile(path.join(__dirname, 'public', 'login.html'));
+// });
+
+app.get('/contact', (req, res) => {
+	res.sendFile(path.join(__dirname, 'public', 'contact.html'));
+});
+
+app.get('/cookies', (req, res) => {
+	res.sendFile(path.join(__dirname, 'public', 'cookies.html'));
+});
+
 app.get('/client', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'main.html'));
+	res.sendFile(path.join(__dirname, 'public', 'client.html'));
+});
+
+app.post('/api/email-form', (req, res) => {
+	const { name, school, email, phone, message } = req.body;
+
+	console.log = req.body;
+
+	// Validate the incoming data
+	if (!name || !school || !email) {
+		return res
+			.status(400)
+			.json({ error: 'Nimi, Kool, ja Emaili aadress on kohustuslikud.' });
+	}
+
+	// Setup Nodemailer transporter
+	const transporter = nodemailer.createTransport({
+		service: 'gmail', // or use your email service provider
+		auth: {
+			user: 'eduardteller1@gmail.com', // your email address
+			pass: 'snzy cwwy qgug gzsp', // your email password or application-specific password
+		},
+	});
+
+	// Construct the email options
+	const mailOptions = {
+		from: email,
+		to: 'info@koolitech.ee',
+		subject: 'Uus kiri',
+		text: `
+					Name: ${name}
+					School: ${school}
+					Email: ${email}
+					Phone: ${phone}
+					Message: ${message}
+			`,
+	};
+
+	// Send the email
+	transporter.sendMail(mailOptions, (error, info) => {
+		if (error) {
+			return res.status(500).json({ error: 'Failed to send email.' });
+		}
+		res.status(200).json({ message: 'Email sent successfully!' });
+	});
 });
 
 // Register route
