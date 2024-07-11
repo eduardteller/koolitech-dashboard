@@ -104,3 +104,9 @@ document
 				});
 		}
 	});
+
+const logoBtn = document.getElementById('header-lbl');
+
+logoBtn.onclick = function () {
+	document.location.href = '/';
+};
