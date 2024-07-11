@@ -21,6 +21,8 @@ document
 		const errorPhone = document.getElementById('error-number');
 		const errorText = document.getElementById('error-text');
 
+		const success = document.getElementById('success-email');
+
 		const loader = document.getElementById('loader');
 
 		let errors = 0;
@@ -94,6 +96,7 @@ document
 					emailI.value = '';
 					phoneI.value = '';
 					textI.value = '';
+					success.classList.remove('hidden');
 				})
 				.catch((error) => {
 					console.error('There was an error submitting the form!', error);
