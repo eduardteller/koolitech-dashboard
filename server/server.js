@@ -56,8 +56,6 @@ app.get('/client', (req, res) => {
 app.post('/api/email-form', (req, res) => {
 	const { name, school, email, phone, text } = req.body;
 
-	console.log(req.body);
-
 	// Validate the incoming data
 	if (!name || !school || !email) {
 		return res
