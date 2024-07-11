@@ -76,6 +76,8 @@ document
 
 			loader.classList.remove('hidden');
 
+			console.log(text);
+
 			fetch('https://koolitech.ee/api/email-form', {
 				method: 'POST',
 				headers: {

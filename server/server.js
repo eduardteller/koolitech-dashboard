@@ -54,9 +54,9 @@ app.get('/client', (req, res) => {
 });
 
 app.post('/api/email-form', (req, res) => {
-	const { name, school, email, phone, message } = req.body;
+	const { name, school, email, phone, text } = req.body;
 
-	console.log = req.body;
+	console.log(req.body);
 
 	// Validate the incoming data
 	if (!name || !school || !email) {
@@ -84,7 +84,7 @@ app.post('/api/email-form', (req, res) => {
 					School: ${school}
 					Email: ${email}
 					Phone: ${phone}
-					Message: ${message}
+					Message: ${text}
 			`,
 	};
 
@@ -93,7 +93,7 @@ app.post('/api/email-form', (req, res) => {
 		if (error) {
 			return res.status(500).json({ error: 'Failed to send email.' });
 		}
-		res.status(200).json({ message: 'Email sent successfully!' });
+		res.status(200).json({ text: 'Email sent successfully!' });
 	});
 });
 
