@@ -3447,6 +3447,11 @@ html:has(.drawer-toggle:checked) {
   background-color: rgb(241 245 249 / var(--tw-bg-opacity));
 }
 
+.bg-success {
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-su,oklch(var(--su)/var(--tw-bg-opacity)));
+}
+
 .bg-transparent {
   background-color: transparent;
 }
@@ -3716,6 +3721,11 @@ html:has(.drawer-toggle:checked) {
 .text-slate-900 {
   --tw-text-opacity: 1;
   color: rgb(15 23 42 / var(--tw-text-opacity));
+}
+
+.text-success-content {
+  --tw-text-opacity: 1;
+  color: var(--fallback-suc,oklch(var(--suc)/var(--tw-text-opacity)));
 }
 
 .text-warning-content {

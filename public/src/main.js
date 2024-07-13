@@ -481,6 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
 							console.error('Network response was not ok');
 						} else {
 							response.json().then((data) => {
+								data.STATUS ? statusSet(true) : statusSet(false);
 								tableDataProcess(data.data);
 							});
 						}
@@ -576,12 +577,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	// const token = localStorage.getItem('token');
-	// if (token) {
-	// 	Connect(token);
-	// } else {
-	// 	document.location.href = '/login';
-	// }
+	const token = localStorage.getItem('token');
+	if (token) {
+		Connect(token);
+	} else {
+		document.location.href = '/login';
+	}
 
 	const logo = document.getElementById('logo-btn');
 	logo.onclick = function () {

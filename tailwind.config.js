@@ -7,6 +7,10 @@ module.exports = {
 		'overflow-hidden',
 		'block',
 		'text-gray-800',
+		'bg-error',
+		'bg-success',
+		'text-error-content',
+		'text-success-content',
 	],
 	theme: {
 		extend: {
