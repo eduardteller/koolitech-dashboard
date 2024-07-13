@@ -758,18 +758,18 @@ app.post('/api/update', async (req, res) => {
 					throw err;
 				} finally {
 					await closeAsync();
-					const time = new Date();
-					await fs.utimes(
-						path.join(
-							__dirname,
-							'data',
-							`${school}`,
-							`central_data`,
-							`${req.body.dbid}.db`
-						),
-						time,
-						time
-					);
+					// const time = new Date();
+					// await fs.utimes(
+					// 	path.join(
+					// 		__dirname,
+					// 		'data',
+					// 		`${school}`,
+					// 		`central_data`,
+					// 		`${req.body.dbid}.db`
+					// 	),
+					// 	time,
+					// 	time
+					// );
 				}
 			})();
 
