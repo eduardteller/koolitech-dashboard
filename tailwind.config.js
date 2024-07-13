@@ -1,7 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: ['./public/*.{html,js}'],
-	safelist: ['bg-red-400', 'bg-green-400', 'overflow-hidden', 'block'],
+	safelist: [
+		'bg-red-400',
+		'bg-green-400',
+		'overflow-hidden',
+		'block',
+		'text-gray-800',
+	],
 	theme: {
 		extend: {
 			fontFamily: {

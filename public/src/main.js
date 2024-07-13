@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const presetListPlan = document.getElementById('preset-list-plan');
 	let presetItemsPlan = document.querySelectorAll('.preset-item-plan');
 
-	const table = document.getElementById('data-table');
 	const H1Text = document.getElementById('heada');
 
 	const overlay = document.getElementById('overlay');
@@ -577,12 +576,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	const token = localStorage.getItem('token');
-	if (token) {
-		Connect(token);
-	} else {
-		document.location.href = '/login';
-	}
+	// const token = localStorage.getItem('token');
+	// if (token) {
+	// 	Connect(token);
+	// } else {
+	// 	document.location.href = '/login';
+	// }
 
 	const logo = document.getElementById('logo-btn');
 	logo.onclick = function () {
