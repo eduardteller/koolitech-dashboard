@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const enableBtn = document.getElementById('enable-plan');
-	const newPlanBtn = document.getElementById('new-plan');
+	const newPlanBtn = document.getElementById('saveButton');
 	const delPlanBtn = document.getElementById('del-plan');
 
 	const updateBtn = document.getElementById('update-btn');
@@ -8,37 +8,30 @@ document.addEventListener('DOMContentLoaded', () => {
 	const delRowBtn = document.getElementById('delete-btn');
 	const logOutBtn = document.getElementById('log-out');
 
-	const alarmBtn = document.getElementById('haire-btn');
 	const alarmBtnMain = document.getElementById('alarmBtn');
 
 	const presetListPlan = document.getElementById('preset-list-plan');
 	let presetItemsPlan = document.querySelectorAll('.preset-item-plan');
 
-	let presetItemsDays = document.querySelectorAll('.preset-item');
-
 	const table = document.getElementById('data-table');
 	const H1Text = document.getElementById('heada');
 
 	const overlay = document.getElementById('overlay');
-	const overlayAlarm = document.getElementById('overlay-alarm');
-	const overlayAlarmCloseBtn = document.getElementById('close-overlay-alarm');
 	const saveButton = document.getElementById('saveButton');
 	const cancelButton = document.getElementById('cancelButton');
 	const elementNameInput = document.getElementById('elementName');
 	const statusHead = document.getElementById('status-head');
-	const modeBtn = document.getElementById('clr-btn');
 
-	let newPlanName = '';
 	let selectedPresetPlan = null;
 	let activePresetPlan = null;
 	let userDatabaseIndexes = [];
 	let userDatabaseNames = [];
-	let currentDay;
 	let selDBIndex = 0;
 	let schName = '';
 
+	let selectedDay = 'Esmaspäev';
+
 	async function Connect(token) {
-		showSpinner('Ühendan...');
 		const response = await fetch('/api/preset', {
 			method: 'GET',
 			headers: {
@@ -52,8 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			setDayButtons();
 			await presetDataProcess(processed.data);
 		} else {
-			hideSpinner('VIGA');
-			setMainLabelTimer();
+			console.error('connect');
 		}
 	}
 
@@ -65,13 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			data.forEach((header) => {
 				Object.entries(header).forEach(([key, value]) => {
 					const newItem = document.createElement('li');
+					const newItemA = document.createElement('a');
 					if (key === 'Name') {
-						newItem.classList.add(
-							'preset-item-plan',
-							'list-plan-tail',
-							'regular'
-						);
-						newItem.textContent = value;
+						newItemA.textContent = value;
+						newItem.appendChild(newItemA);
 						presetListPlan.appendChild(newItem);
 						userDatabaseNames.push(value);
 					} else if (key === 'DbId') {
@@ -80,165 +69,173 @@ document.addEventListener('DOMContentLoaded', () => {
 					if (key === 'Current' && value === 1) {
 						const lastItem = presetListPlan.lastElementChild;
 						if (lastItem) {
-							lastItem.classList.remove('regular');
-							lastItem.classList.add('active');
-							activePresetPlan = lastItem.textContent;
+							activePresetPlan = lastItem.textContent.trim();
 						}
 					}
 				});
 			});
-			presetItemsPlan = document.querySelectorAll('.preset-item-plan');
+			const presetList = document.getElementById('preset-list-plan');
+			presetItemsPlan = presetList.querySelectorAll('li');
 			setPlans();
 			triggerPlanClick();
-			// setMainLabel();
 			resolve();
 		});
 	}
 
 	function tableDataProcess(data) {
 		return new Promise((resolve, reject) => {
-			removeTableData();
-			const initial = table.querySelector('thead').insertRow(-1);
-			let i = 0;
-			for (i = 0; i < 4; i++) {
-				const cell = document.createElement('th');
-				if (i === 0) {
-					cell.classList.add('list-table-h-tail');
-					cell.textContent = 'Nimi';
-					cell.contentEditable = false;
-				} else if (i === 1) {
-					cell.classList.add('list-table-h-tail');
-					cell.textContent = 'Aeg';
-					cell.contentEditable = false;
-				} else if (i === 2) {
-					cell.classList.add('list-table-h-tail');
-					cell.textContent = 'Kirjeldus';
-					cell.contentEditable = false;
-				} else if (i === 3) {
-					cell.classList.add('list-table-h-tail');
-					cell.textContent = 'Helifail';
-					cell.contentEditable = false;
-				}
-				initial.appendChild(cell);
-			}
-			if (data[0] !== undefined && data[0] !== null && data[0] !== '') {
-				data.forEach((rowData) => {
-					const newRow = table.querySelector('tbody').insertRow(-1);
+			const tables = [
+				'Mondays',
+				'Tuesdays',
+				'Wednesdays',
+				'Thursdays',
+				'Fridays',
+				'Saturdays',
+				'Sundays',
+			];
 
-					Object.entries(rowData).forEach(([key, value]) => {
-						if (key === 'Helifail') {
-							const cell = newRow.insertCell(-1);
-							cell.contentEditable = false;
-							cell.textContent = value;
-							cell.classList.add('list-table-tail');
-						} else if (key !== 'Id') {
-							const cell = newRow.insertCell(-1);
-							cell.contentEditable = true;
-							cell.textContent = value;
-							cell.classList.add('list-table-tail');
-						}
-					});
+			removeTableData();
+			const pageTables = document.querySelectorAll('[name="data-table"]');
+			let tableId = 0;
+
+			tables.forEach((day) => {
+				data[day].forEach((rowData) => {
+					const newRow = pageTables[tableId]
+						.querySelector('tbody')
+						.insertRow(-1);
+					if (rowData) {
+						Object.entries(rowData).forEach(([key, value]) => {
+							if (key === 'Helifail') {
+								const cell = newRow.insertCell(-1);
+								cell.contentEditable = false;
+								cell.textContent = value;
+								cell.classList.add('list-table-tail');
+							} else if (key !== 'Id') {
+								const cell = newRow.insertCell(-1);
+								cell.contentEditable = true;
+								cell.textContent = value;
+								cell.classList.add('list-table-tail');
+							}
+						});
+					}
 				});
-			}
+				tableId++;
+			});
 			resolve();
 		});
 	}
 
-	addRowBtn.addEventListener('click', function () {
-		let empty = false;
-		const head = table.querySelector('tbody');
-		if (head.children.length === 0) {
-			empty = true;
-		}
-		const newRow = table.querySelector('tbody').insertRow(-1);
-		let i = 0;
-		for (i = 0; i < 4; i++) {
-			const cell = newRow.insertCell(-1);
-			if (i === 3) {
-				cell.contentEditable = false;
-				cell.textContent = 'Vaikimisi';
-			} else {
-				cell.contentEditable = true;
-			}
-			cell.classList.add('list-table-tail');
-		}
-		updateBtn.textContent = 'Salvesta 💾';
-	});
-
 	updateBtn.addEventListener('click', function () {
-		showSpinner('Salvestamine...');
+		setLoader(true);
 		let sendingAccept = true;
-		const tableData = [];
+		const tableData = {};
+		let allTables = {
+			Esmaspäev: [],
+			Teisipäev: [],
+			Kolmapäev: [],
+			Neljapäev: [],
+			Reede: [],
+			Laupäev: [],
+			Pühapäev: [],
+		};
 
-		for (let i = 1; i < table.rows.length; i++) {
-			const dataCells = table.rows[i].cells;
-			for (let j = 0; j < dataCells.length; j++) {
-				dataCells[j].classList.remove('errorClass');
-			}
-		}
+		const pageTables = document.querySelectorAll('[name="data-table"]');
 
-		for (let i = 1; i < table.rows.length; i++) {
-			const dataRow = [];
-			const dataCells = table.rows[i].cells;
-			for (let j = 0; j < dataCells.length + 1; j++) {
-				if (j === 0) {
-					dataRow.push(`${i}`);
-				} else if (j === 2) {
-					const tempString = formatTime(dataCells[j - 1].textContent.trim());
-					if (tempString !== 'Invalid') {
-						dataRow.push(tempString);
-					} else {
-						sendingAccept = false;
-						H1Text.textContent = 'Vale aja formaat 🕓⬇️';
-						dataCells[j - 1].classList.add('errorClass');
-						setTimeout(() => {
-							setMainLabel();
-						}, 5000);
-					}
-				} else if (j === 1 || j === 3) {
-					if (dataCells[j - 1].textContent.trim().length < 15) {
-						dataRow.push(dataCells[j - 1].textContent.trim());
-					} else {
-						sendingAccept = false;
-						H1Text.textContent = 'Liiga pikk tekst 📏⬇️';
-						dataCells[j - 1].classList.add('errorClass');
-						setTimeout(() => {
-							setMainLabel();
-						}, 5000);
-					}
-				} else {
-					dataRow.push(dataCells[j - 1].textContent.trim());
+		pageTables.forEach((table) => {
+			for (let i = 1; i < table.rows.length; i++) {
+				const dataCells = table.rows[i].cells;
+				for (let j = 0; j < dataCells.length; j++) {
+					dataCells[j].classList.remove('bg-error', 'text-error-content');
 				}
 			}
-			tableData.push(dataRow);
-		}
+			let tableArray = [];
+
+			for (let i = 1; i < table.rows.length; i++) {
+				let dataRow = {
+					Id: 0,
+					Nimi: '',
+					Aeg: '',
+					Kirjeldus: '',
+					Helifail: '',
+				};
+				const dataCells = table.rows[i].cells;
+				for (let j = 0; j < dataCells.length + 1; j++) {
+					if (j === 0) {
+						dataRow.Id = i;
+					} else if (j === 2) {
+						const tempString = formatTime(dataCells[j - 1].textContent.trim());
+						if (tempString !== 'Invalid') {
+							dataRow.Aeg = tempString;
+						} else {
+							sendingAccept = false;
+							H1Text.textContent = 'Vale aja formaat 🕓⬇️';
+							dataCells[j - 1].classList.add('bg-error', 'text-error-content');
+						}
+					} else if (j === 1 || j === 3) {
+						if (dataCells[j - 1].textContent.trim().length < 15) {
+							if (j === 1) {
+								dataRow.Nimi = dataCells[j - 1].textContent.trim();
+							} else {
+								dataRow.Kirjeldus = dataCells[j - 1].textContent.trim();
+							}
+						} else {
+							sendingAccept = false;
+							H1Text.textContent = 'Liiga pikk tekst 📏⬇️';
+							dataCells[j - 1].classList.add('bg-error', 'text-error-content');
+						}
+					} else {
+						dataRow.Helifail = dataCells[j - 1].textContent.trim();
+					}
+				}
+				tableArray.push(dataRow);
+			}
+			allTables[table.ariaLabel.trim()] = tableArray;
+		});
+		// console.log(allTables);
 		if (sendingAccept) {
-			updateMessage(tableData);
+			updateMessage(allTables);
 		}
+	});
+
+	addRowBtn.addEventListener('click', function () {
+		const tables = document.querySelectorAll('[name="data-table"]');
+		tables.forEach((table) => {
+			if (table.ariaLabel.trim() === selectedDay) {
+				let empty = false;
+				const head = table.querySelector('tbody');
+				if (head.children.length === 0) {
+					empty = true;
+				}
+				const newRow = table.querySelector('tbody').insertRow(-1);
+				let i = 0;
+				for (i = 0; i < 4; i++) {
+					const cell = newRow.insertCell(-1);
+					if (i === 3) {
+						cell.contentEditable = false;
+						cell.textContent = 'Vaikimisi';
+					} else {
+						cell.contentEditable = true;
+					}
+					cell.classList.add('list-table-tail');
+				}
+				updateBtn.textContent = 'Salvesta 💾';
+			}
+		});
 	});
 
 	delRowBtn.addEventListener('click', function () {
-		const table = document.getElementById('data-table');
-		const tableBody = table.querySelector('tbody');
-		if (tableBody.rows.length > 0) {
-			tableBody.deleteRow(tableBody.rows.length - 1);
-			updateBtn.textContent = 'Salvesta 💾';
-		}
-	});
-
-	alarmBtn.addEventListener('click', function () {
-		overlayAlarm.classList.remove('hidden');
-		const bodymain = document.getElementById('bbody');
-		bodymain.classList.add('overflow-hidden');
-		overlayAlarmCloseBtn.onclick = () => {
-			overlayAlarm.classList.add('hidden');
-			bodymain.classList.remove('overflow-hidden');
-		};
+		const tables = document.querySelectorAll('[name="data-table"]');
+		tables.forEach((table) => {
+			if (table.ariaLabel.trim() === selectedDay) {
+				const tableBody = table.querySelector('tbody');
+				if (tableBody.rows.length > 0) {
+					tableBody.deleteRow(tableBody.rows.length - 1);
+				}
+			}
+		});
 	});
 
 	alarmBtnMain.addEventListener('click', async function () {
-		showSpinner('Saadan Haire Request...');
-
 		const response = await fetch('/api/alarm_req', {
 			method: 'GET',
 			headers: {
@@ -259,24 +256,15 @@ document.addEventListener('DOMContentLoaded', () => {
 					alarmBtnMain.classList.add('animate-pulse');
 				}
 				statusSet(true);
-				setMainLabel();
 			}
 		} else {
 			statusSet(false);
-			hideSpinner('Ühendus kooli arvutiga puudub!');
-			setMainLabelTimer();
 		}
 	});
 
-	function setMainLabelTimer() {
-		setTimeout(() => {
-			setMainLabel();
-		}, 5000);
-	}
-
 	enableBtn.addEventListener('click', async function () {
 		if (selectedPresetPlan != null) {
-			showSpinner('Aktiveerin...');
+			setLoader(true);
 			const response = await fetch('/api/enable_plan', {
 				method: 'POST',
 				headers: {
@@ -296,33 +284,29 @@ document.addEventListener('DOMContentLoaded', () => {
 					}, 100);
 				} else {
 					statusSet(false);
-					hideSpinner('Ühendus kooli arvutiga puudub!');
-					setMainLabelTimer();
 				}
 			} else {
 				statusSet(false);
-				hideSpinner('Viga!');
-				setMainLabelTimer();
 			}
+			setLoader(false);
 		}
 	});
 
 	logOutBtn.onclick = function () {
 		if (localStorage.getItem('token')) {
 			localStorage.removeItem('token');
-			console.log('Token deleted successfully');
+			// console.log('Token deleted successfully');
 			document.location.href = '/login';
 		} else {
-			console.log('No token found in local storage');
+			// console.log('No token found in local storage');
 			document.location.href = '/login';
 		}
 	};
 
 	newPlanBtn.addEventListener('click', async function () {
 		if (presetListPlan.children.length < 10) {
-			await pullupModal();
-			if (newPlanName) {
-				showSpinner('Uuendan...');
+			const newName = document.getElementById('input-new-plan').value.trim();
+			if (newName) {
 				const response = await fetch('/api/new_plan', {
 					method: 'POST',
 					headers: {
@@ -330,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						Authorization: `${token}`,
 						School: schName,
 					},
-					body: JSON.stringify({ name: newPlanName }),
+					body: JSON.stringify({ name: newName }),
 				});
 
 				if (response.ok) {
@@ -343,20 +327,16 @@ document.addEventListener('DOMContentLoaded', () => {
 					await presetDataProcess(processed.data);
 				} else {
 					statusSet(false);
-					hideSpinner('Viga!');
-					setMainLabelTimer();
 				}
-				newPlanName = '';
+				document.getElementById('input-new-plan').value = '';
 			}
 		} else {
-			setMainLabel();
 			alert('Liiga palju plaane, palun kustutage mõned ära!');
 		}
 	});
 
 	delPlanBtn.addEventListener('click', async function () {
 		if (selectedPresetPlan !== null) {
-			showSpinner('Uuendan...');
 			const response = await fetch('/api/del_plan', {
 				method: 'POST',
 				headers: {
@@ -379,8 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				await presetDataProcess(processed.data);
 			} else {
 				statusSet(false);
-				hideSpinner('Viga!');
-				setMainLabelTimer();
 			}
 		}
 	});
@@ -394,7 +372,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				school: schName,
 			},
 			body: JSON.stringify({
-				day: currentDay,
 				tableData: tableD,
 				dbid: selDBIndex,
 			}),
@@ -406,26 +383,24 @@ document.addEventListener('DOMContentLoaded', () => {
 			} else {
 				statusSet(false);
 			}
-			setMainLabel();
 		} else {
 			statusSet(false);
-			hideSpinner('Viga!');
-			setMainLabelTimer();
 		}
+		setLoader(false);
 	}
 
 	function statusSet(bool) {
 		if (bool) {
 			statusHead.textContent = 'Ühendus kooli arvutiga: Online 🟢';
-			statusHead.classList.add('bg-green-400');
-			statusHead.classList.remove('bg-red-400');
+			statusHead.classList.add('bg-success');
+			statusHead.classList.remove('bg-error');
 
 			const nblab = document.getElementById('nb-label');
 			nblab.classList.add('hidden');
 		} else {
 			statusHead.textContent = 'Ühendus kooli arvutiga: Offline 🔴';
-			statusHead.classList.remove('bg-green-400');
-			statusHead.classList.add('bg-red-400');
+			statusHead.classList.remove('bg-success');
+			statusHead.classList.add('bg-error');
 
 			const nblab = document.getElementById('nb-label');
 			nblab.classList.remove('hidden');
@@ -433,83 +408,23 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function removeTableData() {
-		const table = document.getElementById('data-table');
-
-		while (table.rows.length > 0) {
-			table.deleteRow(0);
-		}
-	}
-
-	function setDayButtons() {
-		presetItemsDays.forEach((item) => {
-			item.addEventListener('click', async function () {
-				// showSpinner('Tootlen...');
-				presetItemsDays.forEach((i) => i.classList.remove('selected'));
-				item.classList.add('selected');
-				const selectedPresetDay = item.textContent.trim();
-				// console.log(selectedPresetDay);
-
-				switch (selectedPresetDay) {
-					case 'Esmaspäev':
-						currentDay = 'Mondays';
-						break;
-					case 'Teisipäev':
-						currentDay = 'Tuesdays';
-						break;
-					case 'Kolmapäev':
-						currentDay = 'Wednesdays';
-						break;
-					case 'Neljapäev':
-						currentDay = 'Thursdays';
-						break;
-					case 'Reede':
-						currentDay = 'Fridays';
-						break;
-					case 'Laupäev':
-						currentDay = 'Saturdays';
-						break;
-					case 'Pühapäev':
-						currentDay = 'Sundays';
-						break;
-					default:
-						break;
-				}
-				const response = await fetch('/api/fetch', {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						authorization: token,
-						school: schName,
-						day: currentDay,
-						dbid: selDBIndex,
-					},
-				});
-				if (response.ok) {
-					const processed = await response.json();
-					if (processed.STATUS) {
-						statusSet(true);
-					} else {
-						statusSet(false);
-					}
-					await tableDataProcess(processed.data);
-					// setMainLabel();
-				} else {
-					hideSpinner('VIGA');
-					setMainLabelTimer();
-				}
-			});
+		const tables = document.querySelectorAll('[name="data-table"]');
+		tables.forEach((table) => {
+			while (table.rows.length > 1) {
+				table.deleteRow(1);
+			}
 		});
 	}
 
-	function triggerDayClick(presetText) {
-		const item = Array.from(presetItemsDays).find(
-			(i) => i.textContent.trim() === presetText
+	function setDayButtons() {
+		const radioButtons = document.querySelectorAll(
+			'input[type="radio"][name="my_tabs_2"]'
 		);
-		if (item) {
-			item.dispatchEvent(new Event('click'));
-		} else {
-			console.error('Preset item not found:', presetText);
-		}
+		radioButtons.forEach((item) => {
+			item.addEventListener('click', async function () {
+				selectedDay = item.ariaLabel.trim();
+			});
+		});
 	}
 
 	function triggerPlanClick() {
@@ -527,32 +442,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	function showSpinner(text) {
-		H1Text.innerHTML = `${text} <span class="spinner">🔄</span>`;
-	}
-
-	function hideSpinner(text) {
-		H1Text.innerHTML = `${text}`;
-	}
-
-	function setMainLabel() {
-		if (schName && selectedPresetPlan) {
-			hideSpinner(`${schName} Kool: ${selectedPresetPlan}`);
-		} else {
-			hideSpinner('BLANK');
-		}
-	}
-
 	function setPlans() {
+		const presetList = document.getElementById('preset-list-plan');
+		presetItemsPlan = presetList.querySelectorAll('li');
 		presetItemsPlan.forEach((item) => {
 			item.addEventListener('click', function () {
 				presetItemsPlan.forEach((i) => {
-					i.classList.remove('selected');
+					// i.classList.remove('active');
+					i.querySelector('a').classList.remove('active');
 				});
 
-				item.classList.add('selected');
+				item.querySelector('a').classList.add('active');
 
-				selectedPresetPlan = item.textContent;
+				selectedPresetPlan = item.querySelector('a').textContent.trim();
 
 				if (selectedPresetPlan) {
 					let i = 0;
@@ -563,11 +465,40 @@ document.addEventListener('DOMContentLoaded', () => {
 						}
 					}
 					selDBIndex = userDatabaseIndexes[j];
-					triggerDayClick('Esmaspäev');
-					setMainLabel();
 				}
+
+				setLoader(true);
+				fetch('api/fetch', {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						authorization: token,
+						school: schName,
+						dbid: selDBIndex,
+					},
+				})
+					.then((response) => {
+						if (!response.ok) {
+							console.error('Network response was not ok');
+						} else {
+							response.json().then((data) => {
+								tableDataProcess(data.data);
+							});
+						}
+					})
+					.catch((error) => {
+						console.error('Fetch', error);
+					})
+					.finally(() => {
+						setLoader(false);
+					});
 			});
 		});
+	}
+
+	function setLoader(bool) {
+		const load = document.getElementById('loader');
+		bool ? load.classList.remove('hidden') : load.classList.add('hidden');
 	}
 
 	function removeAllPresets() {
@@ -646,36 +577,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	function closeModal() {
-		overlay.classList.add('hidden');
-		const bodymain = document.getElementById('bbody');
-
-		bodymain.classList.remove('overflow-hidden');
-	}
-
 	const token = localStorage.getItem('token');
 	if (token) {
 		Connect(token);
 	} else {
 		document.location.href = '/login';
 	}
-
-	// On page load or when changing themes, best to add inline in `head` to avoid FOUC
-	if (localStorage.theme === 'dark') {
-		document.documentElement.classList.add('dark');
-	} else {
-		document.documentElement.classList.remove('dark');
-	}
-
-	modeBtn.onclick = function () {
-		if (localStorage.theme === 'dark') {
-			document.documentElement.classList.remove('dark');
-			localStorage.theme = 'light';
-		} else {
-			document.documentElement.classList.add('dark');
-			localStorage.theme = 'dark';
-		}
-	};
 
 	const logo = document.getElementById('logo-btn');
 	logo.onclick = function () {

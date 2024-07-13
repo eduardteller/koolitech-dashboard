@@ -1,30 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const login = document.getElementById('login-btn');
-	const singup = document.getElementById('signup-btn');
+	// const singup = document.getElementById('signup-btn');
 	const user = document.getElementById('username');
 	const pass = document.getElementById('password');
 
-	const modeBtn = document.getElementById('clr-btn');
+	// singup.addEventListener('click', async (e) => {
+	// 	e.preventDefault();
+	// 	const username = user.value;
+	// 	const password = pass.value;
 
-	singup.addEventListener('click', async (e) => {
-		e.preventDefault();
-		const username = user.value;
-		const password = pass.value;
+	// 	const response = await fetch('/api/register', {
+	// 		method: 'POST',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 		},
+	// 		body: JSON.stringify({ username, password }),
+	// 	});
 
-		const response = await fetch('/api/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ username, password }),
-		});
-
-		if (response.ok) {
-			alert('Kasutaja loodud, palun logi sisse!');
-		} else {
-			alert('Registreerimine ebaõnnestus');
-		}
-	});
+	// 	if (response.ok) {
+	// 		alert('Kasutaja loodud, palun logi sisse!');
+	// 	} else {
+	// 		alert('Registreerimine ebaõnnestus');
+	// 	}
+	// });
 
 	login.addEventListener('click', async (e) => {
 		e.preventDefault();
@@ -68,21 +66,21 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	if (localStorage.theme === 'dark') {
-		document.documentElement.classList.add('dark');
-	} else {
-		document.documentElement.classList.remove('dark');
-	}
+	// if (localStorage.theme === 'dark') {
+	// 	document.documentElement.classList.add('dark');
+	// } else {
+	// 	document.documentElement.classList.remove('dark');
+	// }
 
-	modeBtn.onclick = function () {
-		if (localStorage.theme === 'dark') {
-			document.documentElement.classList.remove('dark');
-			localStorage.theme = 'light';
-		} else {
-			document.documentElement.classList.add('dark');
-			localStorage.theme = 'dark';
-		}
-	};
+	// modeBtn.onclick = function () {
+	// 	if (localStorage.theme === 'dark') {
+	// 		document.documentElement.classList.remove('dark');
+	// 		localStorage.theme = 'light';
+	// 	} else {
+	// 		document.documentElement.classList.add('dark');
+	// 		localStorage.theme = 'dark';
+	// 	}
+	// };
 
 	const logo = document.getElementById('logo-btn');
 	logo.onclick = function () {

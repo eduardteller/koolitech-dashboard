@@ -582,7 +582,6 @@ app.get('/api/preset', async (req, res) => {
 app.get('/api/fetch', async (req, res) => {
 	const token = req.headers['authorization'];
 	const dbid = req.headers['dbid'];
-	const day = req.headers['day'];
 	const school = req.headers['school'];
 	if (!token || !checkToken(token)) {
 		return res.status(400).send();
@@ -597,20 +596,39 @@ app.get('/api/fetch', async (req, res) => {
 				available = true;
 			}
 
+			const tables = [
+				'Mondays',
+				'Tuesdays',
+				'Wednesdays',
+				'Thursdays',
+				'Fridays',
+				'Saturdays',
+				'Sundays',
+			];
+			let results = {};
+			let queriesCompleted = 0;
+
 			const closeAsyncMain = promisify(dbMain.close.bind(dbMain));
 			const resp = await new Promise((resolve, reject) => {
-				dbMain.all(`SELECT * FROM ${day}`, (err, rows) => {
-					if (err) {
-						reject(err); // Reject the Promise if there's an error
-						return;
-					}
-					resolve(rows); // Resolve the Promise with the fetched data
+				tables.forEach((table) => {
+					dbMain.all(`SELECT * FROM ${table}`, [], (err, rows) => {
+						if (err) {
+							reject(err); // Reject the Promise if there's an error
+							return;
+						}
+						results[table] = rows;
+						queriesCompleted += 1;
+						if (queriesCompleted === tables.length) {
+							resolve(results); // Resolve the Promise with the fetched data
+						}
+					});
 				});
 			});
 
 			await closeAsyncMain();
 
 			if (resp) {
+				// console.log(resp);
 				res.json({ data: resp, STATUS: available });
 			}
 			// console.log(`SUCCESFULLY FETCHED ${day} TO WEB: ${school}`);
@@ -621,7 +639,25 @@ app.get('/api/fetch', async (req, res) => {
 	}
 });
 
+function getKeyByValue(obj, value) {
+	for (const key in obj) {
+		if (obj[key] === value) {
+			return key;
+		}
+	}
+	return null; // Return null if no key with the given value is found
+}
+
 app.post('/api/update', async (req, res) => {
+	const translations = new Map([
+		['Mondays', 'Esmaspäev'],
+		['Tuesdays', 'Teisipäev'],
+		['Wednesdays', 'Kolmapäev'],
+		['Thursdays', 'Neljapäev'],
+		['Fridays', 'Reede'],
+		['Saturdays', 'Laupäev'],
+		['Sundays', 'Pühapäev'],
+	]);
 	const token = req.headers['authorization'];
 	const school = req.headers['school'];
 	if (!token || !checkToken(token)) {
@@ -638,23 +674,27 @@ app.post('/api/update', async (req, res) => {
 				)
 			);
 
-			// Promisify the run and close methods
 			const runAsync = promisify(dbMain.run.bind(dbMain));
 			const closeAsync = promisify(dbMain.close.bind(dbMain));
 
-			// Wrap the delete operation in a promise
-			await runAsync(`DELETE FROM ${req.body.day}`);
+			await new Promise((resolve, reject) => {
+				translations.forEach(async (value, key) => {
+					await runAsync(`DELETE FROM ${key}`);
+					for (let i = 0; i < req.body.tableData[value].length; i++) {
+						const arr = req.body.tableData[value];
+						const { Id, Nimi, Aeg, Kirjeldus, Helifail } = arr[i];
 
-			for (let i = 0; i < req.body.tableData.length; i++) {
-				const [Id, Nimi, Aeg, Kirjeldus, Helifail] = req.body.tableData[i];
-				await runAsync(`INSERT INTO ${req.body.day} VALUES (?, ?, ?, ?, ?)`, [
-					Id,
-					Nimi,
-					Aeg,
-					Kirjeldus,
-					Helifail,
-				]);
-			}
+						await runAsync(`INSERT INTO ${key} VALUES (?, ?, ?, ?, ?)`, [
+							Id,
+							Nimi,
+							Aeg,
+							Kirjeldus,
+							Helifail,
+						]);
+					}
+				});
+				resolve();
+			});
 
 			await closeAsync();
 

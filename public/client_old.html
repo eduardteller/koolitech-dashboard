@@ -31,24 +31,6 @@
 				class="max-w-screen-xl mx-auto py-4 px-8 flex flex-row items-center justify-between"
 			>
 				<div class="flex flex-row items-center justify-start">
-					<label
-						for="my-drawer-2"
-						class="btn btn-square btn-ghost drawer-button lg:hidden mr-2"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							class="inline-block h-5 w-5 stroke-current"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M4 6h16M4 12h16M4 18h16"
-							></path>
-						</svg>
-					</label>
 					<button id="logo-btn" class="text-2xl font-bold font-libre">
 						KooliTech
 					</button>
@@ -66,34 +48,68 @@
 			</div>
 		</header>
 
-		<div class="drawer lg:drawer-open">
-			<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-			<div class="drawer-content flex flex-col items-center justify-center">
-				<!-- Page content here -->
-				<div class="w-full mt-8 flex flex-col justify-start items-center">
-					<div
-						class="bg-base-100 mb-2 card shadow-xl p-4 flex flex-col justify-start items-center lg:-ml-60"
-					>
-						<div class="flex flex-col justify-center items-center">
-							<h1
-								id="status-head"
-								class="px-4 py-2 bg-error card text-error-content text-center w-96"
-							>
-								Ühendus kooli arvutiga: Offline 🔴
-							</h1>
-						</div>
-						<div
-							id="nb-label"
-							class="bg-warning h-12 sm:h-8 card shadow-xl p-4 flex flex-row justify-center items-center w-96 mt-2"
+		<main id="cntMain" class="container mx-auto max-w-screen-xl">
+			<div class="w-full mt-8 flex flex-col justify-start items-center">
+				<div
+					class="bg-base-100 mb-2 card shadow-xl p-4 flex flex-col justify-start items-center"
+				>
+					<div class="flex flex-col justify-center items-center">
+						<h1
+							id="status-head"
+							class="px-4 py-2 bg-error card text-error-content text-center w-96"
 						>
-							<h1 class="text-warning-content">
-								⚠️ NB! Koik muudatused salvestuvad ainult pilve!
-							</h1>
+							Ühendus kooli arvutiga: Offline 🔴
+						</h1>
+					</div>
+					<div
+						id="nb-label"
+						class="bg-warning h-12 sm:h-8 card shadow-xl p-4 flex flex-row justify-center items-center w-96 mt-2"
+					>
+						<h1 class="text-warning-content">
+							⚠️ NB! Koik muudatused salvestuvad ainult pilve!
+						</h1>
+					</div>
+				</div>
+				<div class="flex flex-row w-full items-start justify-center mt-6">
+					<div
+						class="lg:h-[640px] w-48 bg-base-100 card shadow-xl flex flex-col items-center justify-between font-nunito mr-4"
+					>
+						<div class="w-full mt-4">
+							<h1 class="font-semibold text-xl pb-4 text-center">Plaanid 📝</h1>
+							<ul
+								id="preset-list-plan"
+								class="menu menu-md bg-base-100 rounded-box w-full"
+							>
+								<li><a class="active">Item 1</a></li>
+								<li><a>Item 2</a></li>
+								<li><a>Item 3</a></li>
+								<li><a>Item 4</a></li>
+								<li><a>Item 5</a></li>
+								<li><a>Item 6</a></li>
+								<li><a>Item 7</a></li>
+								<li><a>Item 8</a></li>
+								<li><a>Item 9</a></li>
+								<li><a>Item 10</a></li>
+							</ul>
+						</div>
+						<div class="flex flex-col justify-start items-center mb-6">
+							<button
+								id="new-plan"
+								class="btn btn-primary mb-1 w-36"
+								onclick="my_modal_1.showModal()"
+							>
+								Uus ➕
+							</button>
+							<button id="del-plan" class="btn btn-primary mb-1 w-36">
+								Kustuta 🗑️
+							</button>
+							<button id="enable-plan" class="btn btn-primary mb-1 w-36">
+								Kasuta ✅
+							</button>
 						</div>
 					</div>
-
 					<div
-						class="bg-base-100 w-[720px] h-[640px] card shadow-xl p-4 flex flex-col justify-between items-center mt-6 lg:-ml-60"
+						class="bg-base-100 w-[720px] h-[640px] card shadow-xl p-4 flex flex-col justify-between items-center mr-52"
 					>
 						<div class="w-full">
 							<h1
@@ -384,68 +400,29 @@
 							</button>
 						</div>
 					</div>
-					<div
-						class="bg-base-100 mb-8 mt-24 card shadow-xl p-4 w-[720px] lg:-ml-60"
-					>
-						<div class="flex flex-col justify-start items-center w-full h-full">
-							<h1 class="text-3xl font-semibold my-4 h-8">Käivita häire</h1>
-							<p class="text-lg m-2">
-								Lorem ipsum dolor sit amet consectetur adipisicing elit.
-								Corporis quisquam, quas, tempore inventore voluptatum placeat
-								delectus id quos earum error ut nobis molestiae? Eius magnam
-								molestiae iure ullam, dolor enim?
-							</p>
-							<button
-								class="btn btn-error m-1"
-								onclick="my_modal_3.showModal()"
-								id="haire-btn"
-							>
-								Kooli häire 🚨
-							</button>
-						</div>
+				</div>
+				<div class="bg-base-100 mb-8 mt-24 card shadow-xl p-4 w-[720px]">
+					<div class="flex flex-col justify-start items-center w-full h-full">
+						<h1 class="text-3xl font-semibold my-4 h-8">Käivita häire</h1>
+						<p class="text-lg m-2">
+							Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis
+							quisquam, quas, tempore inventore voluptatum placeat delectus id
+							quos earum error ut nobis molestiae? Eius magnam molestiae iure
+							ullam, dolor enim?
+						</p>
+						<button
+							class="btn btn-error m-1"
+							onclick="my_modal_3.showModal()"
+							id="haire-btn"
+						>
+							Kooli häire 🚨
+						</button>
 					</div>
 				</div>
 			</div>
-			<div class="drawer-side">
-				<label
-					for="my-drawer-2"
-					aria-label="close sidebar"
-					class="drawer-overlay"
-				></label>
+		</main>
 
-				<ul class="menu bg-base-200 text-base-content min-h-full w-60 p-4">
-					<h1 class="font-semibold text-xl my-4 text-center">Plaanid 📝</h1>
-					<ul id="preset-list-plan">
-						<li><a class="active">Item 1</a></li>
-						<li><a>Item 2</a></li>
-						<li><a>Item 3</a></li>
-						<li><a>Item 4</a></li>
-						<li><a>Item 5</a></li>
-						<li><a>Item 6</a></li>
-						<li><a>Item 7</a></li>
-						<li><a>Item 8</a></li>
-						<li><a>Item 9</a></li>
-						<li><a>Item 10</a></li>
-					</ul>
-					<div class="flex flex-col justify-start items-center mt-4">
-						<button
-							id="new-plan"
-							class="btn btn-primary mb-2 w-36"
-							onclick="my_modal_1.showModal()"
-						>
-							Uus ➕
-						</button>
-						<button id="del-plan" class="btn btn-primary mb-2 w-36">
-							Kustuta 🗑️
-						</button>
-						<button id="enable-plan" class="btn btn-primary w-36">
-							Kasuta ✅
-						</button>
-					</div>
-				</ul>
-			</div>
-		</div>
-
+		<!-- You can open the modal using ID.showModal() method -->
 		<dialog id="my_modal_1" class="modal">
 			<div class="modal-box">
 				<form method="dialog">
