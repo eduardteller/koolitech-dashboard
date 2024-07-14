@@ -535,6 +535,11 @@ document.addEventListener('DOMContentLoaded', () => {
 					.finally(() => {
 						setLoader(false);
 					});
+
+				const kolmapaevTab = document.querySelector(
+					'input[aria-label="Esmaspäev"]'
+				);
+				kolmapaevTab.dispatchEvent(new Event('click'));
 			});
 		});
 	}
