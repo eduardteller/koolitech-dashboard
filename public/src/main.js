@@ -75,8 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 			const presetList = document.getElementById('preset-list-plan');
 			presetItemsPlan = presetList.querySelectorAll('li');
-			setPlans();
-			triggerPlanClick();
+
 			if (presetItemsPlan.length >= 10) {
 				newPlanBtn.disabled = true;
 				document.getElementById('new-plan').disabled = true;
@@ -92,6 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				delPlanBtn.disabled = false;
 				enableBtn.disabled = false;
 			}
+
+			setPlans();
+			triggerPlanClick();
 			// document.getElementById('my_modal_1').open = false;
 			resolve();
 		});
@@ -492,10 +494,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				selectedPresetPlan = item.querySelector('a').textContent.trim();
 
 				if (selectedPresetPlan === activePresetPlan) {
-					console.log(selectedPresetPlan, activePresetPlan, 1);
 					enableBtn.disabled = true;
 				} else {
-					console.log(selectedPresetPlan, activePresetPlan, 2);
 					enableBtn.disabled = false;
 				}
 
@@ -586,39 +586,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 	};
-
-	function pullupModal() {
-		return new Promise((resolve) => {
-			overlay.classList.remove('hidden');
-			const bodymain = document.getElementById('bbody');
-			bodymain.classList.add('overflow-hidden');
-			elementNameInput.value = ''; // Clear the input field
-			saveButton.addEventListener('click', function () {
-				const elementName = elementNameInput.value.trim().toUpperCase();
-				let check = false;
-				if (elementName && /^[a-zA-Z0-9 ]+$/.test(elementName)) {
-					presetItemsPlan.forEach((plan) => {
-						if (plan.textContent === elementName) {
-							check = true;
-						}
-					});
-					if (!check) {
-						newPlanName = elementName;
-						closeModal();
-						resolve();
-					} else {
-						alert('Selline nimi juba olemas');
-					}
-				} else {
-					alert('Palun sistestage ainult nubmrid ja tahed');
-				}
-			});
-			cancelButton.addEventListener('click', function () {
-				closeModal();
-				resolve();
-			});
-		});
-	}
 
 	const token = localStorage.getItem('token');
 	if (token) {
