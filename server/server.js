@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import sqlite3 from 'sqlite3';
 import fs from 'fs/promises';
-import path from 'path';
+import path, { resolve } from 'path';
 import jwt from 'jsonwebtoken';
 import express from 'express';
 import http from 'http';
@@ -13,6 +13,7 @@ import { fileURLToPath } from 'url';
 import { promisify } from 'util';
 import { sendMessage, cmpDBModDate, sendDBFile } from './func.js';
 import nodemailer from 'nodemailer';
+import { rejects } from 'assert';
 
 // const privateKey = await fs.readFile('./private/key.pem', 'utf8');
 // const certificate = await fs.readFile('./private/cert.pem', 'utf8');
@@ -674,104 +675,41 @@ app.post('/api/update', async (req, res) => {
 				)
 			);
 
-			// await new Promise((resolve, reject) => {
-			// 	translations.forEach(async (value, key) => {
-			// 		await runAsync(`DELETE FROM ${key}`);
-			// 		for (let i = 0; i < req.body.tableData[value].length; i++) {
-			// 			const arr = req.body.tableData[value];
-			// 			const { Id, Nimi, Aeg, Kirjeldus, Helifail } = arr[i];
-
-			// 			await runAsync(`INSERT INTO ${key} VALUES (?, ?, ?, ?, ?)`, [
-			// 				Id,
-			// 				Nimi,
-			// 				Aeg,
-			// 				Kirjeldus,
-			// 				Helifail,
-			// 			]);
-			// 		}
-			// 	});
-			// 	resolve();
-			// });
-			// Use an array to collect promises
 			const runAsync = promisify(dbMain.run.bind(dbMain));
 			const closeAsync = promisify(dbMain.close.bind(dbMain));
-
-			// const promisesDel = [];
-			// const promises = [];
-
-			// await new Promise((resolve, reject) => {
-			// 	translations.forEach((value, key) => {
-			// 		dbMain.run(`DELETE FROM ${key}`);
-			// 	});
-			// 	resolve();
-			// });
-			// await new Promise((resolve, reject) => {
-			// 	translations.forEach((value, key) => {
-			// 		const tableData = req.body.tableData[value];
-			// 		for (let i = 0; i < tableData.length; i++) {
-			// 			const { Id, Nimi, Aeg, Kirjeldus, Helifail } = tableData[i];
-			// 			console.log(Id, Nimi, Aeg, Kirjeldus, Helifail);
-			// 			dbMain.run(`INSERT OR REPLACE INTO ${key} VALUES (?, ?, ?, ?, ?)`, [
-			// 				Id,
-			// 				Nimi,
-			// 				Aeg,
-			// 				Kirjeldus,
-			// 				Helifail,
-			// 			]);
-			// 		}
-			// 	});
-			// 	resolve();
-			// });
-
-			// Wait for all promises to resolve
-			// await Promise.all(promisesDel);
-			// await Promise.all(promises);
-
-			// await closeAsync();
 
 			const promisesDel = [];
 			const promises = [];
 
-			translations.forEach((value, key) => {
-				promisesDel.push(runAsync(`DELETE FROM ${key}`));
-				const tableData = req.body.tableData[value];
-				for (let i = 0; i < tableData.length; i++) {
-					const { Id, Nimi, Aeg, Kirjeldus, Helifail } = tableData[i];
-					promises.push(
-						runAsync(
-							`INSERT OR REPLACE INTO ${key} (Id, Nimi, Aeg, Kirjeldus, Helifail) VALUES (?, ?, ?, ?, ?)`,
-							[Id, Nimi, Aeg, Kirjeldus, Helifail]
-						)
-					);
-				}
+			await new Promise((resolve, reject) => {
+				translations.forEach((value, key) => {
+					promisesDel.push(runAsync(`DELETE FROM ${key}`));
+					const tableData = req.body.tableData[value];
+					for (let i = 0; i < tableData.length; i++) {
+						const { Id, Nimi, Aeg, Kirjeldus, Helifail } = tableData[i];
+						promises.push(
+							runAsync(
+								`INSERT OR REPLACE INTO ${key} (Id, Nimi, Aeg, Kirjeldus, Helifail) VALUES (?, ?, ?, ?, ?)`,
+								[Id, Nimi, Aeg, Kirjeldus, Helifail]
+							)
+						);
+					}
+				});
+				resolve();
 			});
 
 			// Execute all operations in a transaction
-			(async () => {
-				try {
-					await runAsync('BEGIN TRANSACTION');
-					await Promise.all(promisesDel);
-					await Promise.all(promises);
-					await runAsync('COMMIT');
-				} catch (err) {
-					await runAsync('ROLLBACK');
-					throw err;
-				} finally {
-					await closeAsync();
-					// const time = new Date();
-					// await fs.utimes(
-					// 	path.join(
-					// 		__dirname,
-					// 		'data',
-					// 		`${school}`,
-					// 		`central_data`,
-					// 		`${req.body.dbid}.db`
-					// 	),
-					// 	time,
-					// 	time
-					// );
-				}
-			})();
+			try {
+				await runAsync('BEGIN TRANSACTION');
+				await Promise.all(promisesDel);
+				await Promise.all(promises);
+				await runAsync('COMMIT');
+			} catch (err) {
+				await runAsync('ROLLBACK');
+				throw err;
+			} finally {
+				await closeAsync();
+			}
 
 			const selClient = findClient(school);
 
