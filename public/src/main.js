@@ -447,7 +447,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 		if (!check && presetItemsPlan) {
-			presetItemsPlan[0].dispatchEvent(new Event('click'));
+			if (presetItemsPlan[0]) {
+				presetItemsPlan[0].dispatchEvent(new Event('click'));
+			}
 		}
 	}
 
