@@ -619,12 +619,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	// const token = localStorage.getItem('token');
-	// if (token) {
-	// 	Connect(token);
-	// } else {
-	// 	document.location.href = '/login';
-	// }
+	const token = localStorage.getItem('token');
+	if (token) {
+		Connect(token);
+	} else {
+		document.location.href = '/login';
+	}
 
 	const logo = document.getElementById('logo-btn');
 	logo.onclick = function () {
