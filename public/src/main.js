@@ -440,7 +440,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				const tables = document.querySelectorAll('[name="data-table"]');
 				tables.forEach((table) => {
 					if (table.ariaLabel.trim() === item.ariaLabel.trim()) {
-						if (table.rows.length <= 0) {
+						const newTable = table.querySelector('tbody');
+						if (newTable.rows.length <= 0) {
 							delRowBtn.disabled = true;
 						} else {
 							delRowBtn.disabled = false;
