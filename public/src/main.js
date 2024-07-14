@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				delPlanBtn.disabled = false;
 				enableBtn.disabled = false;
 			}
-			document.getElementById('my_modal_1').open = false;
+			// document.getElementById('my_modal_1').open = false;
 			resolve();
 		});
 	}
