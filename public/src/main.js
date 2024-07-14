@@ -485,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					// i.classList.remove('active');
 					i.querySelector('a').classList.remove('active', 'bg-blue-300');
 					if (i.querySelector('a').textContent.trim() === activePresetPlan) {
-						item.querySelector('a').classList.add('bg-blue-300');
+						i.querySelector('a').classList.add('bg-blue-300');
 					}
 				});
 
