@@ -79,10 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			triggerPlanClick();
 			if (presetItemsPlan.length >= 10) {
 				newPlanBtn.disabled = true;
-				console.log('1');
 			} else {
 				newPlanBtn.disabled = false;
-				console.log('2');
+			}
+
+			if (presetItemsPlan.length <= 0) {
+				delPlanBtn.disabled = true;
+			} else {
+				delPlanBtn.disabled = false;
 			}
 			resolve();
 		});

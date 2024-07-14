@@ -11,7 +11,7 @@ module.exports = {
 		'bg-success',
 		'text-error-content',
 		'text-success-content',
-		'bg-red-200',
+		'bg-blue-300',
 	],
 	theme: {
 		extend: {
