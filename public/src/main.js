@@ -465,7 +465,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			const item = presetItemsPlan[i];
 			if (item.textContent === activePresetPlan) {
 				item.dispatchEvent(new Event('click'));
-				enableBtn.disabled = true;
 				check = true;
 				return;
 			}
@@ -485,6 +484,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				presetItemsPlan.forEach((i) => {
 					// i.classList.remove('active');
 					i.querySelector('a').classList.remove('active', 'bg-blue-300');
+					if (i.querySelector('a').textContent.trim() === activePresetPlan) {
+						item.querySelector('a').classList.add('bg-blue-300');
+					}
 				});
 
 				item.querySelector('a').classList.add('active');
@@ -493,7 +495,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				if (selectedPresetPlan === activePresetPlan) {
 					enableBtn.disabled = true;
-					item.querySelector('a').classList.add('bg-blue-300');
 				} else {
 					enableBtn.disabled = false;
 				}
