@@ -88,8 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			if (presetItemsPlan.length <= 0) {
 				delPlanBtn.disabled = true;
+				enableBtn.disabled = true;
 			} else {
 				delPlanBtn.disabled = false;
+				enableBtn.disabled = false;
 			}
 			resolve();
 		});
