@@ -80,8 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			console.log(presetItemsPlan.length);
 			if (presetItemsPlan.length >= 10) {
 				newPlanBtn.disabled = true;
+				document.getElementById('new-plan').disabled = true;
 			} else {
 				newPlanBtn.disabled = false;
+				document.getElementById('new-plan').disabled = false;
 			}
 
 			if (presetItemsPlan.length <= 0) {
