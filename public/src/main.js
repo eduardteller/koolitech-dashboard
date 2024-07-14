@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					}
 					cell.classList.add('list-table-tail');
 				}
-				updateBtn.textContent = 'Salvesta 💾';
+				delRowBtn.disabled = false;
 			}
 		});
 	});
@@ -244,6 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				const tableBody = table.querySelector('tbody');
 				if (tableBody.rows.length > 0) {
 					tableBody.deleteRow(tableBody.rows.length - 1);
+					tableBody.rows.length
+						? (delRowBtn.disabled = false)
+						: (delRowBtn.disabled = true);
 				}
 			}
 		});
@@ -433,7 +436,17 @@ document.addEventListener('DOMContentLoaded', () => {
 			'input[type="radio"][name="my_tabs_2"]'
 		);
 		radioButtons.forEach((item) => {
-			item.addEventListener('click', async function () {
+			item.addEventListener('click', function () {
+				const tables = document.querySelectorAll('[name="data-table"]');
+				tables.forEach((table) => {
+					if (table.ariaLabel.trim() === item.ariaLabel.trim()) {
+						if (table.rows.length <= 0) {
+							delRowBtn.disabled = true;
+						} else {
+							delRowBtn.disabled = false;
+						}
+					}
+				});
 				selectedDay = item.ariaLabel.trim();
 			});
 		});
