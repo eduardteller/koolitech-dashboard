@@ -537,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					});
 
 				const FirstTab = document.getElementById('nigger');
-				FirstTab.dispatchEvent(new Event('click'));
+				FirstTab.checked = true;
 			});
 		});
 	}
