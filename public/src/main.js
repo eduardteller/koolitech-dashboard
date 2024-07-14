@@ -79,9 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			triggerPlanClick();
 			if (presetItemsPlan.length >= 10) {
 				newPlanBtn.disabled = true;
-				console.log(presetItemsPlan.length);
+				console.log('1');
 			} else {
 				newPlanBtn.disabled = false;
+				console.log('2');
 			}
 			resolve();
 		});
@@ -461,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				if (selectedPresetPlan === activePresetPlan) {
 					enableBtn.disabled = true;
-					i.querySelector('a').classList.add('bg-blue-300');
+					item.querySelector('a').classList.add('bg-blue-300');
 				} else {
 					enableBtn.disabled = false;
 				}
