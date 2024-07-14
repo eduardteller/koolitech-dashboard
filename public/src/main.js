@@ -463,16 +463,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		let check = false;
 		for (let i = 0; i < presetItemsPlan.length; i++) {
 			const item = presetItemsPlan[i];
-			if (item.textContent === activePresetPlan) {
+			if (item.textContent.trim() === activePresetPlan) {
 				item.dispatchEvent(new Event('click'));
 				check = true;
 				return;
 			}
 		}
-		if (!check && presetItemsPlan) {
-			if (presetItemsPlan[0]) {
-				presetItemsPlan[0].dispatchEvent(new Event('click'));
-			}
+		if (!check && presetItemsPlan[0]) {
+			presetItemsPlan[0].dispatchEvent(new Event('click'));
 		}
 	}
 
@@ -481,8 +479,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		presetItemsPlan = presetList.querySelectorAll('li');
 		presetItemsPlan.forEach((item) => {
 			item.addEventListener('click', function () {
+				setLoader(true);
 				presetItemsPlan.forEach((i) => {
-					// i.classList.remove('active');
 					i.querySelector('a').classList.remove('active', 'bg-purple-700');
 					if (i.querySelector('a').textContent.trim() === activePresetPlan) {
 						i.querySelector('a').classList.add('bg-purple-700');
@@ -494,8 +492,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				selectedPresetPlan = item.querySelector('a').textContent.trim();
 
 				if (selectedPresetPlan === activePresetPlan) {
+					console.log(selectedPresetPlan, activePresetPlan, 1);
 					enableBtn.disabled = true;
 				} else {
+					console.log(selectedPresetPlan, activePresetPlan, 2);
 					enableBtn.disabled = false;
 				}
 
@@ -510,7 +510,6 @@ document.addEventListener('DOMContentLoaded', () => {
 					selDBIndex = userDatabaseIndexes[j];
 				}
 
-				setLoader(true);
 				fetch('api/fetch', {
 					method: 'GET',
 					headers: {
