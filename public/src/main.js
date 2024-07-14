@@ -77,8 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			presetItemsPlan = presetList.querySelectorAll('li');
 			setPlans();
 			triggerPlanClick();
-			if (presetListPlan.children.length >= 10) {
+			if (presetItemsPlan.length >= 10) {
 				newPlanBtn.disabled = true;
+				console.log(presetItemsPlan.length);
 			} else {
 				newPlanBtn.disabled = false;
 			}
