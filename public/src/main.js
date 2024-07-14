@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			presetItemsPlan = presetList.querySelectorAll('li');
 			setPlans();
 			triggerPlanClick();
+			console.log(presetItemsPlan.length);
 			if (presetItemsPlan.length >= 10) {
 				newPlanBtn.disabled = true;
 			} else {
@@ -84,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 
 			if (presetItemsPlan.length <= 0) {
-				console.log('whatTheFuck');
 				delPlanBtn.disabled = true;
 			} else {
 				delPlanBtn.disabled = false;
