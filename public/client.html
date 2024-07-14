@@ -422,7 +422,7 @@
 					<h1 class="font-semibold text-xl my-4 text-center">Plaanid 📝</h1>
 					<ul id="preset-list-plan">
 						<li><a class="active">Item 1</a></li>
-						<li><a>Item 2</a></li>
+						<li><a class="bg-blue-300">Item 2</a></li>
 						<li><a>Item 3</a></li>
 						<li><a>Item 4</a></li>
 						<li><a>Item 5</a></li>
@@ -437,13 +437,18 @@
 							id="new-plan"
 							class="btn btn-primary mb-2 w-36"
 							onclick="my_modal_1.showModal()"
+							disabled="false"
 						>
 							Uus ➕
 						</button>
 						<button id="del-plan" class="btn btn-primary mb-2 w-36">
 							Kustuta 🗑️
 						</button>
-						<button id="enable-plan" class="btn btn-primary w-36">
+						<button
+							id="enable-plan"
+							class="btn btn-primary w-36"
+							disabled="false"
+						>
 							Kasuta ✅
 						</button>
 					</div>

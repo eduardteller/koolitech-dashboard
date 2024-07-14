@@ -77,6 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			presetItemsPlan = presetList.querySelectorAll('li');
 			setPlans();
 			triggerPlanClick();
+			if (presetListPlan.children.length >= 10) {
+				newPlanBtn.disabled = true;
+			} else {
+				newPlanBtn.disabled = false;
+			}
 			resolve();
 		});
 	}
@@ -329,8 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				}
 				document.getElementById('input-new-plan').value = '';
 			}
-		} else {
-			alert('Liiga palju plaane, palun kustutage mõned ära!');
 		}
 	});
 
@@ -448,12 +451,19 @@ document.addEventListener('DOMContentLoaded', () => {
 			item.addEventListener('click', function () {
 				presetItemsPlan.forEach((i) => {
 					// i.classList.remove('active');
-					i.querySelector('a').classList.remove('active');
+					i.querySelector('a').classList.remove('active', 'bg-blue-300');
 				});
 
 				item.querySelector('a').classList.add('active');
 
 				selectedPresetPlan = item.querySelector('a').textContent.trim();
+
+				if (selectedPresetPlan === activePresetPlan) {
+					enableBtn.disabled = true;
+					i.querySelector('a').classList.add('bg-blue-300');
+				} else {
+					enableBtn.disabled = false;
+				}
 
 				if (selectedPresetPlan) {
 					let i = 0;
@@ -577,12 +587,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	const token = localStorage.getItem('token');
-	if (token) {
-		Connect(token);
-	} else {
-		document.location.href = '/login';
-	}
+	// const token = localStorage.getItem('token');
+	// if (token) {
+	// 	Connect(token);
+	// } else {
+	// 	document.location.href = '/login';
+	// }
 
 	const logo = document.getElementById('logo-btn');
 	logo.onclick = function () {
