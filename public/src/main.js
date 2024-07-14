@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 
 			if (presetItemsPlan.length <= 0) {
+				console.log('whatTheFuck');
 				delPlanBtn.disabled = true;
 			} else {
 				delPlanBtn.disabled = false;
