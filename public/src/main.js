@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				delPlanBtn.disabled = false;
 				enableBtn.disabled = false;
 			}
+			document.getElementById('my_modal_1').open = false;
 			resolve();
 		});
 	}
@@ -437,6 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		);
 		radioButtons.forEach((item) => {
 			item.addEventListener('click', function () {
+				//diable/enable del btn when switching tabs
 				const tables = document.querySelectorAll('[name="data-table"]');
 				tables.forEach((table) => {
 					if (table.ariaLabel.trim() === item.ariaLabel.trim()) {
@@ -448,7 +450,11 @@ document.addEventListener('DOMContentLoaded', () => {
 						}
 					}
 				});
+				//diable/enable del btn when switching tabs
+
+				//set selected tab/day to memory
 				selectedDay = item.ariaLabel.trim();
+				//set selected tab/day to memory
 			});
 		});
 	}
@@ -613,12 +619,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	const token = localStorage.getItem('token');
-	if (token) {
-		Connect(token);
-	} else {
-		document.location.href = '/login';
-	}
+	// const token = localStorage.getItem('token');
+	// if (token) {
+	// 	Connect(token);
+	// } else {
+	// 	document.location.href = '/login';
+	// }
 
 	const logo = document.getElementById('logo-btn');
 	logo.onclick = function () {
