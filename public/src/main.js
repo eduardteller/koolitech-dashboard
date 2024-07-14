@@ -465,6 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const item = presetItemsPlan[i];
 			if (item.textContent === activePresetPlan) {
 				item.dispatchEvent(new Event('click'));
+				enableBtn.disabled = true;
 				check = true;
 				return;
 			}
