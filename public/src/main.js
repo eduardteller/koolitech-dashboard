@@ -536,10 +536,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						setLoader(false);
 					});
 
-				const kolmapaevTab = document.querySelector(
-					'input[aria-label="Esmaspäev"]'
-				);
-				kolmapaevTab.dispatchEvent(new Event('click'));
+				const FirstTab = document.getElementById('nigger');
+				FirstTab.dispatchEvent(new Event('click'));
 			});
 		});
 	}
