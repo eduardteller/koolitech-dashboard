@@ -483,9 +483,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			item.addEventListener('click', function () {
 				presetItemsPlan.forEach((i) => {
 					// i.classList.remove('active');
-					i.querySelector('a').classList.remove('active', 'bg-blue-300');
+					i.querySelector('a').classList.remove('active', 'bg-purple-700');
 					if (i.querySelector('a').textContent.trim() === activePresetPlan) {
-						i.querySelector('a').classList.add('bg-blue-300');
+						i.querySelector('a').classList.add('bg-purple-700');
 					}
 				});
 
