@@ -273,9 +273,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (processed.STATUS === 'ONLINE') {
 				if (processed.alarm === 'alarm_stopped') {
 					// alarmBtnMain.textContent = 'Käivita kooli häire 🚨';
+					intruderMain.disabled = true;
+					evacBtnMain.disabled = true;
 					alarmBtnMain.classList.remove('animate-pulse');
 				} else if (processed.alarm === 'alarm_started') {
 					// alarmBtnMain.textContent = 'Peata kooli häire... 🚨';
+					intruderMain.disabled = false;
+					evacBtnMain.disabled = false;
 					alarmBtnMain.classList.add('animate-pulse');
 				}
 				statusSet(true);
@@ -299,10 +303,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			const processed = await response.json();
 			if (processed.STATUS === 'ONLINE') {
 				if (processed.alarm === 'alarm_stopped') {
-					// evacBtnMain.textContent = 'Käivita kooli häire 🚨';
+					alarmBtnMain.disabled = true;
+					intruderMain.disabled = true;
 					evacBtnMain.classList.remove('animate-pulse');
 				} else if (processed.alarm === 'alarm_started') {
-					// evacBtnMain.textContent = 'Peata kooli häire... 🚨';
+					alarmBtnMain.disabled = false;
+					intruderMain.disabled = false;
 					evacBtnMain.classList.add('animate-pulse');
 				}
 				statusSet(true);
@@ -327,9 +333,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (processed.STATUS === 'ONLINE') {
 				if (processed.alarm === 'alarm_stopped') {
 					// intruderMain.textContent = 'Käivita kooli häire 🚨';
+					alarmBtnMain.disabled = true;
+					evacBtnMain.disabled = true;
 					intruderMain.classList.remove('animate-pulse');
 				} else if (processed.alarm === 'alarm_started') {
 					// intruderMain.textContent = 'Peata kooli häire... 🚨';
+					alarmBtnMain.disabled = false;
+					evacBtnMain.disabled = false;
 					intruderMain.classList.add('animate-pulse');
 				}
 				statusSet(true);
