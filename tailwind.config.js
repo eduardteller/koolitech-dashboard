@@ -12,6 +12,7 @@ module.exports = {
 		'text-error-content',
 		'text-success-content',
 		'bg-purple-700',
+		'animate-pulse',
 	],
 	theme: {
 		extend: {

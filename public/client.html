@@ -11,18 +11,6 @@
 
 		<title>KooliTech</title>
 		<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-		<link
-			rel="preload"
-			href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap"
-			as="style"
-			onload="this.onload=null;this.rel='stylesheet'"
-		/>
-		<noscript>
-			<link
-				rel="stylesheet"
-				href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap"
-			/>
-		</noscript>
 		<link rel="stylesheet" href="src/main.css" />
 	</head>
 	<body class="bg-base-200" id="bbody">
@@ -405,19 +393,16 @@
 						class="bg-base-100 mb-8 mt-24 card shadow-xl p-4 w-full md:w-[720px] lg:-ml-60"
 					>
 						<div class="flex flex-col justify-start items-center w-full h-full">
-							<h1 class="text-3xl font-semibold my-4 h-8">Käivita häire</h1>
-							<p class="text-lg m-2">
-								Lorem ipsum dolor sit amet consectetur adipisicing elit.
-								Corporis quisquam, quas, tempore inventore voluptatum placeat
-								delectus id quos earum error ut nobis molestiae? Eius magnam
-								molestiae iure ullam, dolor enim?
+							<h1 class="text-2xl font-semibold my-4 h-8">Käivita häire</h1>
+							<p class="m-2">
+								Tööriist, et käivita kooli häire signaali kaugelt.
 							</p>
 							<button
-								class="btn btn-error m-1"
+								class="btn btn-error my-2"
 								onclick="my_modal_3.showModal()"
 								id="haire-btn"
 							>
-								Kooli häire 🚨
+								Häiresignaal 🚨
 							</button>
 						</div>
 					</div>
@@ -510,19 +495,32 @@
 					</button>
 				</form>
 				<div class="h-full w-full flex flex-col justify-between items-center">
-					<h2 class="mb-4 text-2xl text-center">Tähelepanu!</h2>
-					<p class="text-lg text-center">
-						Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur
-						modi quam eum tempore, minima nam. Ipsam unde dolorum temporibus,
-						sequi animi non saepe impedit placeat architecto, facere error in
-						officia?
-					</p>
-					<button
-						id="alarmBtn"
-						class="btn btn-lg btn-error mt-4 text-error-content"
+					<h2
+						class="mb-2 pb-2 text-2xl text-center border-b border-base-content w-full"
 					>
-						Käivita kooli häire 🚨
-					</button>
+						Tähelepanu!
+					</h2>
+					<p class="text-lg text-center">
+						Vajutades nuppu, saadetakse häire signaal arvutisse, kus asub
+						tarkvara. See omakorda käivitab helisignaali, mis kostub valitud
+						heliallikast.
+					</p>
+					<div
+						class="mt-4 flex flex-col w-full items-center justify-center gap-2"
+					>
+						<button id="fireBtn" class="btn btn-error text-error-content w-48">
+							Tulekahju häire 🔥
+						</button>
+						<button id="evacBtn" class="btn btn-error text-error-content w-48">
+							Evakuatsioon häire 🆘
+						</button>
+						<button
+							id="intruderBtn"
+							class="btn btn-error text-error-content w-48"
+						>
+							Äkkrünnak häire 🚨
+						</button>
+					</div>
 				</div>
 			</div>
 		</dialog>

@@ -778,6 +778,7 @@ function checkToken(token) {
 app.get('/api/alarm_req', async (req, res) => {
 	const token = req.headers['authorization'];
 	const school = req.headers['school'];
+	const alType = req.headers['type'];
 	if (!token || !checkToken(token)) {
 		return res.status(400).send();
 	} else {
@@ -790,7 +791,10 @@ app.get('/api/alarm_req', async (req, res) => {
 				throw error;
 			}
 
-			await sendMessage(JSON.stringify({ type: 'alarm_req' }), school);
+			await sendMessage(
+				JSON.stringify({ type: 'alarm_req', alarm: alType }),
+				school
+			);
 
 			const responseFromWebSocket = await new Promise((resolve, reject) => {
 				const timeoutId = setTimeout(() => {

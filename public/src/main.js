@@ -8,7 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const delRowBtn = document.getElementById('delete-btn');
 	const logOutBtn = document.getElementById('log-out');
 
-	const alarmBtnMain = document.getElementById('alarmBtn');
+	const alarmBtnMain = document.getElementById('fireBtn');
+	const evacBtnMain = document.getElementById('evacBtn');
+	const intruderMain = document.getElementById('intruderBtn');
 
 	const presetListPlan = document.getElementById('preset-list-plan');
 	let presetItemsPlan = document.querySelectorAll('.preset-item-plan');
@@ -262,6 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				'Content-Type': 'application/json',
 				Authorization: token,
 				School: schName,
+				Type: 'fire',
 			},
 		});
 
@@ -269,11 +272,65 @@ document.addEventListener('DOMContentLoaded', () => {
 			const processed = await response.json();
 			if (processed.STATUS === 'ONLINE') {
 				if (processed.alarm === 'alarm_stopped') {
-					alarmBtnMain.textContent = 'Käivita kooli häire 🚨';
+					// alarmBtnMain.textContent = 'Käivita kooli häire 🚨';
 					alarmBtnMain.classList.remove('animate-pulse');
 				} else if (processed.alarm === 'alarm_started') {
-					alarmBtnMain.textContent = 'Peata kooli häire... 🚨';
+					// alarmBtnMain.textContent = 'Peata kooli häire... 🚨';
 					alarmBtnMain.classList.add('animate-pulse');
+				}
+				statusSet(true);
+			}
+		} else {
+			statusSet(false);
+		}
+	});
+	evacBtnMain.addEventListener('click', async function () {
+		const response = await fetch('/api/alarm_req', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: token,
+				School: schName,
+				Type: 'evac',
+			},
+		});
+
+		if (response.ok) {
+			const processed = await response.json();
+			if (processed.STATUS === 'ONLINE') {
+				if (processed.alarm === 'alarm_stopped') {
+					// evacBtnMain.textContent = 'Käivita kooli häire 🚨';
+					evacBtnMain.classList.remove('animate-pulse');
+				} else if (processed.alarm === 'alarm_started') {
+					// evacBtnMain.textContent = 'Peata kooli häire... 🚨';
+					evacBtnMain.classList.add('animate-pulse');
+				}
+				statusSet(true);
+			}
+		} else {
+			statusSet(false);
+		}
+	});
+	intruderMain.addEventListener('click', async function () {
+		const response = await fetch('/api/alarm_req', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: token,
+				School: schName,
+				Type: 'intruder',
+			},
+		});
+
+		if (response.ok) {
+			const processed = await response.json();
+			if (processed.STATUS === 'ONLINE') {
+				if (processed.alarm === 'alarm_stopped') {
+					// intruderMain.textContent = 'Käivita kooli häire 🚨';
+					intruderMain.classList.remove('animate-pulse');
+				} else if (processed.alarm === 'alarm_started') {
+					// intruderMain.textContent = 'Peata kooli häire... 🚨';
+					intruderMain.classList.add('animate-pulse');
 				}
 				statusSet(true);
 			}
@@ -597,12 +654,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 	};
 
-	const token = localStorage.getItem('token');
-	if (token) {
-		Connect(token);
-	} else {
-		document.location.href = '/login';
-	}
+	// const token = localStorage.getItem('token');
+	// if (token) {
+	// 	Connect(token);
+	// } else {
+	// 	document.location.href = '/login';
+	// }
 
 	const storedTheme = localStorage.getItem('theme');
 	if (storedTheme) {
