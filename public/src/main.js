@@ -654,12 +654,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 	};
 
-	// const token = localStorage.getItem('token');
-	// if (token) {
-	// 	Connect(token);
-	// } else {
-	// 	document.location.href = '/login';
-	// }
+	const token = localStorage.getItem('token');
+	if (token) {
+		Connect(token);
+	} else {
+		document.location.href = '/login';
+	}
 
 	const storedTheme = localStorage.getItem('theme');
 	if (storedTheme) {
