@@ -47,7 +47,7 @@
 			</div>
 		</header>
 		<main
-			class="bg-base-200 container w-full mx-auto flex flex-col items-center justify-center"
+			class="container w-full mx-auto flex flex-col items-center justify-center px-4"
 		>
 			<div
 				class="h-[364px] my-64 card bg-base-100 w-96 shadow-xl flex flex-col items-center justify-around p-4"
@@ -99,7 +99,11 @@
 				</form>
 				<div class="w-full flex flex-row justify-center items-center">
 					<!-- <button class="btn" type="button" id="signup-btn">Registreeru</button> -->
-					<button type="submit" class="btn btn-primary" id="login-btn">
+					<button
+						type="submit"
+						class="btn btn-info dark:btn-primary"
+						id="login-btn"
+					>
 						Logi sisse
 					</button>
 				</div>
@@ -205,6 +209,7 @@
 						<input
 							data-toggle-theme="dark,emerald"
 							type="checkbox"
+							id="theme-c"
 							value="dark"
 							class="toggle theme-controller"
 						/>

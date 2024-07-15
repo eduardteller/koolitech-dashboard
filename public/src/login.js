@@ -66,21 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	// if (localStorage.theme === 'dark') {
-	// 	document.documentElement.classList.add('dark');
-	// } else {
-	// 	document.documentElement.classList.remove('dark');
-	// }
-
-	// modeBtn.onclick = function () {
-	// 	if (localStorage.theme === 'dark') {
-	// 		document.documentElement.classList.remove('dark');
-	// 		localStorage.theme = 'light';
-	// 	} else {
-	// 		document.documentElement.classList.add('dark');
-	// 		localStorage.theme = 'dark';
-	// 	}
-	// };
+	const storedTheme = localStorage.getItem('theme');
+	if (storedTheme) {
+		if (storedTheme === 'dark') {
+			const themeC = document.getElementById('theme-c');
+			themeC.checked = true;
+		}
+	}
 
 	const logo = document.getElementById('logo-btn');
 	logo.onclick = function () {
