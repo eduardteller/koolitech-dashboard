@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -61,7 +61,9 @@
 					<button id="btn-about" class="btn btn-ghost mr-2 hidden md:block">
 						Meist
 					</button>
-					<button class="btn btn-primary" id="log-out">Logi välja</button>
+					<button class="btn btn-secondary dark:btn-primary" id="log-out">
+						Logi välja
+					</button>
 				</div>
 			</div>
 		</header>
@@ -379,13 +381,22 @@
 						<div
 							class="buttons flex flex-col xsm:flex-row items-center justify-center w-full min-h-16 xsm:mt-0 mt-4"
 						>
-							<button class="btn btn-primary m-1 w-32" id="update-btn">
+							<button
+								class="btn btn-secondary dark:btn-primary m-1 w-32"
+								id="update-btn"
+							>
 								Salvesta 💾
 							</button>
-							<button class="btn btn-primary m-1 w-32" id="row-btn">
+							<button
+								class="btn btn-secondary dark:btn-primary m-1 w-32"
+								id="row-btn"
+							>
 								Lisa rida ➕
 							</button>
-							<button class="btn btn-primary m-1 w-32" id="delete-btn">
+							<button
+								class="btn btn-secondary dark:btn-primary m-1 w-32"
+								id="delete-btn"
+							>
 								Kustuta 🗑️
 							</button>
 						</div>
@@ -423,7 +434,7 @@
 					<h1 class="font-semibold text-xl my-4 text-center">Plaanid 📝</h1>
 					<ul id="preset-list-plan">
 						<li><a class="active">Item 1</a></li>
-						<li><a class="bg-blue-300">Item 2</a></li>
+						<li><a class="bg-primary text-primary-content">Item 2</a></li>
 						<li><a>Item 3</a></li>
 						<li><a>Item 4</a></li>
 						<li><a>Item 5</a></li>
@@ -436,15 +447,21 @@
 					<div class="flex flex-col justify-start items-center mt-4">
 						<button
 							id="new-plan"
-							class="btn btn-primary mb-2 w-36"
+							class="btn btn-secondary dark:btn-primary mb-2 w-36"
 							onclick="my_modal_1.showModal()"
 						>
 							Uus ➕
 						</button>
-						<button id="del-plan" class="btn btn-primary mb-2 w-36">
+						<button
+							id="del-plan"
+							class="btn btn-secondary dark:btn-primary mb-2 w-36"
+						>
 							Kustuta 🗑️
 						</button>
-						<button id="enable-plan" class="btn btn-primary w-36">
+						<button
+							id="enable-plan"
+							class="btn btn-secondary dark:btn-primary w-36"
+						>
 							Kasuta ✅
 						</button>
 					</div>
@@ -474,7 +491,10 @@
 						class="input input-bordered w-2/3"
 					/>
 					<div class="flex justify-center items-center">
-						<button id="saveButton" class="btn btn-primary w-32 mt-4">
+						<button
+							id="saveButton"
+							class="btn btn-secondary dark:btn-primary w-32 mt-4"
+						>
 							Ok
 						</button>
 					</div>
@@ -537,8 +557,9 @@
 							/>
 						</svg>
 						<input
-							data-toggle-theme="dark,light"
+							data-toggle-theme="dark,emerald"
 							type="checkbox"
+							id="theme-c"
 							value="dark"
 							class="toggle theme-controller"
 						/>

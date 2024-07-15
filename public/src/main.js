@@ -483,9 +483,16 @@ document.addEventListener('DOMContentLoaded', () => {
 			item.addEventListener('click', function () {
 				setLoader(true);
 				presetItemsPlan.forEach((i) => {
-					i.querySelector('a').classList.remove('active', 'bg-purple-700');
+					i.querySelector('a').classList.remove(
+						'active',
+						'bg-primary',
+						'text-primary-content'
+					);
 					if (i.querySelector('a').textContent.trim() === activePresetPlan) {
-						i.querySelector('a').classList.add('bg-purple-700');
+						i.querySelector('a').classList.add(
+							'bg-primary',
+							'text-primary-content'
+						);
 					}
 				});
 
@@ -595,6 +602,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		Connect(token);
 	} else {
 		document.location.href = '/login';
+	}
+
+	const storedTheme = localStorage.getItem('theme');
+	if (storedTheme) {
+		if (storedTheme === 'dark') {
+			const themeC = document.getElementById('theme-c');
+			themeC.checked = true;
+		}
 	}
 
 	const logo = document.getElementById('logo-btn');
