@@ -178,7 +178,11 @@ cron.schedule('*/10 * * * *', async () => {
 					const processed = await response.json();
 					if (processed.time > 60000) {
 						sendMessage(
-							JSON.stringify({ type: 'timer_left', status: false }),
+							JSON.stringify({
+								type: 'timer_left',
+								time_left: processed.time,
+								status: false,
+							}),
 							schoolName
 						);
 					} else {
