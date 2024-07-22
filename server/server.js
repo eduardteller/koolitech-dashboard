@@ -3,7 +3,7 @@ import sqlite3 from 'sqlite3';
 import fs from 'fs/promises';
 import path, { resolve } from 'path';
 import jwt from 'jsonwebtoken';
-import express from 'express';
+import express, { json } from 'express';
 import http from 'http';
 import config from '../private/config.js';
 import cors from 'cors';
@@ -162,7 +162,38 @@ app.post('/api/login', async (req, res) => {
 	}
 });
 
-cron.schedule('*/10 * * * *', async () => {
+app.get('/api/get_timer_left', async (req, res) => {
+	try {
+		const schoolName = req.headers['school'];
+		const response = await fetch('http://localhost:5091/get_timer', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				user: schoolName,
+			},
+		});
+
+		if (response.ok) {
+			const processed = await response.json();
+			if (processed.time > 60000) {
+				res.send(
+					JSON.stringify({
+						time_left: processed.time,
+						expired: false,
+					})
+				);
+			} else {
+				res.send(JSON.stringify({ expired: true, time_left: processed.time }));
+			}
+		} else {
+			throw new Error('TIMER FETCH RESPONSE NOT OK ', response.status);
+		}
+	} catch (err) {
+		console.error(err);
+	}
+});
+
+cron.schedule('* * * * *', async () => {
 	if (clients) {
 		try {
 			for (const [client, schoolName] of clients.entries()) {
@@ -180,14 +211,18 @@ cron.schedule('*/10 * * * *', async () => {
 						sendMessage(
 							JSON.stringify({
 								type: 'timer_left',
-								time_left: processed.time,
-								status: false,
+								timer: processed.time,
+								expired: false,
 							}),
 							schoolName
 						);
 					} else {
 						sendMessage(
-							JSON.stringify({ type: 'timer_left', status: true }),
+							JSON.stringify({
+								type: 'timer_left',
+								timer: processed.time,
+								expired: true,
+							}),
 							schoolName
 						);
 					}
