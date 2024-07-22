@@ -7,7 +7,7 @@
 	"scripts": {
 		"start": "node server.js",
 		"tail": "npx tailwindcss -i ./input.css -o ./public/src/main.css",
-		"tailw": "npx tailwindcss -i ./input.css -o ./public/src/main.css --watch"
+		"tail-watch": "npx tailwindcss -i ./input.css -o ./public/src/main.css --watch"
 	},
 	"keywords": [],
 	"author": "Eduard Teller",
@@ -25,7 +25,6 @@
 		"express": "^4.19.2",
 		"fs": "^0.0.1-security",
 		"http": "^0.0.1-security",
-		"https": "^1.0.0",
 		"jsonwebtoken": "^9.0.2",
 		"node-cron": "^3.0.3",
 		"nodemailer": "^6.9.14",
@@ -33,7 +32,6 @@
 		"sqlite": "^5.1.1",
 		"sqlite3": "^5.1.7",
 		"url": "^0.11.3",
-		"util": "^0.12.5",
 		"ws": "^8.17.0"
 	}
 }
