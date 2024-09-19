@@ -31,7 +31,7 @@ module.exports = {
 		},
 	},
 	// darkMode: 'selector',
-	plugins: [require('daisyui')],
+	plugins: [require('daisyui'), require('@tailwindcss/typography')],
 	darkMode: ['class', '[data-theme="dark"]'],
 	daisyui: {
 		themes: ['emerald', 'dark'],

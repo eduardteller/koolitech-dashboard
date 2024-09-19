@@ -25,35 +25,37 @@
 		</noscript>
 		<link rel="stylesheet" href="src/main.css" />
 	</head>
-	<body>
+	<body class="bg-white">
 		<header
-			class="bg-white border-b md:sticky top-0 z-50 font-nunito transition duration-100"
+			class="border-b md:sticky top-0 z-50 font-nunito transition duration-100"
 			id="header"
 		>
 			<div
 				class="max-w-screen-xl mx-auto py-4 px-6 sm:px-8 lg:px-10 flex flex-row items-center justify-between"
 			>
 				<div class="flex flex-row items-center justify-start">
-					<button
+					<a
+						href="/"
 						id="header-lbl"
 						class="text-2xl font-bold font-libre text-gray-900"
 					>
 						KooliTech
-					</button>
+					</a>
 				</div>
 
 				<div class="flex flex-row items-center justify-start">
-					<button
+					<a
+						href="/contact"
 						id="btn-contact"
 						class="text-gray-900 mr-8 font-semibold hover:text-opacity-50 transition duration-100 hidden md:block"
 					>
 						Kontakt
-					</button>
+					</a>
 					<button
 						id="btn-about"
 						class="text-gray-900 mr-8 font-semibold hover:text-opacity-50 transition duration-100 hidden md:block"
 					>
-						Meist
+						<!-- Meist -->
 					</button>
 					<button
 						class="md:px-4 md:py-2 px-8 py-4 rounded-2xl bg-newblue hover:bg-opacity-50 text-white transition duration-200 font-semibold"
@@ -80,7 +82,7 @@
 					Nimi on kohustuslik.
 				</p>
 				<input
-					class="border border-zinc-500 rounded-md bg-white text-gray-900 md:w-1/2 h-20 md:h-10 mb-4 px-4"
+					class="border border-zinc-500 rounded-md bg-zinc-100 text-gray-900 md:w-1/2 h-20 md:h-10 mb-4 px-4"
 					type="text"
 					name=""
 					id="input-name"
@@ -91,7 +93,7 @@
 				</p>
 
 				<input
-					class="border border-zinc-500 rounded-md bg-white text-gray-900 md:w-1/2 h-20 md:h-10 mb-4 px-4"
+					class="border border-zinc-500 rounded-md bg-zinc-100 text-gray-900 md:w-1/2 h-20 md:h-10 mb-4 px-4"
 					type="text"
 					name=""
 					id="input-school"
@@ -105,14 +107,14 @@
 				</p>
 				<div class="md:w-1/2 flex flex-row">
 					<input
-						class="border border-zinc-500 rounded-md bg-white text-gray-900 w-1/2 h-20 md:h-10 mb-4 px-4 mr-4"
+						class="border border-zinc-500 bg-zinc-100 rounded-md text-gray-900 w-1/2 h-20 md:h-10 mb-4 px-4 mr-4"
 						type="text"
 						name=""
 						id="input-email"
 						placeholder="Emaili aadress"
 					/>
 					<input
-						class="border border-zinc-500 rounded-md bg-white text-gray-900 w-1/2 h-20 md:h-10 mb-4 px-4"
+						class="border border-zinc-500 bg-zinc-100 rounded-md text-gray-900 w-1/2 h-20 md:h-10 mb-4 px-4"
 						type="text"
 						name=""
 						id="person-phone"
@@ -124,7 +126,7 @@
 				</p>
 
 				<textarea
-					class="border border-zinc-500 rounded-md bg-white text-gray-900 md:w-1/2 min-h-48 max-h-96 md:min-h-30 md:max-h-60 mb-4 p-4"
+					class="border border-zinc-500 bg-zinc-100 rounded-md text-gray-900 md:w-1/2 min-h-48 max-h-96 md:min-h-30 md:max-h-60 mb-4 p-4"
 					placeholder="Sõnum"
 					type="text"
 					name=""
@@ -160,10 +162,10 @@
 					<h3 class="font-medium mb-4">Klienditugi</h3>
 					<ul class="text-zinc-500 text-sm">
 						<li class="hover:text-zinc-600">
-							<a href="">Kontakt</a>
+							<a href="/contact">Kontakt</a>
 						</li>
 						<li class="hover:text-zinc-600">
-							<a href="">Küpsiste kasutamine</a>
+							<a href="/cookies">Küpsiste kasutamine</a>
 						</li>
 					</ul>
 				</div>
