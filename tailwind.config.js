@@ -17,8 +17,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				libre: ['"Libre Franklin"', 'sans-serif'],
-				nunito: ['Nunito', 'sans-serif'],
+				libre: ['"Inter"', 'sans-serif'],
 			},
 			colors: {
 				newblue: '#0866ff',

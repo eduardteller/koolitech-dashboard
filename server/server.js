@@ -1,18 +1,17 @@
-import { WebSocketServer } from 'ws';
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import fs from 'fs/promises';
-import path from 'path';
-import jwt from 'jsonwebtoken';
-import express from 'express';
-import http from 'http';
-import config from '../private/config.js';
-import cors from 'cors';
 import bcrypt from 'bcrypt';
+import cors from 'cors';
+import express from 'express';
+import fs from 'fs/promises';
+import http from 'http';
+import jwt from 'jsonwebtoken';
 import cron from 'node-cron';
+import path from 'path';
+import { open } from 'sqlite';
+import sqlite3 from 'sqlite3';
 import { fileURLToPath } from 'url';
-import { sendMessage, cmpDBModDate, sendDBFile } from './func.js';
-import nodemailer from 'nodemailer';
+import { WebSocketServer } from 'ws';
+import config from '../private/config.js';
+import { cmpDBModDate, sendDBFile, sendMessage } from './func.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -29,20 +28,12 @@ export const clients = new Map();
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', (req, res) => {
+	res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.get('/login', (req, res) => {
 	res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
-app.get('/contact', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'contact.html'));
-});
-
-app.get('/cookies', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'cookies.html'));
-});
-
-app.get('/client', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'client.html'));
 });
 
 const weekDaysMap = new Map([
@@ -72,48 +63,6 @@ async function getDatabaseConnection(dbPath) {
 	});
 	return db;
 }
-
-app.post('/api/email-form', (req, res) => {
-	const { name, school, email, phone, text } = req.body;
-
-	// Validate the incoming data
-	if (!name || !school || !email) {
-		return res
-			.status(400)
-			.json({ error: 'Nimi, Kool, ja Emaili aadress on kohustuslikud.' });
-	}
-
-	// Setup Nodemailer transporter
-	const transporter = nodemailer.createTransport({
-		service: 'gmail', // or use your email service provider
-		auth: {
-			user: 'eduardteller1@gmail.com', // your email address
-			pass: 'snzy cwwy qgug gzsp', // your email password or application-specific password
-		},
-	});
-
-	// Construct the email options
-	const mailOptions = {
-		from: email,
-		to: 'info@koolitech.ee',
-		subject: 'Uus kiri',
-		text: `
-					Name: ${name}
-					School: ${school}
-					Email: ${email}
-					Phone: ${phone}
-					Message: ${text}
-			`,
-	};
-
-	// Send the email
-	transporter.sendMail(mailOptions, (error, info) => {
-		if (error) {
-			return res.status(500).json({ error: 'Failed to send email.' });
-		}
-		res.status(200).json({ text: 'Email sent successfully!' });
-	});
-});
 
 // Register route
 app.post('/api/register', async (req, res) => {
