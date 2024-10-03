@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.list-table-h-tail {
+  @apply border border-base-content/20 bg-base-200 p-4;
+}
+
+.list-table-tail {
+  @apply border-x border-y border-base-content/20;
+}
