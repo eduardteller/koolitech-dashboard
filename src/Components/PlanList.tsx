@@ -57,6 +57,7 @@ const PlanList = ({ active, setActive }: Props) => {
 		setLoading(true);
 		fetch(url + '/api/preset-list', {
 			method: 'GET',
+			credentials: 'include',
 		})
 			.then((response) => {
 				response.json().then((data) => {

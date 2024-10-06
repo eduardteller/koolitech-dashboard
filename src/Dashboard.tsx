@@ -1,6 +1,7 @@
-import { Ban, OctagonAlert, Siren } from "lucide-react";
+import { Siren } from "lucide-react";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
+import Accordion from "./Components/Accordion";
 import Footer from "./Components/Footer";
 import Header from "./Components/Header";
 import PlanItem from "./Components/PlanItem";
@@ -22,17 +23,11 @@ const Dashboard = () => {
           <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
             {/* <!-- Page content here --> */}
-            <div className="mx-auto flex max-w-4xl flex-col items-center justify-start px-4 py-12">
-              <div className="card mb-8 flex w-full flex-col items-center gap-2 border border-base-content/20 bg-base-100 p-4 sm:w-2/3 md:w-1/2 lg:mr-60">
-                <div className="card flex w-full flex-row items-center justify-center gap-2 rounded-lg bg-error px-4 py-2">
-                  <p>Ühendus kooli arvutiga: Offline</p>
-                  <Ban />
-                </div>
-                <div className="card w-full flex-row items-center justify-center gap-2 rounded-lg bg-warning px-4 py-2">
-                  <p>Koik muudatused salvestuvad ainult pilve!</p>
-                  <OctagonAlert />
-                </div>
+            <div className="mx-auto flex max-w-4xl flex-col items-center justify-start p-4">
+              <div className="w-full sm:w-2/3 md:w-1/2 lg:mr-60">
+                <Accordion></Accordion>
               </div>
+
               <ul className="border-base-content-20 menu menu-horizontal mb-4 w-max flex-row rounded-xl border border-base-content/20 bg-base-100 lg:mr-60">
                 <PlanItem setActiveDay={setActiveDay} activeDay={activeDay} />
               </ul>

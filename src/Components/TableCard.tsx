@@ -192,6 +192,7 @@ const TableCard = ({ activeDay, activePlan }: Props) => {
 		setLoading(true);
 		fetch(url + '/api/preset-data?name=' + activePlan, {
 			method: 'GET',
+			credentials: 'include',
 		})
 			.then((response) => {
 				response.json().then((data) => {

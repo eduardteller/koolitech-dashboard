@@ -39,6 +39,7 @@ const getAuthState = async () => {
 	const url = import.meta.env.VITE_BASE_URL;
 	const response = await fetch(url + '/api/auth', {
 		method: 'GET',
+		credentials: 'include',
 	});
 	return response.ok;
 };
