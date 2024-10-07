@@ -23,7 +23,7 @@ export const days: (keyof TableData)[] = [
 export interface TableElement {
   name: string;
   time: string;
-  description: string;
+  desc: string;
   audio: string;
 }
 
@@ -51,7 +51,7 @@ export interface ErrorMatrix {
 export const TableElementSchema = z.object({
   name: z.string().min(1, "Nimi puudu!").max(50, "Nimi on liiga pikk"),
   time: z.string().regex(/^\d{2}:\d{2}$/, "Aeg peab olema formaadis HH:MM"),
-  description: z
+  desc: z
     .string()
     .min(1, "Kirjeldus puudu!")
     .max(100, "Kirjeldus on liiga pikk"),

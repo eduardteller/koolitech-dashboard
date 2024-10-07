@@ -91,8 +91,8 @@ const Table = ({ day, tableData, setTableData, errorState }: Props) => {
                 </td>
                 <td className="list-table-tail">
                   <input
-                    onChange={(e) => handleInputChange(e, index, "description")}
-                    value={element.description}
+                    onChange={(e) => handleInputChange(e, index, "desc")}
+                    value={element.desc}
                     className={`h-full w-full p-4 ${errorState[days[day]][index]?.[2] ? "bg-error text-error-content" : ""}`}
                   ></input>
                 </td>
