@@ -1,3 +1,4 @@
+import axios from "axios";
 import { CirclePlus, CircleX, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -117,20 +118,19 @@ const TableCard = ({ activeDay, activePlan }: Props) => {
       setLoading(true);
       const url = import.meta.env.VITE_BASE_URL;
       const data = tableData;
-      fetch(url + "/api/preset-update", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tableData: data, name: activePlan }),
-      })
+      axios
+        .post(
+          url + "/api/preset-update",
+          { tableData: data, name: activePlan },
+          { withCredentials: true },
+        )
         .then((response) => {
-          if (response.ok) {
-            toast.success("Andmed on edukalt salvestatud!");
-          } else {
+          if (response.status !== 200) {
             toast.error("Andmete salvestamine ebaõnnestus!");
           }
+        })
+        .catch(() => {
+          toast.error("Andmete salvestamine ebaõnnestus!");
         })
         .finally(() => {
           setLoading(false);
