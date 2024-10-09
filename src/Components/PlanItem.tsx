@@ -12,15 +12,13 @@ const PlanItem = ({ activeDay, setActiveDay }: PlanItemProps) => {
     <>
       {daysEstonia.map((dayCurrent, index) => {
         return (
-          <li key={index}>
+          <li className="flex-1" key={index}>
             <a
               onClick={() => setActiveDay(index)}
-              className={`${index === activeDay ? "active" : ""} flex flex-col items-center gap-2 max-[640px]:w-14 max-[420px]:w-12 max-[390px]:w-10 sm:w-20 md:w-24`}
+              className={`${index === activeDay ? "active" : ""} flex flex-col items-center gap-2`}
             >
               <CalendarCheck />
-              <p className="uppercase sm:text-lg md:hidden">
-                {dayCurrent.slice(0, 1)}
-              </p>
+              <p className="uppercase md:hidden">{dayCurrent.slice(0, 1)}</p>
               <p className="hidden md:block">{dayCurrent}</p>
             </a>
           </li>

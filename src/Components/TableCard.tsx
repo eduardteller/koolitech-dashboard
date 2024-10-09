@@ -228,14 +228,14 @@ const TableCard = ({ activeDay, activePlan }: Props) => {
 
   if (loading)
     return (
-      <div className="card flex h-[640px] w-full flex-col items-center justify-center gap-4 overflow-hidden border border-base-content/20 bg-base-100 p-4 lg:mr-60">
+      <div className="card flex h-[640px] w-full flex-col items-center justify-center gap-4 overflow-hidden border border-base-content/20 bg-base-100 p-4 min-[1280px]:mr-60">
         <span className="loading loading-spinner loading-md"></span>
       </div>
     );
 
   if (!activePlan)
     return (
-      <div className="card flex h-[640px] w-full flex-col items-center justify-center gap-4 overflow-hidden border border-base-content/20 bg-base-100 p-4 lg:mr-60">
+      <div className="card flex h-[640px] w-full flex-col items-center justify-center gap-4 overflow-hidden border border-base-content/20 bg-base-100 p-4 min-[1280px]:mr-60">
         <span className="card rounded-xl bg-base-200 p-4 text-xl font-bold">
           Valige plaan
         </span>
@@ -243,7 +243,7 @@ const TableCard = ({ activeDay, activePlan }: Props) => {
     );
 
   return (
-    <div className="card flex h-[640px] w-full flex-col items-center justify-between gap-4 overflow-hidden border border-base-content/20 bg-base-100 p-4 lg:mr-60">
+    <div className="card flex h-[640px] w-full flex-col items-center justify-between gap-4 overflow-hidden border border-base-content/20 bg-base-100 p-4 min-[1280px]:mr-60">
       <h1 className="mt-4 text-center text-xl font-bold uppercase">
         {"Tavaplaan - "}
         {daysEstonia[activeDay]}
@@ -276,7 +276,7 @@ const TableCard = ({ activeDay, activePlan }: Props) => {
         <button
           disabled={loading}
           onClick={() => removeRow()}
-          className="btn btn-secondary min-[468px]:w-32"
+          className="btn btn-error min-[468px]:w-32"
           id="delete-btn"
         >
           <p className="max-[468px]:hidden">Kustuta </p> <CircleX />

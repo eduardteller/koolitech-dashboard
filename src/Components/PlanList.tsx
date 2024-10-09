@@ -67,7 +67,7 @@ const PlanList = ({ active, setActive }: Props) => {
         } else {
           setPlans({ ...response.data });
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error(error);
         toast.error("Plaanide laadimine ebaõnnestus!");
       } finally {
@@ -122,7 +122,7 @@ const PlanList = ({ active, setActive }: Props) => {
             >
               Uus <BadgePlus />
             </button>
-            <button onClick={deletePlan} className="btn btn-secondary w-36">
+            <button onClick={deletePlan} className="btn btn-error w-36">
               Kustuta <BadgeMinus />
             </button>
             <button className="btn btn-secondary w-36">

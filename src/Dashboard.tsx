@@ -24,11 +24,11 @@ const Dashboard = () => {
           <div className="drawer-content">
             {/* <!-- Page content here --> */}
             <div className="mx-auto flex max-w-4xl flex-col items-center justify-start p-4">
-              <div className="w-full sm:w-2/3 md:w-1/2 lg:mr-60">
+              <div className="w-full max-w-96 min-[1280px]:mr-60">
                 <Accordion></Accordion>
               </div>
 
-              <ul className="border-base-content-20 menu menu-horizontal mb-4 w-max flex-row rounded-xl border border-base-content/20 bg-base-100 lg:mr-60">
+              <ul className="border-base-content-20 menu menu-horizontal mb-4 w-full flex-row justify-between rounded-xl border border-base-content/20 bg-base-100 min-[1280px]:mr-60">
                 <PlanItem setActiveDay={setActiveDay} activeDay={activeDay} />
               </ul>
 
@@ -36,7 +36,7 @@ const Dashboard = () => {
                 activePlan={activePlan}
                 activeDay={activeDay}
               ></TableCard>
-              <div className="card mb-8 mt-24 w-full border border-base-content/20 bg-base-100 p-4 lg:mr-60">
+              <div className="card mb-8 mt-24 w-full border border-base-content/20 bg-base-100 p-4 min-[1280px]:mr-60">
                 <div className="flex h-full w-full flex-col items-center justify-start gap-8 py-12 text-center">
                   <h1 className="text-4xl font-extrabold">Käivita häire</h1>
                   <p className="">
