@@ -1,16 +1,6 @@
 import { z } from 'zod'
 
-export const daysEstonia = [
-  'Esmaspäev',
-  'Teisipäev',
-  'Kolmapäev',
-  'Neljapäev',
-  'Reede',
-  'Laupäev',
-  'Pühapäev'
-]
-
-export const days: (keyof TableData)[] = [
+export const days: (keyof PlanData)[] = [
   'monday',
   'tuesday',
   'wednesday',
@@ -20,32 +10,15 @@ export const days: (keyof TableData)[] = [
   'sunday'
 ]
 
-export interface TableElement {
-  name: string
-  time: string
-  desc: string
-  audio: string
-}
-
-export interface TableData {
-  monday: TableElement[]
-  tuesday: TableElement[]
-  wednesday: TableElement[]
-  thursday: TableElement[]
-  friday: TableElement[]
-  saturday: TableElement[]
-  sunday: TableElement[]
-}
-
-export interface ErrorMatrix {
-  monday: boolean[][]
-  tuesday: boolean[][]
-  wednesday: boolean[][]
-  thursday: boolean[][]
-  friday: boolean[][]
-  saturday: boolean[][]
-  sunday: boolean[][]
-}
+export const daysEstonia = [
+  'Esmaspäev',
+  'Teisipäev',
+  'Kolmapäev',
+  'Neljapäev',
+  'Reede',
+  'Laupäev',
+  'Pühapäev'
+]
 
 export interface PlanName {
   name: string

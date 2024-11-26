@@ -2,10 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+.logo {
+  @apply bg-secondary text-secondary-content dark:bg-primary dark:text-primary-content;
+}
+
+.bg-base {
+  @apply bg-secondary/10 dark:bg-primary/10;
+}
+
+.btn-base {
+  @apply btn-secondary dark:btn-primary;
+}
+
 .list-table-h-tail {
-  @apply border border-base-content/20 bg-base-200 p-4;
+  @apply bg-base-300 p-4;
+}
+
+.border-base {
+  @apply input-bordered dark:border-base-300;
 }
 
 .list-table-tail {
-  @apply border-x border-y border-base-content/20;
+  @apply border-base border-x border-y;
+}
+:root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
+  scrollbar-gutter: auto !important;
+}
+
+.modal::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Edge */
+  width: 0%;
 }

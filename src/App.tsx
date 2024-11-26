@@ -1,26 +1,46 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
-import ProtectedRoute from './Components/Protected';
-import Dashboard from './Dashboard';
-import Login from './Login';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Alarm from './Alarm'
+import MenuNav from './Components/Layout/MenuNav'
+import Protected from './Components/Protected'
+import Dashboard from './Dashboard'
+import Edit from './Edit'
+import Login from './Login'
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <Protected>
+        <MenuNav />
+      </Protected>
+    ),
+    children: [
+      {
+        path: '',
+        element: <Dashboard />
+      },
+      {
+        path: 'edit',
+        element: <Edit />
+      },
+      {
+        path: 'alarm',
+        element: <Alarm />
+      },
+      {
+        path: 'settings',
+        element: <></>
+      }
+    ]
+  },
+  {
+    path: '/login',
+    element: <Login />
+  }
+])
 
 const App = () => {
-	return (
-		<div>
-			<Routes>
-				<Route path="/" element={<Navigate to="/dashboard" />} />
-				<Route
-					path="/dashboard"
-					element={
-						<ProtectedRoute>
-							<Dashboard />
-						</ProtectedRoute>
-					}
-				/>
-				<Route path="/login" element={<Login />} />
-				{/* <Route path="/test" element={<Test />} /> */}
-			</Routes>
-		</div>
-	);
-};
+  return <RouterProvider router={router} />
+}
 
-export default App;
+export default App
