@@ -1,4 +1,3 @@
-import { Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import DeletePlanModal from './Components/Edit/DeletePlanModal'
@@ -30,12 +29,8 @@ const Edit = (): React.ReactElement => {
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content h-full max-h-[calc(100dvh-16px)] w-full max-w-[calc(100dvw-480px)]">
           {/* <!-- Page content here --> */}
-          <div className="mx-auto h-full w-full max-w-4xl px-4 pb-4 pt-2 xl:pb-16 xl:pt-12">
+          <div className="mx-auto h-full w-full max-w-4xl px-4 pb-4 pt-2 xl:pb-8 xl:pt-8">
             <div className="flex h-full flex-col gap-4">
-              <h1 className="flex items-center gap-2 text-2xl font-bold">
-                <Clock size={24} />
-                Ajade haldamine
-              </h1>
               <ul className="border-base menu menu-horizontal w-full flex-row rounded-xl border bg-base-100">
                 <WeekdayMenuList setActiveDay={setActiveDay} activeDay={activeDay} />
               </ul>

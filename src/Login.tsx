@@ -58,7 +58,7 @@ const Login = () => {
 
     if (response.ok) {
       // toast.success('Sisselogimine õnnestus');
-      navigateTo('/dashboard')
+      navigateTo('/')
     } else {
       toast.error('Vale kasutajanimi või salasõna')
     }

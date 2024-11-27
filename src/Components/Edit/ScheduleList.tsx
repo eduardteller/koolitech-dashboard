@@ -4,8 +4,7 @@ import { PlanElement } from '../../table-actions'
 
 interface Props {
   element: PlanElement
-  index: number
-  setCurrentElement: (index: number | null) => void
+  setCurrentElement: (index: string | null) => void
   deleteElement: (id: string) => void
   duplicateElement: (id: string) => void
 }
@@ -13,7 +12,6 @@ interface Props {
 const ScheduleList = ({
   element,
   setCurrentElement,
-  index,
   deleteElement,
   duplicateElement
 }: Props): ReactElement => {
@@ -38,7 +36,7 @@ const ScheduleList = ({
           <Copy className="h-4 w-4" />
         </button>
         <button
-          onClick={() => setCurrentElement(index)}
+          onClick={() => setCurrentElement(element.id)}
           className="btn btn-square btn-outline input-bordered"
         >
           <Edit className="h-4 w-4" />

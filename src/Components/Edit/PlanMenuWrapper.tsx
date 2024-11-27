@@ -58,15 +58,45 @@ const PlanMenuWrapper = ({
     )
   }
 
+  if (!plans.plans.length) {
+    return (
+      <div className="h-full w-60 bg-base-100 pb-4 pt-3">
+        <div className="flex h-full w-full flex-col">
+          <span className="menu-title flex items-center gap-1 pl-6">
+            <NotepadText className="h-4 w-4" />
+            <p>Plaanid</p>
+          </span>
+          <h1 className="flex items-start gap-2">{/* <p>Plaanid</p> */}</h1>
+
+          <div className="flex w-full flex-1 flex-col justify-between">
+            <div className="flex flex-1 items-center justify-center text-center font-bold text-base-content/60">
+              <p>Plaane pole</p>
+            </div>
+            <div className="flex flex-col items-center justify-start gap-2 px-4 pb-16">
+              <button
+                onClick={() =>
+                  (document.getElementById('newPlanModal') as HTMLDialogElement).showModal()
+                }
+                className="btn-base btn btn-block"
+              >
+                <CirclePlus className="mr-2" />
+                Uus
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="h-full w-60 bg-base-100 pb-4 pt-3">
       <div className="flex h-full w-full flex-col">
-        <div className="px-4">
-          <h1 className="border-base flex items-start gap-2 border-b pb-2 text-xl font-bold">
-            <NotepadText />
-            <p>Plaanid</p>
-          </h1>
-        </div>
+        <span className="menu-title flex items-center gap-1 pl-6">
+          <NotepadText className="h-4 w-4" />
+          <p>Plaanid</p>
+        </span>
+        <h1 className="flex items-start gap-2">{/* <p>Plaanid</p> */}</h1>
 
         <div className="flex w-full flex-1 flex-col justify-between">
           <PlanMenuList

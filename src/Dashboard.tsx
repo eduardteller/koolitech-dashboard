@@ -36,19 +36,6 @@ const Dashboard = (): ReactElement => {
     // const times = await window.api.getTodayTimes()
     // setTimes(times)
     // setPlans(plans)
-    setTimes({
-      plan: 'Test Plan',
-      day: 'Monday',
-      times: [
-        { time: '12:00', name: 'Test Event' },
-        { time: '13:00', name: 'Test Event 2' }
-      ]
-    })
-    setPlans({
-      plans: [{ name: 'Test Plan' }, { name: 'Test Plan 2' }],
-      enabled: 'Test Plan',
-      active: 'Test Plan'
-    })
   }
 
   useEffect(() => {

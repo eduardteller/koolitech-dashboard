@@ -6,13 +6,12 @@ import { PlanData, PlanElement, days } from '../../table-actions'
 import TimePicker from './TimePicker'
 
 interface Props {
-  currentElement: number | null
+  currentElement: string | null
   tableData: PlanData
   day: number
   create: (data: PlanElement) => void
   update: (data: PlanElement) => void
   reload: boolean
-  setReload: (reload: boolean) => void
 }
 
 const ScheduleListModal = ({
@@ -21,8 +20,7 @@ const ScheduleListModal = ({
   day,
   create,
   update,
-  reload,
-  setReload
+  reload
 }: Props): ReactElement => {
   const [name, setName] = useState('')
   const [time, setTime] = useState('')
@@ -57,24 +55,26 @@ const ScheduleListModal = ({
     if (currentElement === null) {
       create({ id: '', name, time, desc, audio })
     } else {
-      update({ id: tableData[days[day]][currentElement].id, name, time, desc, audio })
+      update({ id: currentElement, name, time, desc, audio })
     }
   }
 
   useEffect(() => {
-    if (currentElement === null || !tableData[days[day]][currentElement]) {
+    if (currentElement === null) {
       setName('')
       setTime('')
       setDesc('')
       setAudio('default')
       return
     }
-    const element = tableData[days[day]][currentElement]
+    const element = tableData[days[day]].find(
+      (element) => element.id === currentElement
+    ) as PlanElement
     setName(element.name)
     setTime(element.time)
     setDesc(element.desc)
     setAudio(element.audio === 'Vaikimisi' ? 'default' : element.audio)
-  }, [currentElement, reload])
+  }, [reload])
   return (
     <>
       <dialog id="timesListModal" className="modal">

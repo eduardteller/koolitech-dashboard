@@ -1,9 +1,10 @@
 import axios from 'axios'
 import { Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { PlanData, PlanElement, daysEstonia } from '../../table-actions'
+import toast from 'react-hot-toast'
+import { PlanData, PlanElement, days, daysEstonia } from '../../table-actions'
 import ScheduleListModal from './ScheduleListModal'
-import TimesList from './ScheduleListWrapper'
+import PlanDataWrapper from './ScheduleListWrapper'
 
 interface Props {
   activeDay: number
@@ -22,64 +23,118 @@ const emptyPlan: PlanData = {
 
 const TableWrapper = ({ activeDay, activePlan }: Props): React.ReactElement => {
   const [tableData, setTableData] = useState<PlanData>({ ...emptyPlan })
-  const [currentElement, setCurrentElement] = useState<number | null>(null)
+  const [currentElement, setCurrentElement] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [reload, setReload] = useState<boolean>(false)
   const [reloadModal, setReloadModal] = useState<boolean>(false) // yes shits nasty but it works
 
-  const showTheModal = (vari: number | null): void => {
+  const showTheModal = (vari: string | null): void => {
     setCurrentElement(vari)
     setReloadModal(!reloadModal)
     ;(document.getElementById('timesListModal') as HTMLDialogElement).showModal()
   }
 
   const deleteElement = async (id: string): Promise<void> => {
-    // const resp = await window.api.deletePlanElement(activePlan, id)
-    // if (resp.status !== 200) {
-    //   toast.error('Elementi kustutamine ebaõnnestus')
-    //   return
-    // }
-    // toast.success('Element on kustutatud')
-    // setReload(!reload)
+    try {
+      const resp = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/plan-data/delete`,
+        { id: id },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      if (resp.status !== 200) {
+        toast.error('Elementi kustutamine ebaõnnestus')
+        throw new Error('Failed to delete element')
+      }
+      toast.success('Element on kustutatud')
+      setReload(!reload)
+      ;(document.getElementById('timesListModal') as HTMLDialogElement)?.close()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const duplicateElement = async (id: string): Promise<void> => {
-    // const resp = await window.api.duplicatePlanElement(activePlan, id)
-    // if (!resp) {
-    //   toast.error('Elementi dubleerimine ebaõnnestus')
-    //   return
-    // }
-    // toast.success('Element on dubleeritud')
-    // setReload(!reload)
+    try {
+      const resp = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/plan-data/duplicate`,
+        { id: id },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      if (resp.status !== 200) {
+        toast.error('Elementi kopeerimine ebaõnnestus')
+        throw new Error('Failed to copy element')
+      }
+      toast.success('Element on kopeeritud')
+      setReload(!reload)
+      ;(document.getElementById('timesListModal') as HTMLDialogElement)?.close()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const createElement = async (data: PlanElement): Promise<void> => {
-    // const resp = await window.api.createPlanElement(activePlan, days[activeDay], data)
-    // if (!resp) {
-    //   toast.error('Elementi loomine ebaõnnestus')
-    //   return
-    // }
-    // toast.success('Element on loodud')
-    // setReload(!reload)
-    // ;(document.getElementById('timesListModal') as HTMLDialogElement)?.close()
+    try {
+      const resp = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/plan-data/create`,
+        { plan: activePlan, day: days[activeDay], data: data },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      if (resp.status !== 200) {
+        toast.error('Elementi loomine ebaõnnestus')
+        throw new Error('Failed to create element')
+      }
+      toast.success('Element on loodud')
+      setReload(!reload)
+      ;(document.getElementById('timesListModal') as HTMLDialogElement)?.close()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const updateElement = async (data: PlanElement): Promise<void> => {
-    // const resp = await window.api.updatePlanElement(activePlan, data)
-    // if (!resp) {
-    //   toast.error('Elementi uuendamine ebaõnnestus')
-    //   return
-    // }
-    // toast.success('Element on uuendatud')
-    // setReload(!reload)
-    // ;(document.getElementById('timesListModal') as HTMLDialogElement)?.close()
+    try {
+      const resp = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/plan-data/update`,
+        { data: data },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      if (resp.status !== 200) {
+        toast.error('Elementi update ebaõnnestus')
+        throw new Error('Failed to updated element')
+      }
+      toast.success('Element updated')
+      setReload(!reload)
+      ;(document.getElementById('timesListModal') as HTMLDialogElement)?.close()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const fetchData = async (): Promise<void> => {
     try {
       setLoading(true)
       const resp = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/plan-data?plan=${activePlan}`,
+        `${import.meta.env.VITE_BASE_URL}/api/plan-data/fetch?plan=${activePlan}`,
         {
           headers: {
             'Content-Type': 'application/json'
@@ -129,12 +184,12 @@ const TableWrapper = ({ activeDay, activePlan }: Props): React.ReactElement => {
           {daysEstonia[activeDay]}
         </h1>
         <div className="mx-auto flex h-full w-full max-w-3xl flex-col gap-4 overflow-y-auto">
-          <TimesList
+          <PlanDataWrapper
+            day={activeDay}
+            tableData={tableData}
             deleteElement={deleteElement}
             duplicateElement={duplicateElement}
             setCurrentElement={showTheModal}
-            tableData={tableData}
-            day={activeDay}
           />
         </div>
 
@@ -157,7 +212,6 @@ const TableWrapper = ({ activeDay, activePlan }: Props): React.ReactElement => {
         create={createElement}
         update={updateElement}
         reload={reloadModal}
-        setReload={setReloadModal}
       />
     </>
   )

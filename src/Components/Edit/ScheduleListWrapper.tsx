@@ -2,11 +2,11 @@ import { days, PlanData } from '../../interfaces'
 import ScheduleList from './ScheduleList'
 
 interface Props {
-  deleteElement: (id: string) => void
-  duplicateElement: (id: string) => void
   day: number
   tableData: PlanData
-  setCurrentElement: (index: number | null) => void
+  deleteElement: (id: string) => void
+  duplicateElement: (id: string) => void
+  setCurrentElement: (index: string | null) => void
 }
 
 const ScheduleListWrapper = ({
@@ -32,7 +32,6 @@ const ScheduleListWrapper = ({
           <ScheduleList
             key={index}
             setCurrentElement={setCurrentElement}
-            index={index}
             element={element}
             deleteElement={deleteElement}
             duplicateElement={duplicateElement}
