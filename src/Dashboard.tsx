@@ -104,7 +104,7 @@ const Dashboard = (): ReactElement => {
 
   if (!times || !plans)
     return (
-      <div className="mx-auto h-full max-w-5xl px-4 pb-4 pt-2 xl:pb-16 xl:pt-12">
+      <div className="mx-auto h-full max-w-5xl p-4 xl:p-8">
         <div className="flex h-full flex-col gap-4">
           <h1 className="flex items-center gap-2 text-2xl font-bold">
             <LayoutDashboard size={24} />
@@ -122,7 +122,7 @@ const Dashboard = (): ReactElement => {
     )
 
   return (
-    <div className="mx-auto h-full max-w-5xl px-4 pb-4 pt-2 xl:pb-16 xl:pt-12">
+    <div className="mx-auto h-full max-w-5xl p-4 xl:p-8">
       <div className="flex h-full flex-col gap-4">
         <h1 className="flex items-center gap-2 text-2xl font-bold">
           <LayoutDashboard size={24} />
