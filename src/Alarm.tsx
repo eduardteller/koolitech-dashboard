@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { Bell, BellRing, CircleAlert, Flame, LogOut, Shield } from 'lucide-react'
 import { ReactElement, useState } from 'react'
 import AlarmModal from './Components/Edit/Alarm/AlarmModal'
@@ -6,6 +7,16 @@ const Alarm = (): ReactElement => {
   const [modal, setModal] = useState(false)
   const [alarm, setAlarm] = useState(false)
   const [selectedAlarmType, setSelectedAlarmType] = useState<string>('fire')
+
+  const stopAudio = async () => {
+    const resp = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/alarm-stop`, {
+      withCredentials: true
+    })
+
+    if (resp.status === 200) {
+      setAlarm(false)
+    }
+  }
 
   return (
     <>
@@ -35,6 +46,14 @@ const Alarm = (): ReactElement => {
               </div>
             )}
             <button
+              onClick={() => {
+                if (alarm) {
+                  setAlarm(false)
+                  stopAudio()
+                  return
+                }
+                setModal(true)
+              }}
               className={`btn ${alarm ? 'btn-error animate-pulse' : 'btn-outline'} btn-error btn-block`}
             >
               <Bell className="mr-2 h-5 w-5"></Bell>

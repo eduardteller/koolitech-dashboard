@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { ReactElement } from 'react'
 
 interface Props {
@@ -7,6 +8,20 @@ interface Props {
 }
 
 const AlarmModal = ({ modal: { modal, setModal }, alarm, alarmType }: Props): ReactElement => {
+  const handleAlarm = async () => {
+    const resp = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/api/alarm-start?type=${alarmType}`,
+      {
+        withCredentials: true
+      }
+    )
+
+    if (resp.status === 200) {
+      setModal(false)
+      alarm.setAlarm(true)
+    }
+  }
+
   return (
     <dialog className={`modal ${modal ? 'modal-open' : ''}`}>
       <div className="modal-box">
@@ -19,14 +34,7 @@ const AlarmModal = ({ modal: { modal, setModal }, alarm, alarmType }: Props): Re
           <button onClick={() => setModal(false)} className="btn">
             Tühista
           </button>
-          <button
-            onClick={() => {
-              setModal(false)
-              alarm.setAlarm(true)
-              window.api.startAlarm(alarmType)
-            }}
-            className="btn btn-error"
-          >
+          <button onClick={handleAlarm} className="btn btn-error">
             Aktiveeri
           </button>
         </div>
