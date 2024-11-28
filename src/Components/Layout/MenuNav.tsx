@@ -1,4 +1,4 @@
-import { CalendarClock, Mic, NotebookPen, Settings, Siren } from 'lucide-react'
+import { CalendarClock, NotebookPen, Settings, Siren } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Link, Outlet, useLocation } from 'react-router-dom'
@@ -22,64 +22,45 @@ const MenuNav = (): React.ReactElement => {
       </div>
       <div className="flex h-screen w-full flex-col font-inter">
         <Header></Header>
-        <div className="flex-1 bg-base-200">
-          <div className="flex h-full w-full flex-row">
-            <div className="flex h-full flex-col">
-              <ul className="menu w-60 flex-1 justify-between bg-base-100">
-                <div>
-                  <li className="menu-title">Menüü</li>
-                  <li>
-                    <Link className={`${location.pathname === '/' ? 'active' : null}`} to="/">
-                      <CalendarClock />
-                      <p>Töölaud</p>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className={`${location.pathname === '/edit' ? 'active' : null}`}
-                      to="/edit"
-                    >
-                      <NotebookPen />
-                      <p>Loo / Muuda Plaanid</p>
-                    </Link>
-                  </li>
+        <div className="flex w-full flex-1 flex-row bg-base-200">
+          <ul className="menu h-full w-60 justify-between bg-base-100">
+            <div>
+              <li className="menu-title">Menüü</li>
+              <li>
+                <Link className={`${location.pathname === '/' ? 'active' : null}`} to="/">
+                  <CalendarClock />
+                  <p>Töölaud</p>
+                </Link>
+              </li>
+              <li>
+                <Link className={`${location.pathname === '/edit' ? 'active' : null}`} to="/edit">
+                  <NotebookPen />
+                  <p>Loo / Muuda Plaanid</p>
+                </Link>
+              </li>
 
-                  <li>
-                    <Link
-                      className={`${location.pathname === '/alarm' ? 'active' : null}`}
-                      to="/alarm"
-                    >
-                      <Siren />
-                      <p>Häire</p>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className={`${location.pathname === '/recorder' ? 'active' : null}`}
-                      to="/recorder"
-                    >
-                      <Mic />
-                      <p>Häälesalvestus</p>
-                    </Link>
-                  </li>
-                </div>
-                <div>
-                  <li>
-                    <a
-                      onClick={() => setShowModal(true)}
-                      className={`${location.pathname === '/settings' ? 'active' : null}`}
-                    >
-                      <Settings />
-                      <p>Seaded</p>
-                    </a>
-                  </li>
-                </div>
-              </ul>
+              <li>
+                <Link className={`${location.pathname === '/alarm' ? 'active' : null}`} to="/alarm">
+                  <Siren />
+                  <p>Häire</p>
+                </Link>
+              </li>
             </div>
-            <main className="h-full max-h-[calc(100dvh-16px)] max-w-[calc(100dvw-240px)] flex-1 overflow-auto">
-              <Outlet />
-            </main>
-          </div>
+            <div>
+              <li>
+                <a
+                  onClick={() => setShowModal(true)}
+                  className={`${location.pathname === '/settings' ? 'active' : null}`}
+                >
+                  <Settings />
+                  <p>Seaded</p>
+                </a>
+              </li>
+            </div>
+          </ul>
+          <main className="h-full flex-1 overflow-auto">
+            <Outlet />
+          </main>
         </div>
       </div>
       <Footer></Footer>

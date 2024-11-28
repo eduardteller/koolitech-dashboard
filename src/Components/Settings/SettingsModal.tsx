@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { Moon, Settings } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { themeChange } from 'theme-change'
@@ -9,10 +10,30 @@ interface Props {
 
 const SettingsModal = ({ modal, setModal }: Props): React.ReactElement | null => {
   const [licenseTime, setLicenseTime] = useState<number | null>(null)
-  const [settings, setSettings] = useState<boolean>(false)
+  const [theme, setTheme] = useState<string>('')
+
+  const fetchLicenseTime = async (): Promise<void> => {
+    const { data } = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/timer`, {
+      withCredentials: true
+    })
+
+    if (data) {
+      const timeLeft = data.time_left / (1000 * 60 * 60 * 24)
+      setLicenseTime(timeLeft)
+    }
+    // const licenseTime = await window.api.getLicenseTime()
+    // setLicenseTime(licenseTime)
+  }
+
+  const fetchTheme = async (): Promise<void> => {
+    const themeStorage = localStorage.getItem('theme')
+    setTheme(themeStorage ?? 'fantasy')
+  }
 
   useEffect(() => {
     themeChange(false)
+    fetchTheme()
+    fetchLicenseTime()
   }, [modal])
 
   if (!modal) return null
@@ -34,14 +55,7 @@ const SettingsModal = ({ modal, setModal }: Props): React.ReactElement | null =>
                   </p>
                   <p className="text-sm">Valige rakenduse välimus vastavalt oma eelistustele</p>
                 </div>
-                <select
-                  data-choose-theme
-                  onChange={(e) => {
-                    const newSettings = e.target.value === 'dark'
-                    setSettings(newSettings)
-                  }}
-                  className="select select-ghost w-36"
-                >
+                <select defaultValue={theme} data-choose-theme className="select select-ghost w-36">
                   <option value="fantasy">Hele</option>
                   <option value="dark">Tume</option>
                 </select>
@@ -50,7 +64,7 @@ const SettingsModal = ({ modal, setModal }: Props): React.ReactElement | null =>
 
             <div className="border-base flex justify-between border-t pt-4">
               <div className="text-base-content">
-                {licenseTime && <p>Litsents kehtib: {Math.floor(licenseTime / 1440)} päeva</p>}
+                {licenseTime && <p>Litsents kehtib: {Math.floor(licenseTime)} päeva</p>}
               </div>
               <button onClick={() => setModal(false)} className="btn">
                 Tagasi

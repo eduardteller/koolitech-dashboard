@@ -1,3 +1,4 @@
+import axios from 'axios'
 import {
   Bell,
   Calendar,
@@ -10,6 +11,7 @@ import {
   SlidersHorizontal
 } from 'lucide-react'
 import { ReactElement, useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import { Plans } from './table-actions'
 
@@ -31,22 +33,94 @@ const Dashboard = (): ReactElement => {
   } | null>(null)
   const [plans, setPlans] = useState<Plans | null>(null)
   const [reload, setReload] = useState(false)
-  const fetchDashboardData = async (): Promise<void> => {
-    // const plans = await window.api.getPlans()
-    // const times = await window.api.getTodayTimes()
-    // setTimes(times)
-    // setPlans(plans)
+
+  const handleEnablePlan = async (plan: string): Promise<void> => {
+    try {
+      const resp = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/plan/enable`,
+        {
+          plan: plan
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+
+      if (resp.status !== 200) {
+        throw new Error('Failed to duplicate plan')
+      }
+
+      setReload(!reload)
+    } catch (error) {
+      toast.error('Plaani aktiveerimine ebaõnnestus')
+      console.error(error)
+    }
+  }
+
+  const fetchDashboardData = async (): Promise<string | null> => {
+    const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/plan/list`, {
+      withCredentials: true
+    })
+
+    const data = res.data as Plans
+
+    if (data) {
+      setPlans(data as Plans)
+    }
+
+    return data.enabled
+  }
+
+  const fetchTimes = async (plan: string | null): Promise<void> => {
+    if (!plan) return
+    const day = new Date().toLocaleString('en-us', { weekday: 'long' }).toLowerCase()
+
+    const res = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/api/times?plan=${plan}&day=${day}`,
+      {
+        withCredentials: true
+      }
+    )
+
+    const data = res.data as {
+      plan: string
+      day: string
+      times: { time: string; name: string }[]
+    }
+
+    if (data) {
+      setTimes(data)
+    }
   }
 
   useEffect(() => {
-    // window.api.onRefresh(() => setReload(!reload))
-  }, [])
-
-  useEffect(() => {
-    fetchDashboardData()
+    fetchDashboardData().then((plan) => {
+      fetchTimes(plan)
+    })
   }, [reload])
 
-  if (!times || !plans) return <></>
+  if (!times || !plans)
+    return (
+      <div className="mx-auto h-full max-w-5xl px-4 pb-4 pt-2 xl:pb-16 xl:pt-12">
+        <div className="flex h-full flex-col gap-4">
+          <h1 className="flex items-center gap-2 text-2xl font-bold">
+            <LayoutDashboard size={24} />
+            Töölaud
+          </h1>
+          <div className="flex h-full w-full flex-row gap-4">
+            <div className="border-base card flex h-full w-[50%] flex-col rounded-xl border bg-base-100 p-6"></div>
+            <div className="flex h-full max-h-full w-[50%] flex-col gap-4">
+              <div className="border-base card h-fit w-full gap-4 rounded-xl border bg-base-100 p-6"></div>
+              <div className="border-base card flex h-full w-full flex-col rounded-xl border bg-base-100 p-6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+
   return (
     <div className="mx-auto h-full max-w-5xl px-4 pb-4 pt-2 xl:pb-16 xl:pt-12">
       <div className="flex h-full flex-col gap-4">
@@ -112,12 +186,10 @@ const Dashboard = (): ReactElement => {
                       <Clock className="h-4 w-4" />
                     </div>
                     <select
-                      value={plans.enabled}
-                      // onChange={(e) => {
-                      //   window.api.enablePlan(e.target.value).then(() => {
-                      //     setReload(!reload)
-                      //   })
-                      // }}
+                      defaultValue={plans.enabled}
+                      onChange={(e) => {
+                        handleEnablePlan(e.target.value)
+                      }}
                       className="select input-bordered w-full rounded-lg pl-9"
                     >
                       {plans.plans.map((plan, i) => (

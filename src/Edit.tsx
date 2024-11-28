@@ -27,7 +27,7 @@ const Edit = (): React.ReactElement => {
     <>
       <div className="drawer drawer-end drawer-open h-full w-full">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-        <div className="drawer-content h-full max-h-[calc(100dvh-16px)] w-full max-w-[calc(100dvw-480px)]">
+        <div className="drawer-content">
           {/* <!-- Page content here --> */}
           <div className="mx-auto h-full w-full max-w-4xl px-4 pb-4 pt-2 xl:pb-8 xl:pt-8">
             <div className="flex h-full flex-col gap-4">

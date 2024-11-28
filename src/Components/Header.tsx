@@ -15,6 +15,7 @@ const Header = () => {
           >
             Kooli
             <span className="text-base-content/60 duration-200 hover:text-base-content">Tech</span>
+            {/* <p> | E-Kell</p> */}
           </a>
         </div>
 
