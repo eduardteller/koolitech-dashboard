@@ -1,3 +1,4 @@
+import { ArrowRight, NotepadText } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import DeletePlanModal from './Components/Edit/DeletePlanModal'
@@ -25,12 +26,20 @@ const Edit = (): React.ReactElement => {
 
   return (
     <>
-      <div className="drawer drawer-end drawer-open h-full w-full">
+      <div className="drawer drawer-end h-full w-full lg:drawer-open">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           {/* <!-- Page content here --> */}
-          <div className="mx-auto h-full w-full max-w-4xl px-4 pb-4 pt-2 xl:pb-8 xl:pt-8">
+          <div className="mx-auto h-full w-full max-w-4xl p-4 xl:p-8">
             <div className="flex h-full flex-col gap-4">
+              <label
+                htmlFor="my-drawer-2"
+                className="border-base btn btn-outline drawer-button w-fit self-end lg:hidden"
+              >
+                <NotepadText className="h-5 w-5" />
+                Plaanid
+                <ArrowRight className="h-5 w-5" />
+              </label>
               <ul className="border-base menu menu-horizontal w-full flex-row rounded-xl border bg-base-100">
                 <WeekdayMenuList setActiveDay={setActiveDay} activeDay={activeDay} />
               </ul>

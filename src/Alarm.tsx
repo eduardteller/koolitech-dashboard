@@ -20,53 +20,54 @@ const Alarm = (): ReactElement => {
 
   return (
     <>
-      <div className="mx-auto flex h-full w-full max-w-5xl flex-col px-4 pb-4 pt-2 xl:pb-16 xl:pt-12">
-        <h1 className="border-base flex items-center gap-2 border-b pb-2 text-2xl font-bold">
+      <div className="mx-auto flex h-full w-full max-w-5xl flex-col p-4 xl:p-8">
+        {/* <h1 className="flex items-center gap-2 text-2xl font-bold">
           <BellRing size={24} />
           Häiresüsteem
-        </h1>
-        <div className="flex h-full w-full items-center justify-center">
-          <div className="border-base card flex h-fit min-w-[468px] max-w-lg flex-col gap-3 rounded-xl border bg-base-100 p-6">
-            <div className="flex flex-row items-center gap-2 text-xl font-bold">
-              <BellRing className={`h-6 w-6 ${alarm ? 'text-error' : ''}`} />
-              <p>Käivita häire</p>
-            </div>
-            <p className="text-sm font-medium text-base-content/60">
-              Tööriist, et käivita kooli häire signaali kaugelt.
-            </p>
-            {alarm && (
-              <div className="flex animate-pulse items-start justify-start gap-4 rounded-lg border border-error p-4 text-error">
-                <CircleAlert className="w-4 shrink-0" />
-                <div className="flex flex-col gap-1">
-                  <h3 className="font-semibold">Häire on aktiivne!</h3>
-                  <p className="text-sm">
-                    Häiresignaal on praegu aktiivne. Vajutage nuppu uuesti, et see välja lülitada.
-                  </p>
-                </div>
-              </div>
-            )}
-            <button
-              onClick={() => {
-                if (alarm) {
-                  setAlarm(false)
-                  stopAudio()
-                  return
-                }
-                setModal(true)
-              }}
-              className={`btn ${alarm ? 'btn-error animate-pulse' : 'btn-outline'} btn-error btn-block`}
-            >
-              <Bell className="mr-2 h-5 w-5"></Bell>
-              {alarm && <p>Peata häiresignaali</p>}
-              {!alarm && <p>Käivita häiresignaal</p>}
-            </button>
-            <div className="border-base flex flex-col gap-4 rounded-lg border p-4">
-              <div>
-                <p className="font-semibold">Häiresignaali tüüp</p>
-                <p className="text-sm font-medium text-base-content/60">
-                  Vali sobiv häiresignaali tüüp
+        </h1> */}
+
+        <div className="border-base card mx-auto flex h-full max-h-[640px] w-full max-w-lg flex-col gap-3 rounded-xl border bg-base-100 p-6">
+          <div className="flex flex-row items-center gap-2 text-xl font-bold">
+            <BellRing className={`h-6 w-6 ${alarm ? 'text-error' : ''}`} />
+            <p>Käivita häire</p>
+          </div>
+          <p className="text-sm font-medium text-base-content/60">
+            Tööriist, et käivita kooli häire signaali kaugelt.
+          </p>
+          {alarm && (
+            <div className="flex animate-pulse items-start justify-start gap-4 rounded-lg border border-error p-4 text-error">
+              <CircleAlert className="w-4 shrink-0" />
+              <div className="flex flex-col gap-1">
+                <h3 className="font-semibold">Häire on aktiivne!</h3>
+                <p className="text-sm">
+                  Häiresignaal on praegu aktiivne. Vajutage nuppu uuesti, et see välja lülitada.
                 </p>
               </div>
+            </div>
+          )}
+          <button
+            onClick={() => {
+              if (alarm) {
+                setAlarm(false)
+                stopAudio()
+                return
+              }
+              setModal(true)
+            }}
+            className={`btn ${alarm ? 'btn-error animate-pulse' : 'btn-outline'} btn-error btn-block`}
+          >
+            <Bell className="mr-2 h-5 w-5"></Bell>
+            {alarm && <p>Peata häiresignaali</p>}
+            {!alarm && <p>Käivita häiresignaal</p>}
+          </button>
+          <div className="border-base flex flex-1 flex-col gap-4 rounded-lg border p-4">
+            <div>
+              <p className="font-semibold">Häiresignaali tüüp</p>
+              <p className="text-sm font-medium text-base-content/60">
+                Vali sobiv häiresignaali tüüp
+              </p>
+            </div>
+            <div className="flex h-0 grow flex-col gap-4 overflow-y-auto">
               <label
                 htmlFor="alarm-type-1"
                 className={`flex ${selectedAlarmType !== 'fire' ? 'cursor-pointer bg-base-100 hover:bg-base-200' : 'bg-base-200'} ${alarm && selectedAlarmType !== 'fire' && 'hidden'} border-base gap-4 rounded-lg border p-4 duration-200`}

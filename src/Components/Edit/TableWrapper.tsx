@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Plus } from 'lucide-react'
+import { NotepadText, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { PlanData, PlanElement, days, daysEstonia } from '../../table-actions'
@@ -169,8 +169,11 @@ const TableWrapper = ({ activeDay, activePlan }: Props): React.ReactElement => {
   if (!activePlan)
     return (
       <div className="border-base card flex w-full flex-1 flex-col items-center justify-center overflow-hidden border bg-base-100 p-4">
-        <div className="text-center text-lg font-bold text-base-content/60">
-          <p>Vali olemasolev plaan või loo uus plaan, et alustada kella aegade seadistamist.</p>{' '}
+        <div className="flex h-full flex-col items-center justify-center gap-8 px-16 text-center text-lg font-bold text-base-content/60">
+          <NotepadText size={72} className="opacity-60" />
+          <p>
+            Vali olemasolev plaan või loo uus plaan, et alustada kella aegade seadistamist.
+          </p>{' '}
         </div>
       </div>
     )
