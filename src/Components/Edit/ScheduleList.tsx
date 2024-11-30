@@ -31,7 +31,7 @@ const ScheduleList = ({
       <div className="flex h-full flex-shrink-0 flex-row items-center gap-2">
         <button
           onClick={() => duplicateElement(element.id)}
-          className="btn btn-square btn-outline input-bordered"
+          className="btn btn-square btn-outline input-bordered max-sm:hidden"
         >
           <Copy className="h-4 w-4" />
         </button>

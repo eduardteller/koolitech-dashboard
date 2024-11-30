@@ -90,7 +90,7 @@ const PlanMenuWrapper = ({
   }
 
   return (
-    <div className="h-full w-60 bg-base-100 pb-4 pt-3">
+    <div className="h-full w-60 bg-base-100 pb-4 pt-3 max-lg:pt-24">
       <div className="flex h-full w-full flex-col">
         <span className="menu-title flex items-center gap-1 pl-6">
           <NotepadText className="h-4 w-4" />
