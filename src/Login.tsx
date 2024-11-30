@@ -70,8 +70,8 @@ const Login = () => {
       </div>
       <main className="h-screen bg-base-200 font-inter">
         <Header></Header>
-        <div className="flex h-full flex-1 flex-col items-center justify-start px-8 pt-32">
-          <div className="card flex h-[364px] w-96 flex-col items-center justify-around bg-base-100 p-4 shadow-xl">
+        <div className="flex h-full flex-1 flex-col items-center justify-start px-4 pt-32 lg:px-8">
+          <div className="card flex h-[364px] max-w-96 flex-col items-center justify-around bg-base-100 p-4 shadow-xl">
             <div className="flex w-full flex-col items-center justify-center">
               <h2 className="text-2xl font-semibold">
                 Logi sisse <LogIn className="inline" />

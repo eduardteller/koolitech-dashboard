@@ -16,13 +16,13 @@ import { Link } from 'react-router-dom'
 import { Plans } from './table-actions'
 
 const daysToEstonian: { [key: string]: string } = {
-  Monday: 'Esmaspäev',
-  Tuesday: 'Teisipäev',
-  Wednesday: 'Kolmapäev',
-  Thursday: 'Neljapäev',
-  Friday: 'Reede',
-  Saturday: 'Laupäev',
-  Sunday: 'Pühapäev'
+  monday: 'Esmaspäev',
+  tuesday: 'Teisipäev',
+  wednesday: 'Kolmapäev',
+  thursday: 'Neljapäev',
+  friday: 'Reede',
+  saturday: 'Laupäev',
+  sunday: 'Pühapäev'
 }
 
 const Dashboard = (): ReactElement => {
@@ -128,8 +128,8 @@ const Dashboard = (): ReactElement => {
           <LayoutDashboard size={24} />
           Töölaud
         </h1>
-        <div className="flex h-full w-full flex-row gap-4">
-          <div className="border-base card flex h-full w-[50%] flex-col rounded-xl border bg-base-100 p-6">
+        <div className="flex h-full w-full flex-col gap-4 md:flex-row">
+          <div className="border-base card flex h-full w-full flex-col rounded-xl border bg-base-100 p-6 max-md:max-h-[30%] md:w-[50%]">
             <div className="pb-2">
               <h2 className="flex items-center gap-2 text-xl font-bold">
                 <CalendarClock />
@@ -163,7 +163,7 @@ const Dashboard = (): ReactElement => {
               </div>
             )}
           </div>
-          <div className="flex h-full max-h-full w-[50%] flex-col gap-4">
+          <div className="flex h-full max-h-full w-full flex-col gap-4 md:w-[50%]">
             <div className="border-base card h-fit w-full gap-4 rounded-xl border bg-base-100 p-6">
               <h2 className="flex items-center gap-2 text-xl font-bold">
                 <SlidersHorizontal />
@@ -208,7 +208,7 @@ const Dashboard = (): ReactElement => {
                 </Link>
               </div>
             </div>
-            <div className="border-base card flex h-full w-full flex-col rounded-xl border bg-base-100 p-6">
+            <div className="border-base card h-full w-full flex-col rounded-xl border bg-base-100 p-6 max-md:h-full">
               <h2 className="flex items-center gap-2 pb-4 text-xl font-bold">
                 <NotepadText />
                 Plaanide ülevaade

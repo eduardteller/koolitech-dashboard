@@ -21,10 +21,10 @@ const Alarm = (): ReactElement => {
   return (
     <>
       <div className="mx-auto flex h-full w-full max-w-5xl flex-col p-4 xl:p-8">
-        {/* <h1 className="flex items-center gap-2 text-2xl font-bold">
+        <h1 className="flex items-center gap-2 pb-4 text-2xl font-bold">
           <BellRing size={24} />
           Häiresüsteem
-        </h1> */}
+        </h1>
 
         <div className="border-base card mx-auto flex h-full max-h-[640px] w-full max-w-lg flex-col gap-3 rounded-xl border bg-base-100 p-6">
           <div className="flex flex-row items-center gap-2 text-xl font-bold">
