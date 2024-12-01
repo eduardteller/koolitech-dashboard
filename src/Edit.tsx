@@ -31,15 +31,21 @@ const Edit = (): React.ReactElement => {
         <div className="drawer-content">
           {/* <!-- Page content here --> */}
           <div className="mx-auto h-full w-full max-w-4xl p-4 xl:p-8">
-            <div className="flex h-full flex-col gap-4">
-              <label
-                htmlFor="my-drawer-2"
-                className="border-base btn btn-outline drawer-button w-fit self-end lg:hidden"
-              >
-                <NotepadText className="h-5 w-5" />
-                Plaanid
-                <ArrowRight className="h-5 w-5" />
-              </label>
+            <div className="flex h-full flex-col gap-4 max-md:gap-2">
+              <div className="flex w-full flex-row items-center justify-between">
+                <h1 className="flex items-center gap-2 text-2xl font-bold max-md:text-xl">
+                  <NotepadText className="max-md:w-5" />
+                  <p>Ajakavad</p>
+                </h1>
+                <label
+                  htmlFor="my-drawer-2"
+                  className="border-base btn btn-outline drawer-button w-fit self-end lg:hidden"
+                >
+                  <NotepadText className="h-5 w-5" />
+                  Plaanid
+                  <ArrowRight className="h-5 w-5" />
+                </label>
+              </div>
               <ul className="border-base menu menu-horizontal w-full flex-row rounded-xl border bg-base-100">
                 <WeekdayMenuList setActiveDay={setActiveDay} activeDay={activeDay} />
               </ul>

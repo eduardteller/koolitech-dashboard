@@ -181,12 +181,12 @@ const TableWrapper = ({ activeDay, activePlan }: Props): React.ReactElement => {
   return (
     <>
       <div className="border-base card flex flex-1 flex-col gap-4 overflow-hidden rounded-lg border bg-base-100 p-4">
-        <h1 className="border-base border-b p-4 text-center text-xl font-bold uppercase">
+        <h1 className="border-base border-b p-4 text-center text-xl font-bold uppercase max-md:p-2 max-md:text-lg">
           {activePlan}
           {' - '}
           {daysEstonia[activeDay]}
         </h1>
-        <div className="mx-auto flex h-0 w-full max-w-3xl grow flex-col gap-4 overflow-y-auto">
+        <div className="mx-auto flex h-0 w-full max-w-3xl grow flex-col gap-4 overflow-y-auto max-md:gap-2">
           <PlanDataWrapper
             day={activeDay}
             tableData={tableData}

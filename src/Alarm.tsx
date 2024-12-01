@@ -21,21 +21,23 @@ const Alarm = (): ReactElement => {
   return (
     <>
       <div className="mx-auto flex h-full w-full max-w-5xl flex-col p-4 xl:p-8">
-        <h1 className="flex items-center gap-2 pb-4 text-2xl font-bold">
-          <BellRing size={24} />
+        <h1 className="flex items-center gap-2 pb-4 text-2xl font-bold max-md:pb-2 max-md:text-xl">
+          <BellRing className="max-md:w-5" />
           Häiresüsteem
         </h1>
 
-        <div className="border-base card mx-auto flex h-full max-h-[640px] w-full max-w-lg flex-col gap-3 rounded-xl border bg-base-100 p-6">
-          <div className="flex flex-row items-center gap-2 text-xl font-bold">
-            <BellRing className={`h-6 w-6 ${alarm ? 'text-error' : ''}`} />
-            <p>Käivita häire</p>
+        <div className="border-base card mx-auto flex h-full max-h-[640px] w-full max-w-lg flex-col gap-3 rounded-xl border bg-base-100 p-6 max-md:p-4">
+          <div>
+            <div className="flex flex-row items-center gap-2 text-xl font-bold max-md:text-lg">
+              <BellRing className={`h-6 w-6 max-md:h-4 max-md:w-4 ${alarm ? 'text-error' : ''}`} />
+              <p>Käivita häire</p>
+            </div>
+            <p className="text-sm font-medium text-base-content/60">
+              Tööriist, et käivita kooli häire signaali kaugelt.
+            </p>
           </div>
-          <p className="text-sm font-medium text-base-content/60">
-            Tööriist, et käivita kooli häire signaali kaugelt.
-          </p>
           {alarm && (
-            <div className="flex animate-pulse items-start justify-start gap-4 rounded-lg border border-error p-4 text-error">
+            <div className="flex animate-pulse items-start justify-start gap-4 rounded-lg border border-error p-4 text-error max-md:gap-2 max-md:p-2">
               <CircleAlert className="w-4 shrink-0" />
               <div className="flex flex-col gap-1">
                 <h3 className="font-semibold">Häire on aktiivne!</h3>
@@ -60,17 +62,17 @@ const Alarm = (): ReactElement => {
             {alarm && <p>Peata häiresignaali</p>}
             {!alarm && <p>Käivita häiresignaal</p>}
           </button>
-          <div className="border-base flex flex-1 flex-col gap-4 rounded-lg border p-4">
+          <div className="border-base flex flex-1 flex-col gap-4 rounded-lg border p-4 max-md:gap-2 max-md:p-3">
             <div>
               <p className="font-semibold">Häiresignaali tüüp</p>
               <p className="text-sm font-medium text-base-content/60">
                 Vali sobiv häiresignaali tüüp
               </p>
             </div>
-            <div className="flex h-0 grow flex-col gap-4 overflow-y-auto">
+            <div className="flex h-0 grow flex-col gap-4 overflow-y-auto max-md:gap-2">
               <label
                 htmlFor="alarm-type-1"
-                className={`flex ${selectedAlarmType !== 'fire' ? 'cursor-pointer bg-base-100 hover:bg-base-200' : 'bg-base-200'} ${alarm && selectedAlarmType !== 'fire' && 'hidden'} border-base gap-4 rounded-lg border p-4 duration-200`}
+                className={`flex ${selectedAlarmType !== 'fire' ? 'cursor-pointer bg-base-100 hover:bg-base-200' : 'bg-base-200'} ${alarm && selectedAlarmType !== 'fire' && 'hidden'} border-base gap-4 rounded-lg border p-4 duration-200 max-md:gap-2 max-md:p-3`}
               >
                 <input
                   type="radio"
@@ -84,14 +86,14 @@ const Alarm = (): ReactElement => {
                     <Flame className="w-5 shrink-0 text-red-500" />
                     <p>Tulekahju</p>
                   </div>
-                  <p className="text-base-content/60">
+                  <p className="font-medium text-base-content/60 max-md:text-xs">
                     Hädaolukorra signaal tulekahju korral, mis nõuab kohest evakueerimist
                   </p>
                 </div>
               </label>
               <label
                 htmlFor="alarm-type-2"
-                className={`${selectedAlarmType !== 'evacuation' ? 'cursor-pointer bg-base-100 hover:bg-base-200' : 'bg-base-200'} ${alarm && selectedAlarmType !== 'evacuation' && 'hidden'} border-base flex gap-4 rounded-lg border p-4 duration-200`}
+                className={`${selectedAlarmType !== 'evacuation' ? 'cursor-pointer bg-base-100 hover:bg-base-200' : 'bg-base-200'} ${alarm && selectedAlarmType !== 'evacuation' && 'hidden'} border-base flex gap-4 rounded-lg border p-4 duration-200 max-md:gap-2 max-md:p-3`}
               >
                 <input
                   type="radio"
@@ -105,14 +107,14 @@ const Alarm = (): ReactElement => {
                     <LogOut className="w-5 shrink-0 text-amber-500" />
                     <p>Evakuatsioon</p>
                   </div>
-                  <p className="text-base-content/60">
+                  <p className="font-medium text-base-content/60 max-md:text-xs">
                     Kontrollitud evakuatsiooni signaal hoone tühjendamiseks
                   </p>
                 </div>
               </label>
               <label
                 htmlFor="alarm-type-3"
-                className={`${selectedAlarmType !== 'attack' ? 'cursor-pointer bg-base-100 hover:bg-base-200' : 'bg-base-200'} ${alarm && selectedAlarmType !== 'attack' && 'hidden'} border-base flex gap-4 rounded-lg border p-4 duration-200`}
+                className={`${selectedAlarmType !== 'attack' ? 'cursor-pointer bg-base-100 hover:bg-base-200' : 'bg-base-200'} ${alarm && selectedAlarmType !== 'attack' && 'hidden'} border-base flex gap-4 rounded-lg border p-4 duration-200 max-md:gap-2 max-md:p-3`}
               >
                 <input
                   type="radio"
@@ -126,7 +128,7 @@ const Alarm = (): ReactElement => {
                     <Shield className="w-5 shrink-0 text-blue-500" />
                     <p>Äkkrünnak</p>
                   </div>
-                  <p className="text-base-content/60">
+                  <p className="font-medium text-base-content/60 max-md:text-xs">
                     Kriitiline hoiatus koheste turvaohtude või hädaolukordade puhul
                   </p>
                 </div>

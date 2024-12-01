@@ -78,7 +78,7 @@ const ScheduleListModal = ({
   return (
     <>
       <dialog id="timesListModal" className="modal">
-        <div className="modal-box h-fit w-1/2">
+        <div className="modal-box h-fit max-w-lg">
           <form method="dialog">
             <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
           </form>

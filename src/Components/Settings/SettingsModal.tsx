@@ -40,7 +40,7 @@ const SettingsModal = ({ modal, setModal }: Props): React.ReactElement | null =>
   return (
     <>
       {/* Open the modal using document.getElementById('ID').showModal() method */}
-      <dialog id="settingsModal" className="modal modal-open">
+      <dialog id="settingsModal" className="modal modal-open px-4 max-md:px-2">
         <div className="modal-box flex h-1/2 w-full max-w-3xl flex-col justify-between">
           <div className="flex h-full w-full flex-col justify-between">
             <div>

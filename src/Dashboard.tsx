@@ -97,9 +97,11 @@ const Dashboard = (): ReactElement => {
   }
 
   useEffect(() => {
-    fetchDashboardData().then((plan) => {
-      fetchTimes(plan)
-    })
+    fetchDashboardData()
+      .then((plan) => {
+        fetchTimes(plan)
+      })
+      .finally(() => {})
   }, [reload])
 
   if (!times || !plans)
@@ -124,15 +126,15 @@ const Dashboard = (): ReactElement => {
   return (
     <div className="mx-auto h-full max-w-5xl p-4 xl:p-8">
       <div className="flex h-full flex-col gap-4">
-        <h1 className="flex items-center gap-2 text-2xl font-bold">
-          <LayoutDashboard size={24} />
+        <h1 className="flex items-center gap-2 text-2xl font-bold max-md:text-xl">
+          <LayoutDashboard className="max-md:w-5" />
           Töölaud
         </h1>
         <div className="flex h-full w-full flex-col gap-4 md:flex-row">
-          <div className="border-base card flex h-full w-full flex-col rounded-xl border bg-base-100 p-6 max-md:max-h-[30%] md:w-[50%]">
-            <div className="pb-2">
-              <h2 className="flex items-center gap-2 text-xl font-bold">
-                <CalendarClock />
+          <div className="border-base card flex h-full w-full flex-col rounded-xl border bg-base-100 p-6 max-md:max-h-[35%] max-md:p-4 md:w-[50%]">
+            <div className="pb-4 max-md:pb-2">
+              <h2 className="flex items-center gap-2 text-xl font-bold max-md:text-lg">
+                <CalendarClock className="max-md:w-4" />
                 Tänane ajakava
               </h2>
               <h3 className="w-full truncate text-sm font-medium text-base-content/60">
@@ -145,11 +147,11 @@ const Dashboard = (): ReactElement => {
               </div>
             )}
             {times.times.length > 0 && (
-              <div className="flex h-0 w-full grow flex-col gap-4 overflow-auto py-4 text-lg">
+              <div className="flex h-0 w-full grow flex-col gap-4 overflow-auto text-lg max-md:gap-2">
                 {times.times.map((entry, index) => (
                   <div
                     key={index}
-                    className="border-base flex max-w-full shrink-0 items-center gap-4 rounded-lg border p-3 duration-200 hover:bg-base-200"
+                    className="border-base flex max-w-full shrink-0 items-center gap-4 rounded-lg border p-3 duration-200 hover:bg-base-200 max-md:p-2"
                   >
                     <div className="bg-base flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
                       <Clock className="h-5 w-5 text-base-content" />
@@ -164,9 +166,9 @@ const Dashboard = (): ReactElement => {
             )}
           </div>
           <div className="flex h-full max-h-full w-full flex-col gap-4 md:w-[50%]">
-            <div className="border-base card h-fit w-full gap-4 rounded-xl border bg-base-100 p-6">
-              <h2 className="flex items-center gap-2 text-xl font-bold">
-                <SlidersHorizontal />
+            <div className="border-base card h-fit w-full gap-4 rounded-xl border bg-base-100 p-6 max-md:gap-2 max-md:p-4">
+              <h2 className="flex items-center gap-2 text-xl font-bold max-md:text-lg">
+                <SlidersHorizontal className="max-md:w-4" />
                 Kiired toimingud
               </h2>
 
@@ -177,7 +179,7 @@ const Dashboard = (): ReactElement => {
                       <Calendar className="w-4" />
                       Aktiivne plaan
                     </p>
-                    <p className="text-sm font-medium text-base-content/60">
+                    <p className="text-sm font-medium text-base-content/60 max-md:hidden">
                       Muuda aktiivset plaani
                     </p>
                   </div>
@@ -198,19 +200,22 @@ const Dashboard = (): ReactElement => {
                     </select>
                   </div>
                 </div>
-                <Link to={'/edit'} className="btn btn-neutral btn-block space-x-2">
+                <Link to={'/edit'} className="btn btn-neutral btn-block space-x-2 max-md:hidden">
                   <CirclePlus size={16} />
                   Lisa/Muuda plaan
                 </Link>
-                <Link to={'/alarm'} className="btn btn-outline btn-error btn-block space-x-2">
+                <Link
+                  to={'/alarm'}
+                  className="btn btn-outline btn-error btn-block space-x-2 max-md:hidden"
+                >
                   <Bell className="w-4"></Bell>
                   Häiresüsteem
                 </Link>
               </div>
             </div>
-            <div className="border-base card h-full w-full flex-col rounded-xl border bg-base-100 p-6 max-md:h-full">
-              <h2 className="flex items-center gap-2 pb-4 text-xl font-bold">
-                <NotepadText />
+            <div className="border-base card h-full w-full flex-col rounded-xl border bg-base-100 p-6 max-md:h-full max-md:p-4">
+              <h2 className="flex items-center gap-2 pb-4 text-xl font-bold max-md:pb-2 max-md:text-lg">
+                <NotepadText className="max-md:w-4" />
                 Plaanide ülevaade
               </h2>
               <div className="flex h-0 grow flex-col gap-2 overflow-y-auto">
@@ -239,7 +244,7 @@ const Dashboard = (): ReactElement => {
                         className="btn btn-ghost btn-sm flex items-center"
                       >
                         <Pencil className="w-4" />
-                        Muuda
+                        <p className="max-md:hidden">Muuda</p>
                       </Link>
                     </div>
                   </div>

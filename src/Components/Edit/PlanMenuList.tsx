@@ -116,7 +116,7 @@ const PlanMenuList = ({
                 className="border-base menu dropdown-content menu-sm w-48 rounded-lg border bg-base-100 p-2 text-base-content"
               >
                 {plan.name !== plans.enabled && (
-                  <li className="border-b pb-1">
+                  <li className="input-bordered border-b pb-1">
                     <a onClick={() => handleEnablePlan(plan.name)}>
                       <Check className="mr-2 h-4 w-4" />
                       Aktiveeri
