@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { themeChange } from 'theme-change'
-import Footer from '../Footer'
 import Header from '../Header'
 import SettingsModal from '../Settings/SettingsModal'
 
@@ -82,7 +81,7 @@ const MenuNav = (): React.ReactElement => {
           </div>
         </div>
       </div>
-      <Footer></Footer>
+      {/* <Footer></Footer> */}
       <SettingsModal modal={showModal} setModal={setShowModal} />
     </>
   )
